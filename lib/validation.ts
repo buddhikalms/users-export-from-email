@@ -69,8 +69,37 @@ export const syncRequestSchema = z.object({
   folders: z.array(z.string().min(1)).min(1, "Select at least one folder."),
 });
 
+export const lastSeenFilterSchema = z
+  .object({
+    mode: z.enum(["all", "before", "after"]),
+    date: z.string().optional(),
+  })
+  .superRefine((value, context) => {
+    if (value.mode === "all") {
+      return;
+    }
+
+    if (!value.date) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Select a last seen date for this export filter.",
+        path: ["date"],
+      });
+      return;
+    }
+
+    if (Number.isNaN(new Date(value.date).getTime())) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Enter a valid last seen date.",
+        path: ["date"],
+      });
+    }
+  });
+
 export const exportExcelRequestSchema = z.object({
   syncResult: syncResultSchema,
+  filter: lastSeenFilterSchema.default({ mode: "all" }),
 });
 
 export const defaultConnectionSettings = {

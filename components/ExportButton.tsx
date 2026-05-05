@@ -5,9 +5,15 @@ import { Download } from "lucide-react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import type { SyncResult } from "@/types/email";
+import type { LastSeenFilter, SyncResult } from "@/types/email";
 
-export function ExportButton({ syncResult }: { syncResult: SyncResult }) {
+export function ExportButton({
+  syncResult,
+  filter,
+}: {
+  syncResult: SyncResult;
+  filter: LastSeenFilter;
+}) {
   const [status, setStatus] = useState<{
     type: "error" | "success";
     message: string;
@@ -15,6 +21,14 @@ export function ExportButton({ syncResult }: { syncResult: SyncResult }) {
   const [exporting, setExporting] = useState(false);
 
   async function exportWorkbook() {
+    if (filter.mode !== "all" && !filter.date) {
+      setStatus({
+        type: "error",
+        message: "Select a last seen date before exporting with a before/after filter.",
+      });
+      return;
+    }
+
     setExporting(true);
     setStatus(null);
 
@@ -26,6 +40,7 @@ export function ExportButton({ syncResult }: { syncResult: SyncResult }) {
         },
         body: JSON.stringify({
           syncResult,
+          filter,
         }),
       });
 
@@ -63,7 +78,11 @@ export function ExportButton({ syncResult }: { syncResult: SyncResult }) {
 
   return (
     <div className="space-y-4">
-      <Button className="sm:min-w-56" disabled={exporting} onClick={exportWorkbook}>
+      <Button
+        className="sm:min-w-56"
+        disabled={exporting || (filter.mode !== "all" && !filter.date)}
+        onClick={exportWorkbook}
+      >
         <Download className="h-4 w-4" />
         {exporting ? "Generating workbook..." : "Export Excel Workbook"}
       </Button>

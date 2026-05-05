@@ -44,3 +44,10 @@ export interface SyncResult {
   allContacts: EmailContact[];
   duplicatesAcrossFolders: CrossFolderDuplicate[];
 }
+
+export type LastSeenFilterMode = "all" | "before" | "after";
+
+export interface LastSeenFilter {
+  mode: LastSeenFilterMode;
+  date?: string;
+}

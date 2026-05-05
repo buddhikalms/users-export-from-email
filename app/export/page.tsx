@@ -5,14 +5,16 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { ExportButton } from "@/components/ExportButton";
+import { filterSyncResultByLastSeen } from "@/lib/sync-result";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { getStoredSyncResult } from "@/lib/storage";
-import type { SyncResult } from "@/types/email";
+import type { LastSeenFilter, SyncResult } from "@/types/email";
 
 export default function ExportPage() {
   const router = useRouter();
   const [syncResult, setSyncResult] = useState<SyncResult | null>(null);
+  const [filter, setFilter] = useState<LastSeenFilter>({ mode: "all" });
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -35,6 +37,12 @@ export default function ExportPage() {
       </main>
     );
   }
+
+  const filteredSyncResult = filterSyncResultByLastSeen(syncResult, filter);
+  const totalFilteredFolderContacts = filteredSyncResult.folders.reduce(
+    (count, folder) => count + folder.contacts.length,
+    0,
+  );
 
   return (
     <main className="mx-auto max-w-5xl px-6 py-12 lg:px-10">
@@ -66,44 +74,131 @@ export default function ExportPage() {
             <CardTitle className="text-lg">Folder Sheets</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-semibold">{syncResult.folders.length}</p>
+            <p className="text-3xl font-semibold">{filteredSyncResult.folders.length}</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg">All Contacts</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-semibold">{syncResult.allContacts.length}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Duplicate Emails</CardTitle>
+            <CardTitle className="text-lg">Export Contacts</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-3xl font-semibold">
-              {syncResult.duplicatesAcrossFolders.length}
+              {filteredSyncResult.allContacts.length}
             </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg">Filtered Folder Rows</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-3xl font-semibold">{totalFilteredFolderContacts}</p>
           </CardContent>
         </Card>
       </div>
 
       <Card className="mt-6">
         <CardHeader>
-          <CardTitle>Workbook Structure</CardTitle>
+          <CardTitle>Last Seen Filter</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
+          <div className="grid gap-5 md:grid-cols-[minmax(0,220px)_minmax(0,220px)_1fr]">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground" htmlFor="last-seen-mode">
+                Filter mode
+              </label>
+              <select
+                id="last-seen-mode"
+                className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                value={filter.mode}
+                onChange={(event) =>
+                  setFilter((current) => ({
+                    ...current,
+                    mode: event.target.value as LastSeenFilter["mode"],
+                  }))
+                }
+              >
+                <option value="all">Export all contacts</option>
+                <option value="after">Last seen on or after date</option>
+                <option value="before">Last seen on or before date</option>
+              </select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground" htmlFor="last-seen-date">
+                Selected date
+              </label>
+              <input
+                id="last-seen-date"
+                type="date"
+                className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={filter.mode === "all"}
+                value={filter.date ?? ""}
+                onChange={(event) =>
+                  setFilter((current) => ({
+                    ...current,
+                    date: event.target.value || undefined,
+                  }))
+                }
+              />
+            </div>
+
+            <div className="rounded-3xl border border-dashed border-primary/20 bg-primary/5 p-5 text-sm leading-7 text-muted-foreground">
+              {filter.mode === "all"
+                ? "The workbook will include every synced contact."
+                : filter.mode === "after"
+                  ? "The workbook will include contacts whose Last Seen date is on or after the selected date."
+                  : "The workbook will include contacts whose Last Seen date is on or before the selected date."}
+            </div>
+          </div>
+
+          <div className="grid gap-5 md:grid-cols-3">
+            <Card className="border border-border/70 shadow-none">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg">Duplicate Emails</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-3xl font-semibold">
+                  {filteredSyncResult.duplicatesAcrossFolders.length}
+                </p>
+              </CardContent>
+            </Card>
+            <Card className="border border-border/70 shadow-none">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg">Folders With Matches</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-3xl font-semibold">
+                  {
+                    filteredSyncResult.folders.filter((folder) => folder.contacts.length > 0)
+                      .length
+                  }
+                </p>
+              </CardContent>
+            </Card>
+            <Card className="border border-border/70 shadow-none">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg">Selected Date</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-lg font-semibold">
+                  {filter.date || "Not required"}
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
           <div className="grid gap-3 text-sm text-muted-foreground">
             <p>Included columns: Name, Email, Source Folder, First Seen, Last Seen, Email Count.</p>
             <p>Each sheet includes bold headers, auto-sized columns, and Excel filters.</p>
+            <p>The date filter is applied to the Last Seen column before the workbook is created.</p>
             <p>
               Sync data is kept in browser session storage only unless password
               persistence was explicitly enabled on the settings page.
             </p>
           </div>
 
-          <ExportButton syncResult={syncResult} />
+          <ExportButton filter={filter} syncResult={syncResult} />
         </CardContent>
       </Card>
     </main>

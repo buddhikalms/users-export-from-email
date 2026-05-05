@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { createWorkbookBuffer } from "@/lib/excel";
+import { filterSyncResultByLastSeen } from "@/lib/sync-result";
 import { exportExcelRequestSchema } from "@/lib/validation";
 
 export const runtime = "nodejs";
@@ -22,7 +23,11 @@ export async function POST(request: Request) {
       );
     }
 
-    const workbook = await createWorkbookBuffer(parsed.data.syncResult);
+    const filteredSyncResult = filterSyncResultByLastSeen(
+      parsed.data.syncResult,
+      parsed.data.filter,
+    );
+    const workbook = await createWorkbookBuffer(filteredSyncResult);
     const timestamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
 
     return new NextResponse(workbook, {
