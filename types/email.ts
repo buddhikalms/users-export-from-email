@@ -45,6 +45,29 @@ export interface SyncResult {
   duplicatesAcrossFolders: CrossFolderDuplicate[];
 }
 
+export interface SavedEmailAccountSummary {
+  id: string;
+  label: string;
+  email: string;
+  host: string;
+  port: number;
+  security: SecurityType;
+  username: string;
+  isDefault: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type ActiveConnection =
+  | {
+      mode: "manual";
+      settings: ConnectionSettings;
+    }
+  | {
+      mode: "saved";
+      account: SavedEmailAccountSummary;
+    };
+
 export type LastSeenFilterMode = "all" | "before" | "after";
 
 export interface LastSeenFilter {

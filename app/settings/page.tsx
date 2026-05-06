@@ -1,26 +1,30 @@
-import Link from "next/link";
+import { getServerSession } from "next-auth";
 
+import { authOptions } from "@/auth";
 import { ConnectionForm } from "@/components/ConnectionForm";
-import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
-export default function SettingsPage() {
+export default async function SettingsPage() {
+  const session = await getServerSession(authOptions);
+
   return (
-    <main className="mx-auto max-w-5xl px-6 py-12 lg:px-10">
+    <main className="mx-auto max-w-7xl px-6 py-12 lg:px-10">
       <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div className="space-y-3">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">
-            Step 1
+            Workspace
           </p>
-          <h1 className="text-4xl">Connection Settings</h1>
-          <p className="max-w-2xl text-base leading-7 text-muted-foreground">
-            Enter the Outlook incoming mail server details, test the IMAP connection,
-            and continue to folder selection once the account validates successfully.
+          <h1 className="text-4xl">Saved Outlook Accounts & Connection Settings</h1>
+          <p className="max-w-3xl text-base leading-7 text-muted-foreground">
+            Add multiple Outlook IMAP accounts to the database, keep passwords
+            encrypted server-side, and choose any saved account or one-time manual
+            connection when you want to sync folders.
           </p>
         </div>
 
-        <Button asChild variant="outline">
-          <Link href="/">Back Home</Link>
-        </Button>
+        <Badge>
+          Signed in as {session?.user?.name} ({session?.user?.role})
+        </Badge>
       </div>
 
       <ConnectionForm />

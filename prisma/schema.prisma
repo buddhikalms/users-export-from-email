@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum SecurityType {
+  ssl_tls
+  starttls
+}
+
+model User {
+  id            String             @id @default(cuid())
+  name          String
+  email         String             @unique
+  passwordHash  String
+  role          UserRole           @default(USER)
+  savedAccounts SavedEmailAccount[]
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+}
+
+model SavedEmailAccount {
+  id                String       @id @default(cuid())
+  ownerId           String
+  label             String
+  email             String
+  host              String
+  port              Int
+  security          SecurityType
+  username          String
+  encryptedPassword String
+  encryptionIv      String
+  encryptionTag     String
+  isDefault         Boolean      @default(false)
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+  owner             User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  @@index([ownerId])
+  @@unique([ownerId, label])
+}

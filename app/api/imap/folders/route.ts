@@ -1,11 +1,19 @@
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
+import { authOptions } from "@/auth";
 import { fetchMailFolders } from "@/lib/imap";
+import { resolveConnectionSettings } from "@/lib/imap-request";
 import { foldersRequestSchema } from "@/lib/validation";
 
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+  }
+
   try {
     const json = await request.json();
     const parsed = foldersRequestSchema.safeParse(json);
@@ -21,7 +29,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const folders = await fetchMailFolders(parsed.data.settings);
+    const settings = await resolveConnectionSettings(parsed.data, session.user.id);
+    const folders = await fetchMailFolders(settings);
     return NextResponse.json({ folders });
   } catch (error) {
     const message =

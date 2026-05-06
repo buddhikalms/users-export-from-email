@@ -6,28 +6,28 @@ import { useRouter } from "next/navigation";
 
 import { FolderSelector } from "@/components/FolderSelector";
 import { Button } from "@/components/ui/button";
-import { getSelectedFolders, getStoredConnectionSettings } from "@/lib/storage";
-import type { ConnectionSettings } from "@/types/email";
+import { getSelectedFolders, getStoredActiveConnection } from "@/lib/storage";
+import type { ActiveConnection } from "@/types/email";
 
 export default function FoldersPage() {
   const router = useRouter();
-  const [settings, setSettings] = useState<ConnectionSettings | null>(null);
+  const [connection, setConnection] = useState<ActiveConnection | null>(null);
   const [selection, setSelection] = useState<string[]>([]);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const storedSettings = getStoredConnectionSettings();
-    if (!storedSettings) {
+    const activeConnection = getStoredActiveConnection();
+    if (!activeConnection) {
       router.replace("/settings");
       return;
     }
 
-    setSettings(storedSettings);
+    setConnection(activeConnection);
     setSelection(getSelectedFolders());
     setReady(true);
   }, [router]);
 
-  if (!ready || !settings) {
+  if (!ready || !connection) {
     return (
       <main className="mx-auto max-w-5xl px-6 py-12 lg:px-10">
         <div className="rounded-[1.75rem] border border-dashed border-border bg-white/70 p-8 text-sm text-muted-foreground">
@@ -52,11 +52,11 @@ export default function FoldersPage() {
         </div>
 
         <Button asChild variant="outline">
-          <Link href="/settings">Edit Connection</Link>
+          <Link href="/settings">Change Account</Link>
         </Button>
       </div>
 
-      <FolderSelector initialSelection={selection} settings={settings} />
+      <FolderSelector connection={connection} initialSelection={selection} />
     </main>
   );
 }

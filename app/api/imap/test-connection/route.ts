@@ -1,11 +1,19 @@
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
+import { authOptions } from "@/auth";
 import { testImapConnection } from "@/lib/imap";
+import { resolveConnectionSettings } from "@/lib/imap-request";
 import { testConnectionRequestSchema } from "@/lib/validation";
 
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+  }
+
   try {
     const json = await request.json();
     const parsed = testConnectionRequestSchema.safeParse(json);
@@ -21,7 +29,8 @@ export async function POST(request: Request) {
       );
     }
 
-    const result = await testImapConnection(parsed.data.settings);
+    const settings = await resolveConnectionSettings(parsed.data, session.user.id);
+    const result = await testImapConnection(settings);
     return NextResponse.json(result);
   } catch (error) {
     const message =

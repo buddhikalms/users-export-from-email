@@ -2,18 +2,37 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { LockKeyhole, Mail, Server, ShieldCheck } from "lucide-react";
+import {
+  Database,
+  LockKeyhole,
+  Mail,
+  PlayCircle,
+  Save,
+  Server,
+  ShieldCheck,
+  Trash2,
+} from "lucide-react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { clearSyncArtifacts, getStoredConnectionSettings, saveConnectionSettings } from "@/lib/storage";
-import { connectionSettingsSchema, defaultConnectionSettings } from "@/lib/validation";
+import {
+  clearSyncArtifacts,
+  saveActiveConnection,
+  saveConnectionSettings,
+} from "@/lib/storage";
+import {
+  connectionSettingsSchema,
+  defaultConnectionSettings,
+  savedEmailAccountSchema,
+} from "@/lib/validation";
+import type { SavedEmailAccountSummary } from "@/types/email";
 
 type FormState = {
+  label: string;
   email: string;
   host: string;
   port: string;
@@ -23,37 +42,55 @@ type FormState = {
   rememberPassword: boolean;
 };
 
-function toFormState() {
+function toFormState(): FormState {
   return {
+    label: "",
     ...defaultConnectionSettings,
     port: String(defaultConnectionSettings.port),
-  } satisfies FormState;
+  };
 }
 
 export function ConnectionForm() {
   const router = useRouter();
   const [form, setForm] = useState<FormState>(toFormState);
+  const [savedAccounts, setSavedAccounts] = useState<SavedEmailAccountSummary[]>([]);
+  const [loadingAccounts, setLoadingAccounts] = useState(true);
   const [status, setStatus] = useState<{
     type: "success" | "error";
     message: string;
   } | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [busyAction, setBusyAction] = useState<string | null>(null);
+
+  async function loadAccounts() {
+    setLoadingAccounts(true);
+
+    try {
+      const response = await fetch("/api/accounts");
+      const payload = (await response.json()) as {
+        accounts?: SavedEmailAccountSummary[];
+        error?: string;
+      };
+
+      if (!response.ok) {
+        throw new Error(payload.error ?? "Unable to load saved Outlook accounts.");
+      }
+
+      setSavedAccounts(payload.accounts ?? []);
+    } catch (error) {
+      setStatus({
+        type: "error",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Unable to load saved Outlook accounts.",
+      });
+    } finally {
+      setLoadingAccounts(false);
+    }
+  }
 
   useEffect(() => {
-    const stored = getStoredConnectionSettings();
-    if (!stored) {
-      return;
-    }
-
-    setForm({
-      email: stored.email,
-      host: stored.host,
-      port: String(stored.port),
-      security: stored.security,
-      username: stored.username,
-      password: stored.password,
-      rememberPassword: Boolean(stored.rememberPassword),
-    });
+    void loadAccounts();
   }, []);
 
   function updateField<K extends keyof FormState>(key: K, value: FormState[K]) {
@@ -63,8 +100,87 @@ export function ConnectionForm() {
     }));
   }
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  async function useSavedAccount(account: SavedEmailAccountSummary) {
+    clearSyncArtifacts();
+    saveActiveConnection({
+      mode: "saved",
+      account,
+    });
+    router.push("/folders");
+  }
+
+  async function testSavedAccount(account: SavedEmailAccountSummary) {
+    setBusyAction(`test-${account.id}`);
+    setStatus(null);
+
+    try {
+      const response = await fetch("/api/imap/test-connection", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          savedAccountId: account.id,
+        }),
+      });
+
+      const payload = (await response.json()) as { error?: string; message?: string };
+      if (!response.ok) {
+        throw new Error(payload.error ?? "Unable to validate the saved account.");
+      }
+
+      setStatus({
+        type: "success",
+        message:
+          payload.message ??
+          `Connection validated successfully for ${account.label}.`,
+      });
+    } catch (error) {
+      setStatus({
+        type: "error",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Unable to validate the saved account.",
+      });
+    } finally {
+      setBusyAction(null);
+    }
+  }
+
+  async function deleteSavedAccount(account: SavedEmailAccountSummary) {
+    setBusyAction(`delete-${account.id}`);
+    setStatus(null);
+
+    try {
+      const response = await fetch(`/api/accounts/${account.id}`, {
+        method: "DELETE",
+      });
+
+      const payload = (await response.json()) as { error?: string };
+      if (!response.ok) {
+        throw new Error(payload.error ?? "Unable to delete the saved account.");
+      }
+
+      setSavedAccounts((current) => current.filter((item) => item.id !== account.id));
+      setStatus({
+        type: "success",
+        message: `${account.label} was removed from the database.`,
+      });
+    } catch (error) {
+      setStatus({
+        type: "error",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Unable to delete the saved account.",
+      });
+    } finally {
+      setBusyAction(null);
+    }
+  }
+
+  async function handleManualConnect() {
     setStatus(null);
 
     const parsed = connectionSettingsSchema.safeParse({
@@ -73,16 +189,15 @@ export function ConnectionForm() {
     });
 
     if (!parsed.success) {
-      const message =
-        parsed.error.issues[0]?.message ?? "Please review the connection details.";
       setStatus({
         type: "error",
-        message,
+        message:
+          parsed.error.issues[0]?.message ?? "Please review the connection details.",
       });
       return;
     }
 
-    setIsSubmitting(true);
+    setBusyAction("manual-connect");
 
     try {
       const response = await fetch("/api/imap/test-connection", {
@@ -95,19 +210,17 @@ export function ConnectionForm() {
         }),
       });
 
-      const payload = (await response.json()) as
-        | { message?: string; error?: string }
-        | undefined;
+      const payload = (await response.json()) as { error?: string; message?: string };
 
       if (!response.ok) {
-        throw new Error(payload?.error ?? "Unable to connect to Outlook over IMAP.");
+        throw new Error(payload.error ?? "Unable to connect to Outlook over IMAP.");
       }
 
-      saveConnectionSettings(parsed.data);
       clearSyncArtifacts();
+      saveConnectionSettings(parsed.data);
       setStatus({
         type: "success",
-        message: payload?.message ?? "Connection successful. Loading folders next.",
+        message: payload.message ?? "Connection successful. Loading folders next.",
       });
       router.push("/folders");
     } catch (error) {
@@ -119,18 +232,183 @@ export function ConnectionForm() {
             : "Something went wrong while testing the connection.",
       });
     } finally {
-      setIsSubmitting(false);
+      setBusyAction(null);
+    }
+  }
+
+  async function saveAccount(useAfterSave: boolean) {
+    setStatus(null);
+
+    const parsed = savedEmailAccountSchema.safeParse({
+      ...form,
+      port: Number(form.port),
+    });
+
+    if (!parsed.success) {
+      setStatus({
+        type: "error",
+        message:
+          parsed.error.issues[0]?.message ?? "Please review the saved account details.",
+      });
+      return;
+    }
+
+    setBusyAction(useAfterSave ? "save-use" : "save");
+
+    try {
+      const response = await fetch("/api/accounts", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(parsed.data),
+      });
+
+      const payload = (await response.json()) as {
+        account?: SavedEmailAccountSummary;
+        error?: string;
+        message?: string;
+      };
+
+      if (!response.ok) {
+        throw new Error(payload.error ?? "Unable to save the Outlook account.");
+      }
+
+      const account = payload.account;
+      if (!account) {
+        throw new Error("The saved account response was incomplete.");
+      }
+
+      setSavedAccounts((current) => [account, ...current.filter((item) => item.id !== account.id)]);
+      setStatus({
+        type: "success",
+        message: payload.message ?? "Outlook account saved successfully.",
+      });
+
+      if (useAfterSave) {
+        clearSyncArtifacts();
+        saveActiveConnection({
+          mode: "saved",
+          account,
+        });
+        router.push("/folders");
+        return;
+      }
+
+      setForm((current) => ({
+        ...current,
+        password: "",
+      }));
+    } catch (error) {
+      setStatus({
+        type: "error",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Unable to save the Outlook account.",
+      });
+    } finally {
+      setBusyAction(null);
     }
   }
 
   return (
-    <Card className="border-white/80">
-      <CardHeader>
-        <CardTitle>Outlook Incoming Mail Server Setup</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form className="space-y-6" onSubmit={handleSubmit}>
+    <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
+      <Card className="border-white/80">
+        <CardHeader>
+          <CardTitle>Saved Outlook Accounts</CardTitle>
+          <p className="text-sm leading-6 text-muted-foreground">
+            Keep multiple Outlook IMAP accounts in the database and choose any one
+            when you want to sync folders.
+          </p>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {loadingAccounts ? (
+            <div className="rounded-3xl border border-dashed border-border bg-white/60 p-8 text-center text-sm text-muted-foreground">
+              Loading saved accounts...
+            </div>
+          ) : savedAccounts.length === 0 ? (
+            <div className="rounded-3xl border border-dashed border-border bg-white/60 p-8 text-center text-sm text-muted-foreground">
+              No Outlook accounts are saved yet. Use the form to add your first one.
+            </div>
+          ) : (
+            savedAccounts.map((account) => (
+              <div
+                key={account.id}
+                className="rounded-[1.5rem] border border-white/70 bg-white/85 p-5"
+              >
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="space-y-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h3 className="text-lg font-semibold">{account.label}</h3>
+                      {account.isDefault ? <Badge>Default</Badge> : null}
+                    </div>
+                    <p className="text-sm text-muted-foreground">{account.email}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {account.host}:{account.port} • {account.security} • {account.username}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    <Button
+                      size="sm"
+                      onClick={() => void useSavedAccount(account)}
+                    >
+                      <PlayCircle className="h-4 w-4" />
+                      Use
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={busyAction === `test-${account.id}`}
+                      onClick={() => void testSavedAccount(account)}
+                    >
+                      Test
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      disabled={busyAction === `delete-${account.id}`}
+                      onClick={() => void deleteSavedAccount(account)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      Delete
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </CardContent>
+      </Card>
+
+      <Card className="border-white/80">
+        <CardHeader>
+          <CardTitle>Add Outlook Account Or Use One-Time Connection</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="rounded-3xl border border-dashed border-primary/20 bg-primary/5 p-5 text-sm leading-7 text-muted-foreground">
+            Outlook defaults: <strong>Host</strong> `outlook.office365.com`,{" "}
+            <strong>Port</strong> `993`, <strong>Security</strong> `SSL/TLS`.
+            Saved account passwords are encrypted before they are stored in the
+            database.
+          </div>
+
           <div className="grid gap-5 md:grid-cols-2">
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="label">Account label</Label>
+              <div className="relative">
+                <Database className="pointer-events-none absolute left-4 top-3.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="label"
+                  className="pl-10"
+                  placeholder="Example: Sales Inbox"
+                  value={form.label}
+                  onChange={(event) => updateField("label", event.target.value)}
+                />
+              </div>
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="email">Email address</Label>
               <div className="relative">
@@ -218,31 +496,6 @@ export function ConnectionForm() {
             </div>
           </div>
 
-          <div className="flex items-start gap-3 rounded-2xl border border-border/80 bg-secondary/50 p-4">
-            <Checkbox
-              id="remember-password"
-              checked={form.rememberPassword}
-              onCheckedChange={(checked) =>
-                updateField("rememberPassword", Boolean(checked))
-              }
-            />
-            <div className="space-y-1">
-              <Label htmlFor="remember-password">
-                Remember password on this device
-              </Label>
-              <p className="text-sm leading-6 text-muted-foreground">
-                Leave this off to keep credentials in the current browser session only.
-              </p>
-            </div>
-          </div>
-
-          <div className="rounded-3xl border border-dashed border-primary/20 bg-primary/5 p-5 text-sm leading-7 text-muted-foreground">
-            Outlook defaults: <strong>Host</strong> `outlook.office365.com`,{" "}
-            <strong>Port</strong> `993`, <strong>Security</strong> `SSL/TLS`.
-            If your tenant requires app passwords or modern auth exceptions, use the
-            approved account credential here.
-          </div>
-
           {status ? (
             <Alert
               className={
@@ -252,26 +505,45 @@ export function ConnectionForm() {
               }
             >
               <AlertTitle>
-                {status.type === "error" ? "Connection failed" : "Connection ready"}
+                {status.type === "error" ? "Action failed" : "Workspace updated"}
               </AlertTitle>
               <AlertDescription>{status.message}</AlertDescription>
             </Alert>
           ) : null}
 
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <Button className="sm:min-w-52" disabled={isSubmitting} type="submit">
-              {isSubmitting ? "Testing connection..." : "Test Connection & Continue"}
-            </Button>
+          <div className="flex flex-col gap-3">
             <Button
-              type="button"
-              variant="outline"
-              onClick={() => setForm(toFormState())}
+              disabled={busyAction === "manual-connect"}
+              onClick={() => void handleManualConnect()}
             >
-              Reset Defaults
+              {busyAction === "manual-connect"
+                ? "Testing connection..."
+                : "Test Manual Connection & Continue"}
+            </Button>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Button
+                variant="outline"
+                disabled={busyAction === "save"}
+                onClick={() => void saveAccount(false)}
+              >
+                <Save className="h-4 w-4" />
+                Save Account
+              </Button>
+              <Button
+                variant="outline"
+                disabled={busyAction === "save-use"}
+                onClick={() => void saveAccount(true)}
+              >
+                <PlayCircle className="h-4 w-4" />
+                Save & Use Account
+              </Button>
+            </div>
+            <Button type="button" variant="ghost" onClick={() => setForm(toFormState())}>
+              Reset Form
             </Button>
           </div>
-        </form>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

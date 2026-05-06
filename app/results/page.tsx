@@ -8,57 +8,66 @@ import { RefreshCcw } from "lucide-react";
 import { ResultsTable } from "@/components/ResultsTable";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { getSelectedFolders, getStoredConnectionSettings, saveSyncResult } from "@/lib/storage";
-import type { ConnectionSettings, SyncResult } from "@/types/email";
+import {
+  getSelectedFolders,
+  getStoredActiveConnection,
+  saveSyncResult,
+} from "@/lib/storage";
+import type { ActiveConnection, SyncResult } from "@/types/email";
 
 export default function ResultsPage() {
   const router = useRouter();
-  const [settings, setSettings] = useState<ConnectionSettings | null>(null);
+  const [connection, setConnection] = useState<ActiveConnection | null>(null);
   const [folders, setFolders] = useState<string[]>([]);
   const [syncResult, setSyncResult] = useState<SyncResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const runSync = useCallback(async (currentSettings: ConnectionSettings, currentFolders: string[]) => {
-    setLoading(true);
-    setError(null);
+  const runSync = useCallback(
+    async (activeConnection: ActiveConnection, currentFolders: string[]) => {
+      setLoading(true);
+      setError(null);
 
-    try {
-      const response = await fetch("/api/imap/sync", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          settings: currentSettings,
-          folders: currentFolders,
-        }),
-      });
+      try {
+        const response = await fetch("/api/imap/sync", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...(activeConnection.mode === "manual"
+              ? { settings: activeConnection.settings }
+              : { savedAccountId: activeConnection.account.id }),
+            folders: currentFolders,
+          }),
+        });
 
-      const payload = (await response.json()) as SyncResult & { error?: string };
+        const payload = (await response.json()) as SyncResult & { error?: string };
 
-      if (!response.ok) {
-        throw new Error(payload.error ?? "Unable to sync Outlook folders.");
+        if (!response.ok) {
+          throw new Error(payload.error ?? "Unable to sync Outlook folders.");
+        }
+
+        setSyncResult(payload);
+        saveSyncResult(payload);
+      } catch (syncError) {
+        setError(
+          syncError instanceof Error
+            ? syncError.message
+            : "Something went wrong during folder sync.",
+        );
+      } finally {
+        setLoading(false);
       }
-
-      setSyncResult(payload);
-      saveSyncResult(payload);
-    } catch (syncError) {
-      setError(
-        syncError instanceof Error
-          ? syncError.message
-          : "Something went wrong during folder sync.",
-      );
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    },
+    [],
+  );
 
   useEffect(() => {
-    const storedSettings = getStoredConnectionSettings();
+    const activeConnection = getStoredActiveConnection();
     const selectedFolders = getSelectedFolders();
 
-    if (!storedSettings) {
+    if (!activeConnection) {
       router.replace("/settings");
       return;
     }
@@ -68,9 +77,9 @@ export default function ResultsPage() {
       return;
     }
 
-    setSettings(storedSettings);
+    setConnection(activeConnection);
     setFolders(selectedFolders);
-    void runSync(storedSettings, selectedFolders);
+    void runSync(activeConnection, selectedFolders);
   }, [router, runSync]);
 
   return (
@@ -86,12 +95,19 @@ export default function ResultsPage() {
             users from sender and recipient fields, and groups them folder-wise for
             review before export.
           </p>
+          {connection ? (
+            <p className="text-xs uppercase tracking-[0.18em] text-primary">
+              {connection.mode === "manual"
+                ? `Manual session: ${connection.settings.email}`
+                : `Saved account: ${connection.account.label} (${connection.account.email})`}
+            </p>
+          ) : null}
         </div>
 
         <div className="flex flex-wrap gap-3">
           <Button
-            disabled={loading || !settings || folders.length === 0}
-            onClick={() => settings && void runSync(settings, folders)}
+            disabled={loading || !connection || folders.length === 0}
+            onClick={() => connection && void runSync(connection, folders)}
             variant="outline"
           >
             <RefreshCcw className="h-4 w-4" />

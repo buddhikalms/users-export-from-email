@@ -1,76 +1,81 @@
 import Link from "next/link";
+import { getServerSession } from "next-auth";
 import { ArrowRight, FileSpreadsheet, FolderTree, MailCheck, Shield } from "lucide-react";
 
+import { authOptions } from "@/auth";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 const features = [
   {
-    title: "IMAP-first Outlook connection",
+    title: "Database-backed multi-account storage",
     description:
-      "Connect with incoming mail server settings, validate access, and keep credentials server-side for actual mailbox operations.",
+      "Save multiple Outlook IMAP accounts per user and keep account passwords encrypted on the server.",
+    icon: Shield,
+  },
+  {
+    title: "IMAP-first Outlook sync",
+    description:
+      "Connect with incoming mail server settings, validate access, and keep mailbox operations on the server only.",
     icon: MailCheck,
   },
   {
     title: "Folder-wise extraction",
     description:
-      "Scan Inbox, Sent Items, Archive, Junk Email, and custom folders while keeping contact lists organized per folder.",
+      "Scan Inbox, Sent Items, Archive, Junk Email, and custom folders while organizing contacts per folder.",
     icon: FolderTree,
   },
   {
-    title: "Excel workbook export",
+    title: "Excel export workflow",
     description:
-      "Generate one workbook with one sheet per folder plus an All Contacts rollup sheet with filters and formatted headers.",
+      "Generate an All Contacts sheet plus folder-specific worksheets with filters and formatted headers.",
     icon: FileSpreadsheet,
-  },
-  {
-    title: "Safer handling by default",
-    description:
-      "Passwords stay in the current browser session unless the user explicitly chooses to persist them on the device.",
-    icon: Shield,
   },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const session = await getServerSession(authOptions);
+
   return (
     <main className="relative overflow-hidden">
       <div className="absolute inset-0 bg-hero-grid bg-[size:44px_44px] opacity-30" />
 
-      <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col px-6 py-12 lg:px-10">
+      <div className="relative mx-auto flex min-h-[calc(100vh-120px)] max-w-7xl flex-col px-6 py-12 lg:px-10">
         <div className="grid flex-1 items-center gap-10 lg:grid-cols-[1.2fr_0.8fr]">
           <section className="space-y-8">
-            <Badge>Next.js 15 • TypeScript • IMAP • Excel</Badge>
+            <Badge>Next.js 15 • TypeScript • Auth • Prisma • IMAP</Badge>
             <div className="space-y-5">
               <h1 className="max-w-3xl text-5xl leading-tight text-foreground md:text-6xl">
-                Sync Outlook folders, extract unique contacts, and export a clean
-                workbook in one flow.
+                Securely manage multiple Outlook accounts and export folder-wise
+                contact workbooks.
               </h1>
               <p className="max-w-2xl text-lg leading-8 text-muted-foreground">
-                This app connects to Outlook using incoming mail server settings,
-                reads message headers from selected folders, groups unique contacts
-                folder-wise, and exports them to Excel without relying on Microsoft
-                Graph.
+                This workspace adds authenticated access, database-backed Outlook
+                account storage, encrypted password handling, IMAP folder sync,
+                last-seen filtering, and Excel export without Microsoft Graph.
               </p>
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row">
               <Button asChild size="lg">
-                <Link href="/settings">
-                  Start Connection Setup
+                <Link href={session?.user ? "/settings" : "/register"}>
+                  {session?.user ? "Open Workspace" : "Create Secure Workspace"}
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
               <Button asChild size="lg" variant="outline">
-                <Link href="/export">Open Last Export Session</Link>
+                <Link href={session?.user ? "/export" : "/login"}>
+                  {session?.user ? "Resume Export Session" : "Sign In"}
+                </Link>
               </Button>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-3">
               {[
-                ["1", "Enter Outlook IMAP settings"],
-                ["2", "Choose folders to scan"],
-                ["3", "Review and export to Excel"],
+                ["1", "Create a secure authenticated workspace"],
+                ["2", "Save one or many Outlook IMAP accounts"],
+                ["3", "Sync folders, review results, and export"],
               ].map(([step, label]) => (
                 <div
                   key={step}

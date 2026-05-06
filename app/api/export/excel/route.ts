@@ -1,5 +1,7 @@
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
+import { authOptions } from "@/auth";
 import { createWorkbookBuffer } from "@/lib/excel";
 import { filterSyncResultByLastSeen } from "@/lib/sync-result";
 import { exportExcelRequestSchema } from "@/lib/validation";
@@ -7,6 +9,11 @@ import { exportExcelRequestSchema } from "@/lib/validation";
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+  }
+
   try {
     const json = await request.json();
     const parsed = exportExcelRequestSchema.safeParse(json);

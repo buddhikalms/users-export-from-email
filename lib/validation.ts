@@ -21,6 +21,44 @@ export const connectionSettingsSchema = z.object({
   rememberPassword: z.boolean().optional().default(false),
 });
 
+export const savedAccountReferenceSchema = z.object({
+  savedAccountId: z.string().min(1, "Select a saved Outlook account."),
+});
+
+export const imapConnectionInputSchema = z.union([
+  z.object({
+    settings: connectionSettingsSchema,
+  }),
+  savedAccountReferenceSchema,
+]);
+
+export const savedEmailAccountSchema = connectionSettingsSchema.extend({
+  label: z
+    .string()
+    .trim()
+    .min(2, "Use a short label so you can recognize this account later.")
+    .max(80, "Label is too long."),
+  rememberPassword: z.boolean().optional(),
+});
+
+export const updateSavedEmailAccountSchema = savedEmailAccountSchema
+  .omit({
+    password: true,
+  })
+  .extend({
+    password: z.string().min(1).optional(),
+    isDefault: z.boolean().optional(),
+  });
+
+export const registerSchema = z.object({
+  name: z.string().trim().min(2, "Name is required.").max(80, "Name is too long."),
+  email: z.string().trim().email("Enter a valid email address."),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters.")
+    .max(128, "Password is too long."),
+});
+
 export const folderSchema = z.object({
   path: z.string().min(1),
   name: z.string().min(1),
@@ -56,18 +94,15 @@ export const syncResultSchema = z.object({
   duplicatesAcrossFolders: z.array(crossFolderDuplicateSchema),
 });
 
-export const testConnectionRequestSchema = z.object({
-  settings: connectionSettingsSchema,
-});
+export const testConnectionRequestSchema = imapConnectionInputSchema;
 
-export const foldersRequestSchema = z.object({
-  settings: connectionSettingsSchema,
-});
+export const foldersRequestSchema = imapConnectionInputSchema;
 
-export const syncRequestSchema = z.object({
-  settings: connectionSettingsSchema,
-  folders: z.array(z.string().min(1)).min(1, "Select at least one folder."),
-});
+export const syncRequestSchema = imapConnectionInputSchema.and(
+  z.object({
+    folders: z.array(z.string().min(1)).min(1, "Select at least one folder."),
+  }),
+);
 
 export const lastSeenFilterSchema = z
   .object({

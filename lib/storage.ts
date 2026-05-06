@@ -1,9 +1,14 @@
-import type { ConnectionSettings, SyncResult } from "@/types/email";
+import type {
+  ActiveConnection,
+  ConnectionSettings,
+  SyncResult,
+} from "@/types/email";
 
 const SESSION_SETTINGS_KEY = "outlook-sync:settings:session";
 const PERSISTED_SETTINGS_KEY = "outlook-sync:settings:persistent";
 const SELECTED_FOLDERS_KEY = "outlook-sync:selected-folders";
 const SYNC_RESULT_KEY = "outlook-sync:sync-result";
+const ACTIVE_CONNECTION_KEY = "outlook-sync:active-connection";
 
 function canUseStorage() {
   return typeof window !== "undefined";
@@ -38,6 +43,11 @@ export function saveConnectionSettings(settings: ConnectionSettings) {
   } else {
     window.localStorage.removeItem(PERSISTED_SETTINGS_KEY);
   }
+
+  saveActiveConnection({
+    mode: "manual",
+    settings,
+  });
 }
 
 export function clearStoredConnectionSettings() {
@@ -74,6 +84,23 @@ export function saveSyncResult(result: SyncResult) {
   window.sessionStorage.setItem(SYNC_RESULT_KEY, JSON.stringify(result));
 }
 
+export function saveActiveConnection(connection: ActiveConnection) {
+  if (!canUseStorage()) {
+    return;
+  }
+
+  window.sessionStorage.setItem(ACTIVE_CONNECTION_KEY, JSON.stringify(connection));
+}
+
+export function getStoredActiveConnection(): ActiveConnection | null {
+  if (!canUseStorage()) {
+    return null;
+  }
+
+  const value = window.sessionStorage.getItem(ACTIVE_CONNECTION_KEY);
+  return value ? (JSON.parse(value) as ActiveConnection) : null;
+}
+
 export function getStoredSyncResult(): SyncResult | null {
   if (!canUseStorage()) {
     return null;
@@ -90,4 +117,5 @@ export function clearSyncArtifacts() {
 
   window.sessionStorage.removeItem(SELECTED_FOLDERS_KEY);
   window.sessionStorage.removeItem(SYNC_RESULT_KEY);
+  window.sessionStorage.removeItem(ACTIVE_CONNECTION_KEY);
 }

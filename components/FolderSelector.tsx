@@ -10,15 +10,15 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { saveSelectedFolders } from "@/lib/storage";
-import type { ConnectionSettings, MailFolder } from "@/types/email";
+import type { ActiveConnection, MailFolder } from "@/types/email";
 
 interface FolderSelectorProps {
-  settings: ConnectionSettings;
+  connection: ActiveConnection;
   initialSelection?: string[];
 }
 
 export function FolderSelector({
-  settings,
+  connection,
   initialSelection = [],
 }: FolderSelectorProps) {
   const router = useRouter();
@@ -38,9 +38,11 @@ export function FolderSelector({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          settings,
-        }),
+        body: JSON.stringify(
+          connection.mode === "manual"
+            ? { settings: connection.settings }
+            : { savedAccountId: connection.account.id },
+        ),
       });
 
       const payload = (await response.json()) as
@@ -113,6 +115,11 @@ export function FolderSelector({
           <p className="mt-2 text-sm leading-6 text-muted-foreground">
             Choose the Outlook folders whose message headers should be scanned for
             unique contacts.
+          </p>
+          <p className="mt-2 text-xs uppercase tracking-[0.18em] text-primary">
+            {connection.mode === "manual"
+              ? `Manual session: ${connection.settings.email}`
+              : `Saved account: ${connection.account.label} (${connection.account.email})`}
           </p>
         </div>
 
