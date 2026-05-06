@@ -1,10 +1,10 @@
 # Outlook Sync Exporter
 
-Next.js 15 App Router application for securely managing multiple Outlook IMAP accounts, extracting unique contacts from selected folders, and exporting folder-wise results to Excel.
+Next.js 16 App Router application for securely managing multiple Outlook IMAP accounts, extracting unique contacts from selected folders, and exporting folder-wise results to Excel.
 
 ## Tech Stack
 
-- Next.js 15 App Router
+- Next.js 16 App Router
 - TypeScript
 - Tailwind CSS
 - shadcn/ui-style components
@@ -12,7 +12,7 @@ Next.js 15 App Router application for securely managing multiple Outlook IMAP ac
 - Excel export via `exceljs`
 - Validation via `zod`
 - Authentication via `next-auth`
-- Database via Prisma + SQLite
+- Database via Prisma + MySQL
 
 ## Features
 
@@ -58,7 +58,13 @@ Generate the Prisma client:
 npm run db:generate
 ```
 
-Initialize the local SQLite database:
+Start the local MySQL database:
+
+```bash
+npm run db:start
+```
+
+Initialize the Prisma schema in MySQL:
 
 ```bash
 npm run db:init
@@ -70,8 +76,7 @@ Optional Prisma schema push:
 npm run db:push
 ```
 
-Note:
-On this machine, `prisma db push` may fail if Prisma cannot start its schema engine. The app includes `npm run db:init` as a reliable local fallback that creates the required SQLite tables directly.
+`npm run db:init` is a small wrapper around `prisma db push` that validates `DATABASE_URL` and applies the schema to MySQL.
 
 ## Local Run
 
@@ -80,6 +85,7 @@ On this machine, `prisma db push` may fail if Prisma cannot start its schema eng
 3. Run:
 
 ```bash
+npm run db:start
 npm run db:generate
 npm run db:init
 npm run dev
@@ -104,4 +110,4 @@ npm run dev
 - Saved Outlook account passwords are encrypted before database storage.
 - User login passwords are hashed with `bcryptjs`.
 - Sync results remain in browser session storage for the export flow.
-- The current implementation is suited to local or controlled deployments; production deployments should rotate secrets, use stronger operational monitoring, and move from SQLite to a managed database.
+- The current implementation is suited to local or controlled deployments; production deployments should rotate secrets, use stronger operational monitoring, and store MySQL credentials securely.

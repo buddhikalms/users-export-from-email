@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { DatabaseSync } from "node:sqlite";
+import { spawnSync } from "node:child_process";
 
 function loadEnvFile() {
   const envPath = path.resolve(process.cwd(), ".env");
@@ -30,67 +30,31 @@ function loadEnvFile() {
   }
 }
 
-function resolveDatabasePath(databaseUrl) {
-  if (!databaseUrl?.startsWith("file:")) {
-    throw new Error("DATABASE_URL must use the SQLite file: syntax.");
+function assertMySqlDatabaseUrl(databaseUrl) {
+  if (!databaseUrl?.startsWith("mysql://")) {
+    throw new Error(
+      "DATABASE_URL must use a MySQL connection string, for example mysql://user:password@127.0.0.1:3306/database_name.",
+    );
   }
+}
 
-  const relativePath = databaseUrl.slice("file:".length);
-  return path.resolve(process.cwd(), relativePath);
+function getNpxCommand() {
+  return process.platform === "win32" ? "npx.cmd" : "npx";
 }
 
 loadEnvFile();
+assertMySqlDatabaseUrl(process.env.DATABASE_URL);
 
-const databasePath = resolveDatabasePath(process.env.DATABASE_URL);
-fs.mkdirSync(path.dirname(databasePath), { recursive: true });
+const result = spawnSync(getNpxCommand(), ["prisma", "db", "push"], {
+  cwd: process.cwd(),
+  stdio: "inherit",
+  env: process.env,
+});
 
-const database = new DatabaseSync(databasePath);
-database.exec("PRAGMA foreign_keys = ON;");
+if (result.error) {
+  throw result.error;
+}
 
-database.exec(`
-  CREATE TABLE IF NOT EXISTS "User" (
-    "id" TEXT NOT NULL PRIMARY KEY,
-    "name" TEXT NOT NULL,
-    "email" TEXT NOT NULL UNIQUE,
-    "passwordHash" TEXT NOT NULL,
-    "role" TEXT NOT NULL DEFAULT 'USER',
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
-  );
-`);
-
-database.exec(`
-  CREATE TABLE IF NOT EXISTS "SavedEmailAccount" (
-    "id" TEXT NOT NULL PRIMARY KEY,
-    "ownerId" TEXT NOT NULL,
-    "label" TEXT NOT NULL,
-    "email" TEXT NOT NULL,
-    "host" TEXT NOT NULL,
-    "port" INTEGER NOT NULL,
-    "security" TEXT NOT NULL,
-    "username" TEXT NOT NULL,
-    "encryptedPassword" TEXT NOT NULL,
-    "encryptionIv" TEXT NOT NULL,
-    "encryptionTag" TEXT NOT NULL,
-    "isDefault" BOOLEAN NOT NULL DEFAULT false,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT "SavedEmailAccount_ownerId_fkey"
-      FOREIGN KEY ("ownerId") REFERENCES "User" ("id")
-      ON DELETE CASCADE ON UPDATE CASCADE
-  );
-`);
-
-database.exec(`
-  CREATE INDEX IF NOT EXISTS "SavedEmailAccount_ownerId_idx"
-  ON "SavedEmailAccount" ("ownerId");
-`);
-
-database.exec(`
-  CREATE UNIQUE INDEX IF NOT EXISTS "SavedEmailAccount_ownerId_label_key"
-  ON "SavedEmailAccount" ("ownerId", "label");
-`);
-
-database.close();
-
-console.log(`Initialized SQLite database at ${databasePath}`);
+if (result.status !== 0) {
+  process.exit(result.status ?? 1);
+}
