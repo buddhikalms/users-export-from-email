@@ -1,6 +1,6 @@
-# Outlook Sync Exporter
+# Email Contact Exporter
 
-Next.js 16 App Router application for securely managing multiple Outlook IMAP accounts, extracting unique contacts from selected folders, and exporting folder-wise results to Excel.
+Next.js 16 App Router application for securely managing multiple email IMAP accounts, extracting unique contacts from selected folders, and exporting folder-wise results to Excel.
 
 ## Tech Stack
 

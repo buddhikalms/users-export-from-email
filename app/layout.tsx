@@ -20,9 +20,9 @@ const bodyFont = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Outlook Sync Exporter",
+  title: "Email Contact Exporter",
   description:
-    "Connect to Outlook over IMAP, extract unique contacts from selected folders, and export them to Excel.",
+    "Connect to email accounts over IMAP, extract unique contacts from selected folders, and export them to Excel.",
 };
 
 export default async function RootLayout({
@@ -42,7 +42,7 @@ export default async function RootLayout({
             <header className="flex flex-col gap-4 rounded-[1.75rem] border border-white/70 bg-white/70 px-5 py-4 shadow-sm backdrop-blur md:flex-row md:items-center md:justify-between">
               <div className="flex items-center gap-4">
                 <Link className="text-lg font-semibold text-foreground" href="/">
-                  Outlook Sync Exporter
+                  Email Contact Exporter
                 </Link>
                 <nav className="flex flex-wrap gap-2 text-sm">
                   <Button asChild size="sm" variant="ghost">

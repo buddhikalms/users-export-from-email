@@ -6,6 +6,10 @@ const HEADERS = [
   "Name",
   "Email",
   "Source Folder",
+  "Source Type",
+  "Forwarded By",
+  "Original Sender",
+  "Subject",
   "First Seen",
   "Last Seen",
   "Email Count",
@@ -35,9 +39,13 @@ function addRows(
     { header: HEADERS[0], key: "name", width: 24 },
     { header: HEADERS[1], key: "email", width: 30 },
     { header: HEADERS[2], key: "sourceFolder", width: 28 },
-    { header: HEADERS[3], key: "firstSeen", width: 22 },
-    { header: HEADERS[4], key: "lastSeen", width: 22 },
-    { header: HEADERS[5], key: "emailCount", width: 14 },
+    { header: HEADERS[3], key: "sourceType", width: 18 },
+    { header: HEADERS[4], key: "forwardedBy", width: 30 },
+    { header: HEADERS[5], key: "originalSender", width: 30 },
+    { header: HEADERS[6], key: "subject", width: 36 },
+    { header: HEADERS[7], key: "firstSeen", width: 22 },
+    { header: HEADERS[8], key: "lastSeen", width: 22 },
+    { header: HEADERS[9], key: "emailCount", width: 14 },
   ];
 
   worksheet.addRows(
@@ -45,6 +53,10 @@ function addRows(
       name: contact.name,
       email: contact.email,
       sourceFolder: defaultSourceFolder ?? contact.sourceFolder,
+      sourceType: contact.sourceType,
+      forwardedBy: contact.forwardedBy,
+      originalSender: contact.originalSender,
+      subject: contact.subject,
       firstSeen: formatDate(contact.firstSeen),
       lastSeen: formatDate(contact.lastSeen),
       emailCount: contact.emailCount,
@@ -62,7 +74,7 @@ function addRows(
 
   worksheet.autoFilter = {
     from: "A1",
-    to: "F1",
+    to: "J1",
   };
   worksheet.views = [{ state: "frozen", ySplit: 1 }];
 
@@ -86,7 +98,7 @@ function addFolderSheet(workbook: ExcelJS.Workbook, folder: FolderSyncResult) {
 
 export async function createWorkbookBuffer(syncResult: SyncResult) {
   const workbook = new ExcelJS.Workbook();
-  workbook.creator = "Outlook Sync Exporter";
+  workbook.creator = "Email Contact Exporter";
   workbook.created = new Date();
 
   const allContactsSheet = workbook.addWorksheet("All Contacts");

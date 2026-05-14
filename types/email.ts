@@ -20,6 +20,10 @@ export interface EmailContact {
   name: string;
   email: string;
   sourceFolder: string;
+  sourceType: string;
+  forwardedBy: string;
+  originalSender: string;
+  subject: string;
   firstSeen: string;
   lastSeen: string;
   emailCount: number;

@@ -69,6 +69,10 @@ export const emailContactSchema = z.object({
   name: z.string(),
   email: contactEmailSchema,
   sourceFolder: z.string(),
+  sourceType: z.string(),
+  forwardedBy: z.string(),
+  originalSender: z.string(),
+  subject: z.string(),
   firstSeen: z.string(),
   lastSeen: z.string(),
   emailCount: z.number().int().nonnegative(),
@@ -135,6 +139,10 @@ export const lastSeenFilterSchema = z
 export const exportExcelRequestSchema = z.object({
   syncResult: syncResultSchema,
   filter: lastSeenFilterSchema.default({ mode: "all" }),
+});
+
+export const ignoredEmailSchema = z.object({
+  email: contactEmailSchema,
 });
 
 export const defaultConnectionSettings = {

@@ -189,7 +189,10 @@ export default function ExportPage() {
           </div>
 
           <div className="grid gap-3 text-sm text-muted-foreground">
-            <p>Included columns: Name, Email, Source Folder, First Seen, Last Seen, Email Count.</p>
+            <p>
+              Included columns: Name, Email, Source Folder, Source Type, Forwarded By,
+              Original Sender, Subject, First Seen, Last Seen, Email Count.
+            </p>
             <p>Each sheet includes bold headers, auto-sized columns, and Excel filters.</p>
             <p>The date filter is applied to the Last Seen column before the workbook is created.</p>
             <p>

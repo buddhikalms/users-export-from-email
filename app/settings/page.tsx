@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 
 import { authOptions } from "@/auth";
 import { ConnectionForm } from "@/components/ConnectionForm";
+import { IgnoredEmailsForm } from "@/components/IgnoredEmailsForm";
 import { Badge } from "@/components/ui/badge";
 
 export default async function SettingsPage() {
@@ -27,7 +28,10 @@ export default async function SettingsPage() {
         </Badge>
       </div>
 
-      <ConnectionForm />
+      <div className="space-y-6">
+        <IgnoredEmailsForm />
+        <ConnectionForm />
+      </div>
     </main>
   );
 }

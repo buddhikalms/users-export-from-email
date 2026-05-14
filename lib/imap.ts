@@ -2,10 +2,12 @@ import { ImapFlow } from "imapflow";
 
 import {
   buildAllContacts,
+  collectContactsFromForwardedBody,
   collectContactsFromEnvelope,
   createMutableContactMap,
   finalizeFolderContacts,
 } from "@/lib/email-parser";
+import { extractTextFromRawMessage } from "@/lib/forwarded-email-parser";
 import type {
   ConnectionSettings,
   FolderSyncResult,
@@ -35,7 +37,7 @@ function getImapClient(settings: ConnectionSettings) {
       pass: settings.password,
     },
     clientInfo: {
-      name: "Outlook Sync Exporter",
+      name: "Email Contact Exporter",
       version: "1.0.0",
     },
     connectionTimeout: connectTimeout,
@@ -107,6 +109,7 @@ export async function fetchMailFolders(
 export async function syncSelectedFolders(
   settings: ConnectionSettings,
   folderPaths: string[],
+  ignoredEmails: string[] = [],
 ): Promise<SyncResult> {
   return withImapClient(settings, async (client) => {
     const folderResults: FolderSyncResult[] = [];
@@ -121,12 +124,23 @@ export async function syncSelectedFolders(
         for await (const message of client.fetch("1:*", {
           envelope: true,
           internalDate: true,
+          source: true,
         })) {
+          const sourceFolder = normalizeFolderName(folderPath);
           collectContactsFromEnvelope(
             contactMap,
             message.envelope,
-            normalizeFolderName(folderPath),
+            sourceFolder,
             message.internalDate ?? undefined,
+            ignoredEmails,
+          );
+          collectContactsFromForwardedBody(
+            contactMap,
+            extractTextFromRawMessage(message.source),
+            message.envelope,
+            sourceFolder,
+            message.internalDate ?? undefined,
+            ignoredEmails,
           );
         }
       }

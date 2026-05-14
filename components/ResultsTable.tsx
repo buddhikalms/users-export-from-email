@@ -38,6 +38,10 @@ function ContactTable({
               <th className="px-4 py-3 font-semibold">Name</th>
               <th className="px-4 py-3 font-semibold">Email</th>
               <th className="px-4 py-3 font-semibold">Source Folder</th>
+              <th className="px-4 py-3 font-semibold">Source Type</th>
+              <th className="px-4 py-3 font-semibold">Forwarded By</th>
+              <th className="px-4 py-3 font-semibold">Original Sender</th>
+              <th className="px-4 py-3 font-semibold">Subject</th>
               <th className="px-4 py-3 font-semibold">First Seen</th>
               <th className="px-4 py-3 font-semibold">Last Seen</th>
               <th className="px-4 py-3 font-semibold">Email Count</th>
@@ -52,6 +56,10 @@ function ContactTable({
                 <td className="px-4 py-3">{contact.name}</td>
                 <td className="px-4 py-3">{contact.email}</td>
                 <td className="px-4 py-3">{contact.sourceFolder}</td>
+                <td className="px-4 py-3">{contact.sourceType}</td>
+                <td className="px-4 py-3">{contact.forwardedBy || "-"}</td>
+                <td className="px-4 py-3">{contact.originalSender || "-"}</td>
+                <td className="px-4 py-3">{contact.subject || "-"}</td>
                 <td className="px-4 py-3">{formatDate(contact.firstSeen)}</td>
                 <td className="px-4 py-3">{formatDate(contact.lastSeen)}</td>
                 <td className="px-4 py-3">{contact.emailCount}</td>

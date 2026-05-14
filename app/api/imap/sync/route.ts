@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 import { authOptions } from "@/auth";
+import { getIgnoredEmailValues } from "@/lib/ignored-emails";
 import { syncSelectedFolders } from "@/lib/imap";
 import { resolveConnectionSettings } from "@/lib/imap-request";
 import { syncRequestSchema } from "@/lib/validation";
@@ -31,7 +32,12 @@ export async function POST(request: Request) {
     }
 
     const settings = await resolveConnectionSettings(parsed.data, session.user.id);
-    const syncResult = await syncSelectedFolders(settings, parsed.data.folders);
+    const ignoredEmails = await getIgnoredEmailValues(session.user.id);
+    const syncResult = await syncSelectedFolders(
+      settings,
+      parsed.data.folders,
+      ignoredEmails,
+    );
 
     return NextResponse.json(syncResult);
   } catch (error) {
