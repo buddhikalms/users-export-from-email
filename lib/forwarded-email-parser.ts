@@ -3,6 +3,7 @@ import { normalizeContactEmail } from "@/lib/email-format";
 export interface ForwardedContact {
   name: string;
   email: string;
+  header: "from" | "to";
 }
 
 export interface ForwardedEmailParseResult {
@@ -12,7 +13,7 @@ export interface ForwardedEmailParseResult {
 }
 
 const EMAIL_CAPTURE_PATTERN =
-  /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi;
+  /(?:mailto:)?([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(?:\?[^<>\s"')]*)?/gi;
 
 const FORWARDED_MARKERS = [
   /forwarded message/i,
@@ -24,7 +25,7 @@ const FORWARDED_MARKERS = [
 ];
 
 const FORWARDED_HEADER_GROUP =
-  /(?:^|\n)\s*from:\s*.+(?:\n\s*(?:sent|date):\s*.+)?(?:\n\s*to:\s*.+)?(?:\n\s*(?:cc|subject):\s*.+)?/i;
+  /(?:^|\n)\s*(?:-{2,}\s*)?from:\s*.+(?:\n\s*(?:sent|date|to|cc|subject):\s*.+)?/i;
 
 function decodeQuotedPrintable(value: string) {
   return value
@@ -56,6 +57,10 @@ function stripHtml(value: string) {
   return value
     .replace(/<style[\s\S]*?<\/style>/gi, " ")
     .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(
+      /<a\b[^>]*href=["']mailto:([^"'?#>]+)(?:[?#][^"'>]*)?["'][^>]*>([\s\S]*?)<\/a>/gi,
+      "$2 <$1>",
+    )
     .replace(/<br\s*\/?>/gi, "\n")
     .replace(/<\/p>/gi, "\n")
     .replace(/<[^>]+>/g, " ")
@@ -137,15 +142,17 @@ function unfoldLines(value: string) {
 function cleanName(value: string | undefined, email: string) {
   const name = value
     ?.replace(EMAIL_CAPTURE_PATTERN, "")
+    .replace(/^from:\s*/i, "")
     .replace(/[<>"']/g, "")
     .trim();
 
   return name || email.split("@")[0];
 }
 
-function extractAddressEntries(value: string) {
+function extractAddressEntries(value: string, header: ForwardedContact["header"]) {
   const entries: ForwardedContact[] = [];
-  const anglePattern = /([^<\n,;]+)?<\s*([^<>@\s]+@[^<>\s]+)\s*>/g;
+  const anglePattern =
+    /([^<\n,;]+)?<\s*((?:mailto:)?[^<>@\s]+@[^<>\s?#]+(?:\?[^<>\s]*)?)\s*>/gi;
   let angleMatch: RegExpExecArray | null;
 
   while ((angleMatch = anglePattern.exec(value)) !== null) {
@@ -157,12 +164,13 @@ function extractAddressEntries(value: string) {
     entries.push({
       name: cleanName(angleMatch[1], email),
       email,
+      header,
     });
   }
 
-  const plainMatches = value.match(EMAIL_CAPTURE_PATTERN) ?? [];
-  for (const match of plainMatches) {
-    const email = normalizeContactEmail(match);
+  for (const match of value.matchAll(EMAIL_CAPTURE_PATTERN)) {
+    const rawEmail = match[0] ?? match[1] ?? "";
+    const email = normalizeContactEmail(rawEmail);
     if (!email || entries.some((entry) => entry.email === email)) {
       continue;
     }
@@ -170,20 +178,21 @@ function extractAddressEntries(value: string) {
     entries.push({
       name: cleanName(undefined, email),
       email,
+      header,
     });
   }
 
   return entries;
 }
 
-function extractHeaderContacts(section: string, headerName: "from" | "to" | "cc") {
+function extractHeaderContacts(section: string, headerName: "from" | "to") {
   const unfolded = unfoldLines(section);
-  const pattern = new RegExp(`^${headerName}:\\s*(.+)$`, "gim");
+  const pattern = new RegExp(`^\\s*(?:-{2,}\\s*)?${headerName}:\\s*(.+)$`, "gim");
   const contacts: ForwardedContact[] = [];
   let match: RegExpExecArray | null;
 
   while ((match = pattern.exec(unfolded)) !== null) {
-    contacts.push(...extractAddressEntries(match[1] ?? ""));
+    contacts.push(...extractAddressEntries(match[1] ?? "", headerName));
   }
 
   return contacts;
@@ -196,13 +205,17 @@ function dedupeContacts(
   const byEmail = new Map<string, ForwardedContact>();
 
   for (const contact of contacts) {
-    if (ignoredEmails.has(contact.email)) {
+    const email = normalizeContactEmail(contact.email);
+    if (!email || ignoredEmails.has(email)) {
       continue;
     }
 
-    const existing = byEmail.get(contact.email);
+    const existing = byEmail.get(email);
     if (!existing || existing.name === existing.email.split("@")[0]) {
-      byEmail.set(contact.email, contact);
+      byEmail.set(email, {
+        ...contact,
+        email,
+      });
     }
   }
 
@@ -234,13 +247,11 @@ export function parseForwardedEmailBody(
 
   const forwardedSection = getForwardedSection(body);
   const fromContacts = extractHeaderContacts(forwardedSection, "from");
-  const headerContacts = [
-    ...fromContacts,
-    ...extractHeaderContacts(forwardedSection, "to"),
-    ...extractHeaderContacts(forwardedSection, "cc"),
-  ];
-  const bodyContacts = extractAddressEntries(forwardedSection);
-  const contacts = dedupeContacts([...headerContacts, ...bodyContacts], ignoredEmails);
+  const forwarderEmails = new Set(fromContacts.map((contact) => contact.email));
+  const toContacts = extractHeaderContacts(forwardedSection, "to").filter(
+    (contact) => !forwarderEmails.has(contact.email),
+  );
+  const contacts = dedupeContacts([...fromContacts, ...toContacts], ignoredEmails);
   const originalFrom = fromContacts.find(
     (contact) => !ignoredEmails.has(contact.email),
   );

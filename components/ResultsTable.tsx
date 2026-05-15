@@ -2,6 +2,8 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { cleanEmail } from "@/lib/email-cleaner";
+import { normalizeContactEmail } from "@/lib/email-format";
 import type { EmailContact, SyncResult } from "@/types/email";
 
 function formatDate(value: string) {
@@ -14,6 +16,68 @@ function formatDate(value: string) {
   }).format(new Date(value));
 }
 
+function dedupeContactsByCleanEmail(contacts: EmailContact[]) {
+  const uniqueMap = new Map<string, EmailContact>();
+
+  for (const contact of contacts) {
+    const email = normalizeContactEmail(contact.email);
+    if (!email) {
+      continue;
+    }
+
+    const existing = uniqueMap.get(email);
+    if (!existing) {
+      uniqueMap.set(email, {
+        ...contact,
+        email,
+      });
+      continue;
+    }
+
+    uniqueMap.set(email, {
+      ...existing,
+      name:
+        existing.name && existing.name !== existing.email.split("@")[0]
+          ? existing.name
+          : contact.name,
+      sourceFolder: Array.from(
+        new Set(
+          [existing.sourceFolder, contact.sourceFolder]
+            .flatMap((value) => value.split(", "))
+            .filter(Boolean),
+        ),
+      )
+        .sort()
+        .join(", "),
+      sourceType: Array.from(
+        new Set(
+          [existing.sourceType, contact.sourceType]
+            .flatMap((value) => value.split(", "))
+            .filter(Boolean),
+        ),
+      )
+        .sort()
+        .join(", "),
+      forwardedBy: existing.forwardedBy || contact.forwardedBy,
+      originalSender: existing.originalSender || contact.originalSender,
+      subject: existing.subject || contact.subject,
+      firstSeen:
+        new Date(contact.firstSeen) < new Date(existing.firstSeen)
+          ? contact.firstSeen
+          : existing.firstSeen,
+      lastSeen:
+        new Date(contact.lastSeen) > new Date(existing.lastSeen)
+          ? contact.lastSeen
+          : existing.lastSeen,
+      emailCount: existing.emailCount + contact.emailCount,
+    });
+  }
+
+  return Array.from(uniqueMap.values()).sort((left, right) =>
+    left.email.localeCompare(right.email),
+  );
+}
+
 function ContactTable({
   contacts,
   emptyMessage,
@@ -21,7 +85,9 @@ function ContactTable({
   contacts: EmailContact[];
   emptyMessage: string;
 }) {
-  if (contacts.length === 0) {
+  const cleanContacts = dedupeContactsByCleanEmail(contacts);
+
+  if (cleanContacts.length === 0) {
     return (
       <div className="rounded-3xl border border-dashed border-border bg-white/60 p-8 text-center text-sm text-muted-foreground">
         {emptyMessage}
@@ -48,7 +114,7 @@ function ContactTable({
             </tr>
           </thead>
           <tbody>
-            {contacts.map((contact) => (
+            {cleanContacts.map((contact) => (
               <tr
                 key={`${contact.sourceFolder}-${contact.email}`}
                 className="border-t border-border/60"
@@ -73,8 +139,9 @@ function ContactTable({
 }
 
 export function ResultsTable({ syncResult }: { syncResult: SyncResult }) {
+  const cleanAllContacts = dedupeContactsByCleanEmail(syncResult.allContacts);
   const totalFolderContacts = syncResult.folders.reduce(
-    (count, folder) => count + folder.contacts.length,
+    (count, folder) => count + dedupeContactsByCleanEmail(folder.contacts).length,
     0,
   );
 
@@ -86,7 +153,7 @@ export function ResultsTable({ syncResult }: { syncResult: SyncResult }) {
             <CardTitle className="text-lg">Unique Global Contacts</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-semibold">{syncResult.allContacts.length}</p>
+            <p className="text-3xl font-semibold">{cleanAllContacts.length}</p>
           </CardContent>
         </Card>
         <Card>
@@ -117,18 +184,18 @@ export function ResultsTable({ syncResult }: { syncResult: SyncResult }) {
           <Tabs defaultValue="all-contacts">
             <TabsList>
               <TabsTrigger value="all-contacts">
-                All Contacts ({syncResult.allContacts.length})
+                All Contacts ({cleanAllContacts.length})
               </TabsTrigger>
               {syncResult.folders.map((folder) => (
                 <TabsTrigger key={folder.folderPath} value={folder.folderPath}>
-                  {folder.displayName} ({folder.contacts.length})
+                  {folder.displayName} ({dedupeContactsByCleanEmail(folder.contacts).length})
                 </TabsTrigger>
               ))}
             </TabsList>
 
             <TabsContent value="all-contacts">
               <ContactTable
-                contacts={syncResult.allContacts}
+                contacts={cleanAllContacts}
                 emptyMessage="No contacts were found across the selected folders."
               />
             </TabsContent>
@@ -172,9 +239,9 @@ export function ResultsTable({ syncResult }: { syncResult: SyncResult }) {
                   </thead>
                   <tbody>
                     {syncResult.duplicatesAcrossFolders.map((duplicate) => (
-                      <tr key={duplicate.email} className="border-t border-border/60">
+                      <tr key={cleanEmail(duplicate.email)} className="border-t border-border/60">
                         <td className="px-4 py-3">{duplicate.name}</td>
-                        <td className="px-4 py-3">{duplicate.email}</td>
+                        <td className="px-4 py-3">{cleanEmail(duplicate.email)}</td>
                         <td className="px-4 py-3">{duplicate.folders.join(", ")}</td>
                         <td className="px-4 py-3">{duplicate.totalEmailCount}</td>
                       </tr>

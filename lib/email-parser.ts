@@ -15,6 +15,8 @@ interface AddressLike {
 
 interface EnvelopeLike {
   from?: AddressLike[] | null;
+  sender?: AddressLike[] | null;
+  replyTo?: AddressLike[] | null;
   to?: AddressLike[] | null;
   cc?: AddressLike[] | null;
   bcc?: AddressLike[] | null;
@@ -111,18 +113,23 @@ function addContact(
     name: string;
     email: string;
     sourceFolder: string;
-    sourceType: "direct_email" | "forwarded_email";
+    sourceType: "direct_email" | "forwarded_email" | "to_email";
     forwardedBy?: string;
     originalSender?: string;
     subject?: string;
     seenAt: Date;
   },
 ) {
-  const existing = contactMap.get(contact.email);
+  const email = normalizeContactEmail(contact.email);
+  if (!email) {
+    return;
+  }
+
+  const existing = contactMap.get(email);
   if (!existing) {
-    contactMap.set(contact.email, {
+    contactMap.set(email, {
       name: contact.name,
-      email: contact.email,
+      email,
       sourceFolder: contact.sourceFolder,
       sourceTypes: new Set([contact.sourceType]),
       forwardedBy: contact.forwardedBy ?? "",
@@ -143,6 +150,18 @@ function addContact(
   mergeMetadata(existing, contact);
 }
 
+function getSenderAddresses(envelope: EnvelopeLike) {
+  if (envelope.from && envelope.from.length > 0) {
+    return envelope.from;
+  }
+
+  if (envelope.sender && envelope.sender.length > 0) {
+    return envelope.sender;
+  }
+
+  return envelope.replyTo ?? [];
+}
+
 export function collectContactsFromEnvelope(
   contactMap: Map<string, MutableContact>,
   envelope: EnvelopeLike | null | undefined,
@@ -155,29 +174,26 @@ export function collectContactsFromEnvelope(
   }
 
   const seenAt = fallbackDate ? toSafeDate(fallbackDate) : toSafeDate(envelope.date);
-  const groups = [envelope.from, envelope.to, envelope.cc, envelope.bcc];
   const ignoredEmailSet = new Set(
     ignoredEmails
       .map((email) => normalizeContactEmail(email))
       .filter((email): email is string => Boolean(email)),
   );
 
-  for (const group of groups) {
-    for (const address of group ?? []) {
-      const email = resolveEmail(address);
-      if (!email || ignoredEmailSet.has(email)) {
-        continue;
-      }
-
-      addContact(contactMap, {
-        name: deriveName(address.name, email),
-        email,
-        sourceFolder,
-        sourceType: "direct_email",
-        subject: envelope.subject ?? "",
-        seenAt,
-      });
+  for (const address of getSenderAddresses(envelope)) {
+    const email = resolveEmail(address);
+    if (!email || ignoredEmailSet.has(email)) {
+      continue;
     }
+
+    addContact(contactMap, {
+      name: deriveName(address.name, email),
+      email,
+      sourceFolder,
+      sourceType: "direct_email",
+      subject: envelope.subject ?? "",
+      seenAt,
+    });
   }
 }
 
@@ -196,13 +212,23 @@ export function collectContactsFromForwardedBody(
 
   const seenAt = fallbackDate ? toSafeDate(fallbackDate) : toSafeDate(envelope?.date);
   const forwardedBy = formatAddress(envelope?.from?.[0]);
+  const forwarderEmail = envelope?.from?.[0] ? resolveEmail(envelope.from[0]) : null;
 
   for (const contact of parsed.contacts) {
+    const email = normalizeContactEmail(contact.email);
+    if (!email) {
+      continue;
+    }
+
+    if (contact.header === "to" && forwarderEmail === email) {
+      continue;
+    }
+
     addContact(contactMap, {
       name: contact.name,
-      email: contact.email,
+      email,
       sourceFolder,
-      sourceType: "forwarded_email",
+      sourceType: contact.header === "to" ? "to_email" : "forwarded_email",
       forwardedBy,
       originalSender: parsed.originalSender,
       subject: envelope?.subject ?? "",
@@ -258,14 +284,19 @@ export function buildAllContacts(
 
   for (const folder of folders) {
     for (const contact of folder.contacts) {
+      const email = normalizeContactEmail(contact.email);
+      if (!email) {
+        continue;
+      }
+
       const firstSeen = new Date(contact.firstSeen);
       const lastSeen = new Date(contact.lastSeen);
-      const existing = aggregate.get(contact.email);
+      const existing = aggregate.get(email);
 
       if (!existing) {
-        aggregate.set(contact.email, {
+        aggregate.set(email, {
           name: contact.name,
-          email: contact.email,
+          email,
           folders: new Set([folder.displayName]),
           sourceTypes: new Set(contact.sourceType.split(", ")),
           forwardedBy: contact.forwardedBy,

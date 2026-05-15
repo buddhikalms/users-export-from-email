@@ -91,9 +91,9 @@ export default function ResultsPage() {
           </p>
           <h1 className="text-4xl">Sync Results</h1>
           <p className="max-w-3xl text-base leading-7 text-muted-foreground">
-            The app scans message headers from the selected folders, extracts unique
-            users from sender and recipient fields, and groups them folder-wise for
-            review before export.
+            The app scans selected folders, extracts unique senders from current
+            and forwarded message chains, and groups them folder-wise for review
+            before export.
           </p>
           {connection ? (
             <p className="text-xs uppercase tracking-[0.18em] text-primary">

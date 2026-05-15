@@ -3,7 +3,7 @@ import { normalizeContactEmail } from "@/lib/email-format";
 
 const contactEmailSchema = z.string().trim().refine((value) => {
   return normalizeContactEmail(value) !== null;
-}, "Invalid email");
+}, "Invalid email").transform((value) => normalizeContactEmail(value) ?? "");
 
 export const securityTypeSchema = z.enum(["ssl_tls", "starttls"]);
 

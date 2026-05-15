@@ -1,5 +1,6 @@
 import ExcelJS from "exceljs";
 
+import { normalizeContactEmail } from "@/lib/email-format";
 import type { EmailContact, FolderSyncResult, SyncResult } from "@/types/email";
 
 const HEADERS = [
@@ -35,6 +36,8 @@ function addRows(
   contacts: EmailContact[],
   defaultSourceFolder?: string,
 ) {
+  const uniqueContacts = dedupeContactsByCleanEmail(contacts);
+
   worksheet.columns = [
     { header: HEADERS[0], key: "name", width: 24 },
     { header: HEADERS[1], key: "email", width: 30 },
@@ -49,7 +52,7 @@ function addRows(
   ];
 
   worksheet.addRows(
-    contacts.map((contact) => ({
+    uniqueContacts.map((contact) => ({
       name: contact.name,
       email: contact.email,
       sourceFolder: defaultSourceFolder ?? contact.sourceFolder,
@@ -87,6 +90,68 @@ function addRows(
       }
     });
   });
+}
+
+function dedupeContactsByCleanEmail(contacts: EmailContact[]) {
+  const uniqueMap = new Map<string, EmailContact>();
+
+  for (const contact of contacts) {
+    const cleanedEmail = normalizeContactEmail(contact.email);
+    if (!cleanedEmail) {
+      continue;
+    }
+
+    const existing = uniqueMap.get(cleanedEmail);
+    if (!existing) {
+      uniqueMap.set(cleanedEmail, {
+        ...contact,
+        email: cleanedEmail,
+      });
+      continue;
+    }
+
+    uniqueMap.set(cleanedEmail, {
+      ...existing,
+      name:
+        existing.name && existing.name !== existing.email.split("@")[0]
+          ? existing.name
+          : contact.name,
+      sourceFolder: Array.from(
+        new Set(
+          [existing.sourceFolder, contact.sourceFolder]
+            .flatMap((value) => value.split(", "))
+            .filter(Boolean),
+        ),
+      )
+        .sort()
+        .join(", "),
+      sourceType: Array.from(
+        new Set(
+          [existing.sourceType, contact.sourceType]
+            .flatMap((value) => value.split(", "))
+            .filter(Boolean),
+        ),
+      )
+        .sort()
+        .join(", "),
+      forwardedBy: existing.forwardedBy || contact.forwardedBy,
+      originalSender: existing.originalSender || contact.originalSender,
+      subject: existing.subject || contact.subject,
+      firstSeen:
+        new Date(contact.firstSeen) < new Date(existing.firstSeen)
+          ? contact.firstSeen
+          : existing.firstSeen,
+      lastSeen:
+        new Date(contact.lastSeen) > new Date(existing.lastSeen)
+          ? contact.lastSeen
+          : existing.lastSeen,
+      emailCount: existing.emailCount + contact.emailCount,
+    });
+  }
+
+  return Array.from(uniqueMap.values()).sort((left, right) =>
+    left.email.localeCompare(right.email),
+  );
 }
 
 function addFolderSheet(workbook: ExcelJS.Workbook, folder: FolderSyncResult) {
