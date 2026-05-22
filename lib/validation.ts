@@ -8,7 +8,7 @@ const contactEmailSchema = z.string().trim().refine((value) => {
 export const securityTypeSchema = z.enum(["ssl_tls", "starttls"]);
 
 export const connectionSettingsSchema = z.object({
-  email: z.string().trim().email("Enter a valid Outlook email address."),
+  email: z.string().trim().email("Enter a valid email address."),
   host: z.string().trim().min(1, "Incoming mail server host is required."),
   port: z.coerce
     .number()
@@ -22,7 +22,7 @@ export const connectionSettingsSchema = z.object({
 });
 
 export const savedAccountReferenceSchema = z.object({
-  savedAccountId: z.string().min(1, "Select a saved Outlook account."),
+  savedAccountId: z.string().min(1, "Select a saved email account."),
 });
 
 export const imapConnectionInputSchema = z.union([

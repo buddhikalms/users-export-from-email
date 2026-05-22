@@ -18,7 +18,7 @@ export default async function LoginPage() {
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">
             Authentication
           </p>
-          <h1 className="text-4xl">Sign in to your secure Outlook workspace.</h1>
+          <h1 className="text-4xl">Sign in to your secure email workspace.</h1>
           <p className="max-w-xl text-base leading-7 text-muted-foreground">
             Access your saved IMAP accounts, folder sync sessions, export filters,
             and role-aware protection from one authenticated workspace.

@@ -54,7 +54,7 @@ export default function ExportPage() {
           <h1 className="text-4xl">Export Workbook</h1>
           <p className="max-w-2xl text-base leading-7 text-muted-foreground">
             Create one Excel workbook with an All Contacts sheet and one sheet for
-            every Outlook folder you synced.
+            every mail folder you synced.
           </p>
         </div>
 

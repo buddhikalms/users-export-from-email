@@ -55,7 +55,7 @@ export default async function AdminPage() {
         </p>
         <h1 className="text-4xl">Authentication and account oversight</h1>
         <p className="max-w-3xl text-base leading-7 text-muted-foreground">
-          Admin users can inspect who has access and how many Outlook accounts are
+          Admin users can inspect who has access and how many email accounts are
           currently stored in the database.
         </p>
       </div>
@@ -71,7 +71,7 @@ export default async function AdminPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Saved Outlook Accounts</CardTitle>
+            <CardTitle className="text-lg">Saved Email Accounts</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-3xl font-semibold">{accountCount}</p>
@@ -93,7 +93,7 @@ export default async function AdminPage() {
                 <div className="font-medium">{user.name}</div>
                 <div className="text-muted-foreground">{user.email}</div>
                 <div className="mt-2 text-xs uppercase tracking-[0.18em] text-primary">
-                  {user.role} • {user._count.savedAccounts} saved accounts
+                  {user.role} / {user._count.savedAccounts} saved accounts
                 </div>
               </div>
             ))}
@@ -112,7 +112,7 @@ export default async function AdminPage() {
               >
                 <div className="font-medium">{account.label}</div>
                 <div className="text-muted-foreground">
-                  {account.email} • {account.host}:{account.port}
+                  {account.email} / {account.host}:{account.port}
                 </div>
                 <div className="mt-2 text-xs text-primary">
                   Owner: {account.owner.name} ({account.owner.email})

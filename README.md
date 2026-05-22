@@ -18,8 +18,8 @@ Next.js 16 App Router application for securely managing multiple email IMAP acco
 
 - Email/password authentication with hashed passwords
 - First registered user becomes `ADMIN`
-- Database-backed Outlook account storage per user
-- Encrypted Outlook passwords before database persistence
+- Database-backed IMAP account storage per user
+- Encrypted email account passwords before database persistence
 - Manual one-time IMAP connection or saved-account sync
 - Folder-wise contact extraction and Excel export
 - Last-seen date filtering before export
@@ -93,13 +93,24 @@ npm run dev
 
 4. Open `http://localhost:3000`.
 5. Register a user account.
-6. Save one or more Outlook IMAP accounts in `/settings`.
+6. Save one or more IMAP accounts in `/settings`.
 7. Choose a saved account or use a one-time manual connection.
 8. Select folders, sync, filter by last seen date if needed, and export the workbook.
 
-## Default Outlook IMAP Settings
+## Default IMAP Settings
 
+Outlook / Microsoft 365:
 - Host: `outlook.office365.com`
+- Port: `993`
+- Security: `SSL/TLS`
+
+Zoho Mail:
+- Host: `imap.zoho.com`
+- Port: `993`
+- Security: `SSL/TLS`
+
+Zoho paid organization/domain accounts:
+- Host: `imappro.zoho.com`
 - Port: `993`
 - Security: `SSL/TLS`
 
@@ -107,7 +118,11 @@ npm run dev
 
 - The app uses IMAP only and does not depend on Microsoft Graph API.
 - Passwords for manual connections are used server-side for IMAP calls and are not logged.
-- Saved Outlook account passwords are encrypted before database storage.
+- Saved email account passwords are encrypted before database storage.
 - User login passwords are hashed with `bcryptjs`.
 - Sync results remain in browser session storage for the export flow.
 - The current implementation is suited to local or controlled deployments; production deployments should rotate secrets, use stronger operational monitoring, and store MySQL credentials securely.
+
+
+## Keywords - search on email exporter 
+Subject wise filter and keywords filter

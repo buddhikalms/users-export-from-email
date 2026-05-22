@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 import { authOptions } from "@/auth";
-import { testImapConnection } from "@/lib/imap";
+import { getImapErrorStatus, testImapConnection } from "@/lib/imap";
 import { resolveConnectionSettings } from "@/lib/imap-request";
 import { testConnectionRequestSchema } from "@/lib/validation";
 
@@ -22,7 +22,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           error:
-            parsed.error.issues[0]?.message ?? "Invalid Outlook connection settings.",
+            parsed.error.issues[0]?.message ?? "Invalid IMAP connection settings.",
           details: parsed.error.flatten(),
         },
         { status: 400 },
@@ -36,6 +36,6 @@ export async function POST(request: Request) {
     const message =
       error instanceof Error ? error.message : "Failed to test IMAP connection.";
 
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json({ error: message }, { status: getImapErrorStatus(error) });
   }
 }

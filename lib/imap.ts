@@ -15,12 +15,55 @@ import type {
   SyncResult,
 } from "@/types/email";
 
-function toSafeErrorMessage(error: unknown) {
-  if (error instanceof Error) {
-    return error.message.replace(/user=.*?(,|$)/gi, "").trim();
+export class ImapConnectionError extends Error {
+  constructor(
+    message: string,
+    public readonly statusCode = 500,
+  ) {
+    super(message);
+    this.name = "ImapConnectionError";
+  }
+}
+
+function getImapErrorDetails(error: unknown) {
+  return error as {
+    authenticationFailed?: boolean;
+    code?: string;
+    response?: string;
+    responseText?: string;
+    serverResponseCode?: string;
+    message?: string;
+  };
+}
+
+function toSafeImapError(error: unknown) {
+  const details = getImapErrorDetails(error);
+  const rawMessage = error instanceof Error ? error.message : details.message;
+  const responseText = details.responseText ?? details.response ?? "";
+  const responseCode = details.serverResponseCode ?? details.code ?? "";
+  const isAuthFailure =
+    details.authenticationFailed === true ||
+    responseCode.toUpperCase() === "AUTHENTICATIONFAILED" ||
+    /AUTHENTICATIONFAILED|Invalid credentials/i.test(responseText);
+
+  if (isAuthFailure) {
+    return new ImapConnectionError(
+      "Authentication failed. Check that the username is the full email address, IMAP access is enabled for this mailbox, and the password is correct. For Zoho accounts with 2FA, SAML, or federated login, use a Zoho application-specific password.",
+      401,
+    );
   }
 
-  return "An unexpected IMAP error occurred.";
+  if (rawMessage) {
+    return new ImapConnectionError(
+      rawMessage.replace(/user=.*?(,|$)/gi, "").trim(),
+    );
+  }
+
+  return new ImapConnectionError("An unexpected IMAP error occurred.");
+}
+
+export function getImapErrorStatus(error: unknown) {
+  return error instanceof ImapConnectionError ? error.statusCode : 500;
 }
 
 function getImapClient(settings: ConnectionSettings) {
@@ -55,7 +98,7 @@ async function withImapClient<T>(
     await client.connect();
     return await callback(client);
   } catch (error) {
-    throw new Error(toSafeErrorMessage(error));
+    throw toSafeImapError(error);
   } finally {
     try {
       await client.logout();

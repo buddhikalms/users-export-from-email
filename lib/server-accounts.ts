@@ -170,7 +170,7 @@ export async function getSavedAccountSettings(
   });
 
   if (!account) {
-    throw new Error("Saved Outlook account was not found.");
+    throw new Error("Saved email account was not found.");
   }
 
   return {

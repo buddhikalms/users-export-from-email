@@ -45,7 +45,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       account,
-      message: "Outlook account saved successfully.",
+      message: "Email account saved successfully.",
     });
   } catch (error) {
     return NextResponse.json(
@@ -53,7 +53,7 @@ export async function POST(request: Request) {
         error:
           error instanceof Error
             ? error.message
-            : "Unable to save the Outlook account.",
+            : "Unable to save the email account.",
       },
       { status: 500 },
     );

@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 import { authOptions } from "@/auth";
 import { getIgnoredEmailValues } from "@/lib/ignored-emails";
-import { syncSelectedFolders } from "@/lib/imap";
+import { getImapErrorStatus, syncSelectedFolders } from "@/lib/imap";
 import { resolveConnectionSettings } from "@/lib/imap-request";
 import { syncRequestSchema } from "@/lib/validation";
 
@@ -44,6 +44,6 @@ export async function POST(request: Request) {
     const message =
       error instanceof Error ? error.message : "Failed to sync selected folders.";
 
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json({ error: message }, { status: getImapErrorStatus(error) });
   }
 }

@@ -11,11 +11,11 @@ const features = [
   {
     title: "Database-backed multi-account storage",
     description:
-      "Save multiple Outlook IMAP accounts per user and keep account passwords encrypted on the server.",
+      "Save multiple IMAP accounts per user and keep account passwords encrypted on the server.",
     icon: Shield,
   },
   {
-    title: "IMAP-first Outlook sync",
+    title: "IMAP-first mailbox sync",
     description:
       "Connect with incoming mail server settings, validate access, and keep mailbox operations on the server only.",
     icon: MailCheck,
@@ -44,16 +44,16 @@ export default async function HomePage() {
       <div className="relative mx-auto flex min-h-[calc(100vh-120px)] max-w-7xl flex-col px-6 py-12 lg:px-10">
         <div className="grid flex-1 items-center gap-10 lg:grid-cols-[1.2fr_0.8fr]">
           <section className="space-y-8">
-            <Badge>Next.js 15 • TypeScript • Auth • Prisma • IMAP</Badge>
+            <Badge>Next.js 15 / TypeScript / Auth / Prisma / IMAP</Badge>
             <div className="space-y-5">
               <h1 className="max-w-3xl text-5xl leading-tight text-foreground md:text-6xl">
-                Securely manage multiple Outlook accounts and export folder-wise
+                Securely manage multiple email accounts and export folder-wise
                 contact workbooks.
               </h1>
               <p className="max-w-2xl text-lg leading-8 text-muted-foreground">
-                This workspace adds authenticated access, database-backed Outlook
-                account storage, encrypted password handling, IMAP folder sync,
-                last-seen filtering, and Excel export without Microsoft Graph.
+                This workspace adds authenticated access, database-backed account
+                storage, encrypted password handling, IMAP folder sync, last-seen
+                filtering, and Excel export.
               </p>
             </div>
 
@@ -74,7 +74,7 @@ export default async function HomePage() {
             <div className="grid gap-4 sm:grid-cols-3">
               {[
                 ["1", "Create a secure authenticated workspace"],
-                ["2", "Save one or many Outlook IMAP accounts"],
+                ["2", "Save one or many IMAP accounts"],
                 ["3", "Sync folders, review results, and export"],
               ].map(([step, label]) => (
                 <div

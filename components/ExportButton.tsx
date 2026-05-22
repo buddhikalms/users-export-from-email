@@ -55,7 +55,7 @@ export function ExportButton({
       const disposition = response.headers.get("Content-Disposition");
       const fileNameMatch = disposition?.match(/filename="(.+)"/);
       anchor.href = url;
-      anchor.download = fileNameMatch?.[1] ?? "outlook-contacts.xlsx";
+      anchor.download = fileNameMatch?.[1] ?? "email-contacts.xlsx";
       anchor.click();
       window.URL.revokeObjectURL(url);
 

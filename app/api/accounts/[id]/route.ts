@@ -43,7 +43,7 @@ export async function PATCH(
         error:
           error instanceof Error
             ? error.message
-            : "Unable to update the Outlook account.",
+            : "Unable to update the email account.",
       },
       { status: 500 },
     );
@@ -69,7 +69,7 @@ export async function DELETE(
         error:
           error instanceof Error
             ? error.message
-            : "Unable to delete the Outlook account.",
+            : "Unable to delete the email account.",
       },
       { status: 500 },
     );

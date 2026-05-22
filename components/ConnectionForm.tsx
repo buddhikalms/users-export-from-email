@@ -42,6 +42,60 @@ type FormState = {
   rememberPassword: boolean;
 };
 
+type ProviderPreset = {
+  id: "outlook" | "zoho" | "zoho_pro" | "custom";
+  name: string;
+  host: string;
+  port: number;
+  security: FormState["security"];
+  description: string;
+  usernamePlaceholder: string;
+  passwordPlaceholder: string;
+};
+
+const providerPresets: ProviderPreset[] = [
+  {
+    id: "outlook",
+    name: "Outlook / Microsoft 365",
+    host: "outlook.office365.com",
+    port: 993,
+    security: "ssl_tls",
+    description: "Use for Outlook.com, Hotmail, and Microsoft 365 IMAP mailboxes.",
+    usernamePlaceholder: "Usually the full Outlook email",
+    passwordPlaceholder: "Enter account password or Outlook app password",
+  },
+  {
+    id: "zoho",
+    name: "Zoho Mail",
+    host: "imap.zoho.com",
+    port: 993,
+    security: "ssl_tls",
+    description: "Use for Zoho personal mailboxes and free organization accounts.",
+    usernamePlaceholder: "Usually the full Zoho email",
+    passwordPlaceholder: "Enter Zoho password or app-specific password",
+  },
+  {
+    id: "zoho_pro",
+    name: "Zoho Mail domain / paid",
+    host: "imappro.zoho.com",
+    port: 993,
+    security: "ssl_tls",
+    description: "Use for paid Zoho organization users with domain-based addresses.",
+    usernamePlaceholder: "you@yourdomain.com",
+    passwordPlaceholder: "Enter Zoho app-specific password if required",
+  },
+  {
+    id: "custom",
+    name: "Custom IMAP",
+    host: "",
+    port: 993,
+    security: "ssl_tls",
+    description: "Enter the incoming IMAP settings from your email provider.",
+    usernamePlaceholder: "Usually your full email address",
+    passwordPlaceholder: "Enter account password or app password",
+  },
+];
+
 function toFormState(): FormState {
   return {
     label: "",
@@ -53,6 +107,7 @@ function toFormState(): FormState {
 export function ConnectionForm() {
   const router = useRouter();
   const [form, setForm] = useState<FormState>(toFormState);
+  const [providerId, setProviderId] = useState<ProviderPreset["id"]>("outlook");
   const [savedAccounts, setSavedAccounts] = useState<SavedEmailAccountSummary[]>([]);
   const [loadingAccounts, setLoadingAccounts] = useState(true);
   const [status, setStatus] = useState<{
@@ -72,7 +127,7 @@ export function ConnectionForm() {
       };
 
       if (!response.ok) {
-        throw new Error(payload.error ?? "Unable to load saved Outlook accounts.");
+        throw new Error(payload.error ?? "Unable to load saved email accounts.");
       }
 
       setSavedAccounts(payload.accounts ?? []);
@@ -82,7 +137,7 @@ export function ConnectionForm() {
         message:
           error instanceof Error
             ? error.message
-            : "Unable to load saved Outlook accounts.",
+            : "Unable to load saved email accounts.",
       });
     } finally {
       setLoadingAccounts(false);
@@ -99,6 +154,33 @@ export function ConnectionForm() {
       [key]: value,
     }));
   }
+
+  function updateEmail(value: string) {
+    setForm((current) => ({
+      ...current,
+      email: value,
+      username:
+        !current.username || current.username === current.email ? value : current.username,
+    }));
+  }
+
+  function applyProviderPreset(nextProviderId: ProviderPreset["id"]) {
+    const preset =
+      providerPresets.find((item) => item.id === nextProviderId) ??
+      providerPresets[0];
+
+    setProviderId(nextProviderId);
+    setForm((current) => ({
+      ...current,
+      host: nextProviderId === "custom" ? "" : preset.host,
+      port: String(preset.port),
+      security: preset.security,
+      username: current.username || current.email,
+    }));
+  }
+
+  const selectedPreset =
+    providerPresets.find((preset) => preset.id === providerId) ?? providerPresets[0];
 
   async function useSavedAccount(account: SavedEmailAccountSummary) {
     clearSyncArtifacts();
@@ -213,7 +295,7 @@ export function ConnectionForm() {
       const payload = (await response.json()) as { error?: string; message?: string };
 
       if (!response.ok) {
-        throw new Error(payload.error ?? "Unable to connect to Outlook over IMAP.");
+        throw new Error(payload.error ?? "Unable to connect over IMAP.");
       }
 
       clearSyncArtifacts();
@@ -271,7 +353,7 @@ export function ConnectionForm() {
       };
 
       if (!response.ok) {
-        throw new Error(payload.error ?? "Unable to save the Outlook account.");
+        throw new Error(payload.error ?? "Unable to save the email account.");
       }
 
       const account = payload.account;
@@ -282,7 +364,7 @@ export function ConnectionForm() {
       setSavedAccounts((current) => [account, ...current.filter((item) => item.id !== account.id)]);
       setStatus({
         type: "success",
-        message: payload.message ?? "Outlook account saved successfully.",
+        message: payload.message ?? "Email account saved successfully.",
       });
 
       if (useAfterSave) {
@@ -305,7 +387,7 @@ export function ConnectionForm() {
         message:
           error instanceof Error
             ? error.message
-            : "Unable to save the Outlook account.",
+            : "Unable to save the email account.",
       });
     } finally {
       setBusyAction(null);
@@ -316,10 +398,10 @@ export function ConnectionForm() {
     <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
       <Card className="border-white/80">
         <CardHeader>
-          <CardTitle>Saved Outlook Accounts</CardTitle>
+          <CardTitle>Saved Email Accounts</CardTitle>
           <p className="text-sm leading-6 text-muted-foreground">
-            Keep multiple Outlook IMAP accounts in the database and choose any one
-            when you want to sync folders.
+            Keep multiple IMAP accounts in the database and choose any one when
+            you want to sync folders.
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -329,7 +411,7 @@ export function ConnectionForm() {
             </div>
           ) : savedAccounts.length === 0 ? (
             <div className="rounded-3xl border border-dashed border-border bg-white/60 p-8 text-center text-sm text-muted-foreground">
-              No Outlook accounts are saved yet. Use the form to add your first one.
+              No email accounts are saved yet. Use the form to add your first one.
             </div>
           ) : (
             savedAccounts.map((account) => (
@@ -345,7 +427,7 @@ export function ConnectionForm() {
                     </div>
                     <p className="text-sm text-muted-foreground">{account.email}</p>
                     <p className="text-xs text-muted-foreground">
-                      {account.host}:{account.port} • {account.security} • {account.username}
+                      {account.host}:{account.port} / {account.security} / {account.username}
                     </p>
                   </div>
 
@@ -384,17 +466,38 @@ export function ConnectionForm() {
 
       <Card className="border-white/80">
         <CardHeader>
-          <CardTitle>Add Outlook Account Or Use One-Time Connection</CardTitle>
+          <CardTitle>Add Email Account Or Use One-Time Connection</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="rounded-3xl border border-dashed border-primary/20 bg-primary/5 p-5 text-sm leading-7 text-muted-foreground">
-            Outlook defaults: <strong>Host</strong> `outlook.office365.com`,{" "}
-            <strong>Port</strong> `993`, <strong>Security</strong> `SSL/TLS`.
-            Saved account passwords are encrypted before they are stored in the
-            database.
+            Choose a provider to fill the incoming IMAP host, port, and security.
+            For Zoho, make sure IMAP access is enabled in Zoho Mail settings and
+            use an app-specific password when your account requires it. Saved
+            account passwords are encrypted before they are stored in the database.
           </div>
 
           <div className="grid gap-5 md:grid-cols-2">
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="provider">Email provider</Label>
+              <select
+                id="provider"
+                className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                value={providerId}
+                onChange={(event) =>
+                  applyProviderPreset(event.target.value as ProviderPreset["id"])
+                }
+              >
+                {providerPresets.map((preset) => (
+                  <option key={preset.id} value={preset.id}>
+                    {preset.name}
+                  </option>
+                ))}
+              </select>
+              <p className="text-xs leading-5 text-muted-foreground">
+                {selectedPreset.description}
+              </p>
+            </div>
+
             <div className="space-y-2 md:col-span-2">
               <Label htmlFor="label">Account label</Label>
               <div className="relative">
@@ -417,9 +520,9 @@ export function ConnectionForm() {
                   id="email"
                   autoComplete="email"
                   className="pl-10"
-                  placeholder="name@outlook.com"
+                  placeholder="name@example.com"
                   value={form.email}
-                  onChange={(event) => updateField("email", event.target.value)}
+                  onChange={(event) => updateEmail(event.target.value)}
                 />
               </div>
             </div>
@@ -432,7 +535,7 @@ export function ConnectionForm() {
                   id="username"
                   autoComplete="username"
                   className="pl-10"
-                  placeholder="Usually the full Outlook email"
+                  placeholder={selectedPreset.usernamePlaceholder}
                   value={form.username}
                   onChange={(event) => updateField("username", event.target.value)}
                 />
@@ -446,7 +549,7 @@ export function ConnectionForm() {
                 <Input
                   id="host"
                   className="pl-10"
-                  placeholder="outlook.office365.com"
+                  placeholder={selectedPreset.host || "imap.example.com"}
                   value={form.host}
                   onChange={(event) => updateField("host", event.target.value)}
                 />
@@ -488,7 +591,7 @@ export function ConnectionForm() {
                   type="password"
                   autoComplete="current-password"
                   className="pl-10"
-                  placeholder="Enter account password or Outlook app password"
+                  placeholder={selectedPreset.passwordPlaceholder}
                   value={form.password}
                   onChange={(event) => updateField("password", event.target.value)}
                 />
@@ -538,7 +641,14 @@ export function ConnectionForm() {
                 Save & Use Account
               </Button>
             </div>
-            <Button type="button" variant="ghost" onClick={() => setForm(toFormState())}>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => {
+                setProviderId("outlook");
+                setForm(toFormState());
+              }}
+            >
               Reset Form
             </Button>
           </div>

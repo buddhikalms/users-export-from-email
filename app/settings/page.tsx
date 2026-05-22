@@ -15,11 +15,11 @@ export default async function SettingsPage() {
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">
             Workspace
           </p>
-          <h1 className="text-4xl">Saved Outlook Accounts & Connection Settings</h1>
+          <h1 className="text-4xl">Saved Email Accounts & Connection Settings</h1>
           <p className="max-w-3xl text-base leading-7 text-muted-foreground">
-            Add multiple Outlook IMAP accounts to the database, keep passwords
-            encrypted server-side, and choose any saved account or one-time manual
-            connection when you want to sync folders.
+            Add multiple IMAP accounts to the database, keep passwords encrypted
+            server-side, and choose any saved account or one-time manual connection
+            when you want to sync folders.
           </p>
         </div>
 

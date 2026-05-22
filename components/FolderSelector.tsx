@@ -50,7 +50,7 @@ export function FolderSelector({
         | undefined;
 
       if (!response.ok) {
-        throw new Error(payload?.error ?? "Unable to fetch Outlook folders.");
+        throw new Error(payload?.error ?? "Unable to fetch mail folders.");
       }
 
       const nextFolders = payload?.folders ?? [];
@@ -98,7 +98,7 @@ export function FolderSelector({
 
   function continueToSync() {
     if (selected.length === 0) {
-      setError("Select at least one Outlook folder before syncing.");
+      setError("Select at least one mail folder before syncing.");
       return;
     }
 
@@ -113,7 +113,7 @@ export function FolderSelector({
         <div>
           <CardTitle>Select Folders To Sync</CardTitle>
           <p className="mt-2 text-sm leading-6 text-muted-foreground">
-            Choose the Outlook folders whose message headers should be scanned for
+            Choose the mail folders whose message headers should be scanned for
             unique contacts.
           </p>
           <p className="mt-2 text-xs uppercase tracking-[0.18em] text-primary">
@@ -161,7 +161,7 @@ export function FolderSelector({
         <div className="grid gap-3">
           {loading ? (
             <div className="rounded-3xl border border-dashed border-border bg-white/60 p-8 text-center text-sm text-muted-foreground">
-              Loading folders from Outlook...
+              Loading mail folders...
             </div>
           ) : folders.length === 0 ? (
             <div className="rounded-3xl border border-dashed border-border bg-white/60 p-8 text-center text-sm text-muted-foreground">

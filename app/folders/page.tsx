@@ -46,8 +46,8 @@ export default function FoldersPage() {
           </p>
           <h1 className="text-4xl">Folder Selection</h1>
           <p className="max-w-2xl text-base leading-7 text-muted-foreground">
-            Load the Outlook mailbox folder list, choose the folders you want to scan,
-            and continue to contact extraction.
+            Load the mailbox folder list, choose the folders you want to scan, and
+            continue to contact extraction.
           </p>
         </div>
 

@@ -45,7 +45,7 @@ export default function ResultsPage() {
         const payload = (await response.json()) as SyncResult & { error?: string };
 
         if (!response.ok) {
-          throw new Error(payload.error ?? "Unable to sync Outlook folders.");
+          throw new Error(payload.error ?? "Unable to sync mail folders.");
         }
 
         setSyncResult(payload);

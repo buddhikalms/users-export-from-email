@@ -42,7 +42,7 @@ export async function POST(request: Request) {
       headers: {
         "Content-Type":
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        "Content-Disposition": `attachment; filename="outlook-contacts-${timestamp}.xlsx"`,
+        "Content-Disposition": `attachment; filename="email-contacts-${timestamp}.xlsx"`,
       },
     });
   } catch (error) {
