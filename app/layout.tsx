@@ -53,6 +53,11 @@ export default async function RootLayout({
                       <Link href="/settings">Workspace</Link>
                     </Button>
                   ) : null}
+                  {session?.user ? (
+                    <Button asChild size="sm" variant="ghost">
+                      <Link href={"/settings/kit" as "/settings"}>Kit</Link>
+                    </Button>
+                  ) : null}
                 </nav>
               </div>
 

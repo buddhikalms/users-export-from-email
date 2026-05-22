@@ -23,6 +23,7 @@ Next.js 16 App Router application for securely managing multiple email IMAP acco
 - Manual one-time IMAP connection or saved-account sync
 - Folder-wise contact extraction and Excel export
 - Last-seen date filtering before export
+- Direct Kit subscriber sync with tags, forms, folder mappings, and encrypted API key storage
 - Admin overview page for users and stored accounts
 
 ## Install
@@ -49,6 +50,8 @@ Required keys:
 - `ACCOUNT_ENCRYPTION_KEY`
 - `IMAP_CONNECT_TIMEOUT_MS`
 - `IMAP_SOCKET_TIMEOUT_MS`
+- `KIT_API_KEY` (optional fallback/documentation placeholder; saved user keys are stored encrypted)
+- `KIT_API_SECRET` (reserved for Kit API workflows that require a secret)
 
 ## Database Setup
 
@@ -96,6 +99,7 @@ npm run dev
 6. Save one or more IMAP accounts in `/settings`.
 7. Choose a saved account or use a one-time manual connection.
 8. Select folders, sync, filter by last seen date if needed, and export the workbook.
+9. Optional: open `/settings/kit`, connect Kit, choose tags/forms, map folders to tags, then use `Sync to Kit` from `/export`.
 
 ## Default IMAP Settings
 
@@ -119,9 +123,22 @@ Zoho paid organization/domain accounts:
 - The app uses IMAP only and does not depend on Microsoft Graph API.
 - Passwords for manual connections are used server-side for IMAP calls and are not logged.
 - Saved email account passwords are encrypted before database storage.
+- Saved Kit API keys are encrypted before database storage and are never exposed to the browser after saving.
 - User login passwords are hashed with `bcryptjs`.
 - Sync results remain in browser session storage for the export flow.
 - The current implementation is suited to local or controlled deployments; production deployments should rotate secrets, use stronger operational monitoring, and store MySQL credentials securely.
+
+## Kit Sync
+
+1. Run `npm install` to install dependencies, including `axios`.
+2. Run `npm run db:generate`.
+3. Run `npm run db:push` to add `KitSettings` and `KitFolderTagMap`.
+4. Start the app and open `/settings/kit`.
+5. Paste a Kit V4 API key, or choose legacy V3 and paste both the V3 API key and API secret. Test and save it, then select a default tag/form.
+6. After an email sync, return to `/settings/kit` to map each synced folder to a Kit tag.
+7. Open `/export` and click `Sync to Kit`.
+
+The Kit sync cleans and normalizes emails, skips common system senders, dedupes contacts, upserts subscribers in Kit, applies selected tags, optionally adds subscribers to a selected form, retries failed uploads once, and returns a summary with upload logs.
 
 
 ## Keywords - search on email exporter 

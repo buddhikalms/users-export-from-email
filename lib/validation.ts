@@ -145,6 +145,41 @@ export const ignoredEmailSchema = z.object({
   email: contactEmailSchema,
 });
 
+export const kitConnectSchema = z.object({
+  apiVersion: z.enum(["v4", "v3"]).default("v4"),
+  apiKey: z.string().trim().min(1, "Kit API key is required."),
+  apiSecret: z.string().trim().optional(),
+  defaultTagId: z.string().trim().optional(),
+  defaultFormId: z.string().trim().optional(),
+}).superRefine((value, context) => {
+  if (value.apiVersion === "v3" && !value.apiSecret) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Kit V3 sync requires the API secret.",
+      path: ["apiSecret"],
+    });
+  }
+});
+
+export const kitMappingSchema = z.object({
+  folderPath: z.string().min(1, "Folder path is required."),
+  tagId: z.string().min(1, "Select a Kit tag."),
+  tagName: z.string().min(1, "Kit tag name is required."),
+});
+
+export const kitSettingsUpdateSchema = z.object({
+  defaultTagId: z.string().trim().optional(),
+  defaultFormId: z.string().trim().optional(),
+  folderTagMappings: z.array(kitMappingSchema).default([]),
+});
+
+export const kitSyncRequestSchema = z.object({
+  syncResult: syncResultSchema,
+  defaultTagId: z.string().trim().optional(),
+  defaultFormId: z.string().trim().optional(),
+  folderTagMappings: z.array(kitMappingSchema).default([]),
+});
+
 export const defaultConnectionSettings = {
   email: "",
   host: "outlook.office365.com",

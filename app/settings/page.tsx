@@ -1,9 +1,11 @@
 import { getServerSession } from "next-auth";
+import Link from "next/link";
 
 import { authOptions } from "@/auth";
 import { ConnectionForm } from "@/components/ConnectionForm";
 import { IgnoredEmailsForm } from "@/components/IgnoredEmailsForm";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 export default async function SettingsPage() {
   const session = await getServerSession(authOptions);
@@ -23,9 +25,14 @@ export default async function SettingsPage() {
           </p>
         </div>
 
-        <Badge>
-          Signed in as {session?.user?.name} ({session?.user?.role})
-        </Badge>
+        <div className="flex flex-wrap items-center gap-3">
+          <Button asChild variant="outline">
+            <Link href={"/settings/kit" as "/settings"}>Kit Settings</Link>
+          </Button>
+          <Badge>
+            Signed in as {session?.user?.name} ({session?.user?.role})
+          </Badge>
+        </div>
       </div>
 
       <div className="space-y-6">

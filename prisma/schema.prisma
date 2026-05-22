@@ -17,6 +17,11 @@ enum SecurityType {
   starttls
 }
 
+enum KitApiVersion {
+  v4
+  v3
+}
+
 model User {
   id            String             @id @default(cuid())
   name          String
@@ -25,6 +30,7 @@ model User {
   role          UserRole           @default(USER)
   savedAccounts SavedEmailAccount[]
   ignoredEmails IgnoredEmail[]
+  kitSettings   KitSettings?
   createdAt     DateTime           @default(now())
   updatedAt     DateTime           @updatedAt
 }
@@ -59,4 +65,36 @@ model IgnoredEmail {
 
   @@index([ownerId])
   @@unique([ownerId, email])
+}
+
+model KitSettings {
+  id                 String             @id @default(cuid())
+  ownerId            String             @unique
+  apiVersion         KitApiVersion      @default(v4)
+  encryptedApiKey    String
+  encryptedApiSecret String?
+  encryptionIv       String
+  encryptionTag      String
+  secretEncryptionIv String?
+  secretEncryptionTag String?
+  defaultTagId       String?
+  defaultFormId      String?
+  folderTagMappings  KitFolderTagMap[]
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  owner              User               @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+}
+
+model KitFolderTagMap {
+  id            String      @id @default(cuid())
+  kitSettingsId String
+  folderPath    String
+  tagId         String
+  tagName       String
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  kitSettings   KitSettings @relation(fields: [kitSettingsId], references: [id], onDelete: Cascade)
+
+  @@unique([kitSettingsId, folderPath])
+  @@index([kitSettingsId])
 }

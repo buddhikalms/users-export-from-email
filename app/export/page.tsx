@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import { ExportButton } from "@/components/ExportButton";
+import { KitSyncPanel } from "@/components/KitSyncPanel";
 import { filterSyncResultByLastSeen } from "@/lib/sync-result";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -66,6 +67,10 @@ export default function ExportPage() {
             <Link href="/">Home</Link>
           </Button>
         </div>
+      </div>
+
+      <div className="mb-6">
+        <KitSyncPanel syncResult={filteredSyncResult} />
       </div>
 
       <div className="grid gap-5 md:grid-cols-3">
