@@ -31,7 +31,7 @@ export default function ExportPage() {
 
   if (!ready || !syncResult) {
     return (
-      <main className="mx-auto max-w-5xl px-6 py-12 lg:px-10">
+      <main className="w-full">
         <div className="rounded-[1.75rem] border border-dashed border-border bg-white/70 p-8 text-sm text-muted-foreground">
           Preparing workbook export data...
         </div>
@@ -46,7 +46,7 @@ export default function ExportPage() {
   );
 
   return (
-    <main className="mx-auto max-w-5xl px-6 py-12 lg:px-10">
+    <main className="w-full">
       <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div className="space-y-3">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">

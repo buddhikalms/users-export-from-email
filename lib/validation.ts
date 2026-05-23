@@ -161,6 +161,38 @@ export const kitConnectSchema = z.object({
   }
 });
 
+export const kitAccountCreateSchema = z.object({
+  name: z.string().trim().min(2, "Kit account name is required.").max(80, "Kit account name is too long."),
+  apiVersion: z.enum(["v4", "v3"]).default("v4"),
+  apiKey: z.string().trim().min(1, "Kit API key is required."),
+  apiSecret: z.string().trim().optional(),
+  isDefault: z.boolean().optional(),
+}).superRefine((value, context) => {
+  if (value.apiVersion === "v3" && !value.apiSecret) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Kit V3 accounts require the API secret.",
+      path: ["apiSecret"],
+    });
+  }
+});
+
+export const kitAccountUpdateSchema = z.object({
+  name: z.string().trim().min(2).max(80).optional(),
+  apiVersion: z.enum(["v4", "v3"]).optional(),
+  apiKey: z.string().trim().optional(),
+  apiSecret: z.string().trim().optional(),
+  isDefault: z.boolean().optional(),
+}).superRefine((value, context) => {
+  if (value.apiVersion === "v3" && value.apiKey && !value.apiSecret) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Enter the API secret when replacing V3 credentials.",
+      path: ["apiSecret"],
+    });
+  }
+});
+
 export const kitMappingSchema = z.object({
   folderPath: z.string().min(1, "Folder path is required."),
   tagId: z.string().min(1, "Select a Kit tag."),
@@ -178,6 +210,30 @@ export const kitSyncRequestSchema = z.object({
   defaultTagId: z.string().trim().optional(),
   defaultFormId: z.string().trim().optional(),
   folderTagMappings: z.array(kitMappingSchema).default([]),
+});
+
+export const kitAccountSyncRequestSchema = z.object({
+  syncResult: syncResultSchema,
+  destinationType: z.enum(["tag", "form"]),
+  tagId: z.string().trim().optional(),
+  formId: z.string().trim().optional(),
+  destinationName: z.string().trim().optional(),
+}).superRefine((value, context) => {
+  if (value.destinationType === "tag" && !value.tagId) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Select a Kit tag.",
+      path: ["tagId"],
+    });
+  }
+
+  if (value.destinationType === "form" && !value.formId) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Select a Kit form.",
+      path: ["formId"],
+    });
+  }
 });
 
 export const defaultConnectionSettings = {

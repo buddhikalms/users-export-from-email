@@ -31,6 +31,7 @@ model User {
   savedAccounts SavedEmailAccount[]
   ignoredEmails IgnoredEmail[]
   kitSettings   KitSettings?
+  kitAccounts   KitAccount[]
   createdAt     DateTime           @default(now())
   updatedAt     DateTime           @updatedAt
 }
@@ -97,4 +98,24 @@ model KitFolderTagMap {
 
   @@unique([kitSettingsId, folderPath])
   @@index([kitSettingsId])
+}
+
+model KitAccount {
+  id                  String        @id @default(cuid())
+  ownerId             String
+  name                String
+  apiVersion          KitApiVersion @default(v4)
+  encryptedApiKey     String
+  encryptedApiSecret  String?
+  encryptionIv        String
+  encryptionTag       String
+  secretEncryptionIv  String?
+  secretEncryptionTag String?
+  isDefault           Boolean       @default(false)
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  owner               User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  @@index([ownerId])
+  @@unique([ownerId, name])
 }

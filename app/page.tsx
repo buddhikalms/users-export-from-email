@@ -6,6 +6,8 @@ import { authOptions } from "@/auth";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { DashboardOverview } from "@/components/dashboard/DashboardOverview";
+import { db } from "@/lib/db";
 
 const features = [
   {
@@ -36,6 +38,23 @@ const features = [
 
 export default async function HomePage() {
   const session = await getServerSession(authOptions);
+
+  if (session?.user?.id) {
+    const [accountCount, kitAccountCount, ignoredEmailCount] = await Promise.all([
+      db.savedEmailAccount.count({ where: { ownerId: session.user.id } }),
+      db.kitAccount.count({ where: { ownerId: session.user.id } }),
+      db.ignoredEmail.count({ where: { ownerId: session.user.id } }),
+    ]);
+
+    return (
+      <DashboardOverview
+        accountCount={accountCount}
+        ignoredEmailCount={ignoredEmailCount}
+        kitAccountCount={kitAccountCount}
+        userName={session.user.name}
+      />
+    );
+  }
 
   return (
     <main className="relative overflow-hidden">

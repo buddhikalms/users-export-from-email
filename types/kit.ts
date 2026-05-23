@@ -5,6 +5,17 @@ export interface KitTag {
   name: string;
 }
 
+export interface KitAccountSummary {
+  id: string;
+  name: string;
+  apiVersion: "v4" | "v3";
+  maskedApiKey: string;
+  hasApiSecret: boolean;
+  isDefault: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface KitForm {
   id: string;
   name: string;
@@ -38,6 +49,9 @@ export interface KitPreparedContact {
 }
 
 export interface KitSyncSummary {
+  kitAccountName?: string;
+  destinationName?: string;
+  destinationType?: "tag" | "form";
   totalContacts: number;
   uploaded: number;
   skippedDuplicates: number;

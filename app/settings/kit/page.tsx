@@ -13,7 +13,7 @@ export default async function KitSettingsPage() {
   }
 
   return (
-    <main className="mx-auto max-w-7xl px-6 py-12 lg:px-10">
+    <main className="w-full">
       <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div className="space-y-3">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">
@@ -21,8 +21,8 @@ export default async function KitSettingsPage() {
           </p>
           <h1 className="text-4xl">Kit Subscriber Sync Settings</h1>
           <p className="max-w-3xl text-base leading-7 text-muted-foreground">
-            Connect Kit, choose default export targets, and map synced mailbox
-            folders to Kit tags before uploading contacts.
+            Connect multiple Kit accounts, test credentials, edit saved accounts,
+            and choose which account should be the default export destination.
           </p>
         </div>
 

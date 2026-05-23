@@ -99,7 +99,7 @@ npm run dev
 6. Save one or more IMAP accounts in `/settings`.
 7. Choose a saved account or use a one-time manual connection.
 8. Select folders, sync, filter by last seen date if needed, and export the workbook.
-9. Optional: open `/settings/kit`, connect Kit, choose tags/forms, map folders to tags, then use `Sync to Kit` from `/export`.
+9. Optional: open `/settings/kit`, connect one or more Kit accounts, then use `Export Contacts to Kit` from `/export`.
 
 ## Default IMAP Settings
 
@@ -134,9 +134,9 @@ Zoho paid organization/domain accounts:
 2. Run `npm run db:generate`.
 3. Run `npm run db:push` to add `KitSettings` and `KitFolderTagMap`.
 4. Start the app and open `/settings/kit`.
-5. Paste a Kit V4 API key, or choose legacy V3 and paste both the V3 API key and API secret. Test and save it, then select a default tag/form.
-6. After an email sync, return to `/settings/kit` to map each synced folder to a Kit tag.
-7. Open `/export` and click `Sync to Kit`.
+5. Add one or more Kit accounts. Paste a Kit V4 API key, or choose legacy V3 and paste both the V3 API key and API secret.
+6. Set a default Kit account if desired.
+7. Open `/export`, choose the Kit account, wait for that account's tags/forms to load, choose a tag or form, and click `Export to Selected Kit Account`.
 
 The Kit sync cleans and normalizes emails, skips common system senders, dedupes contacts, upserts subscribers in Kit, applies selected tags, optionally adds subscribers to a selected form, retries failed uploads once, and returns a summary with upload logs.
 

@@ -48,7 +48,7 @@ export default async function AdminPage() {
   ]);
 
   return (
-    <main className="mx-auto max-w-6xl px-6 py-12 lg:px-10">
+    <main className="w-full">
       <div className="mb-8 space-y-3">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">
           Admin
