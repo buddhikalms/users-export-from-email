@@ -158,7 +158,7 @@ export function IgnoredEmailsForm() {
               <Input
                 id="ignored-email"
                 className="pl-10"
-                placeholder="madam@example.com"
+                placeholder="Email address to ignore"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 onKeyDown={(event) => {

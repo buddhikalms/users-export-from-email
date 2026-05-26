@@ -12,27 +12,33 @@ import {
   YAxis,
 } from "recharts";
 
-const growthData = [
-  { month: "Jan", contacts: 420, exports: 120 },
-  { month: "Feb", contacts: 680, exports: 180 },
-  { month: "Mar", contacts: 930, exports: 240 },
-  { month: "Apr", contacts: 1280, exports: 310 },
-  { month: "May", contacts: 1640, exports: 390 },
-  { month: "Jun", contacts: 2130, exports: 520 },
-];
+export type GrowthPoint = {
+  month: string;
+  contacts: number;
+  exports?: number;
+};
 
-const folderData = [
-  { name: "Inbox", value: 42 },
-  { name: "Sales", value: 36 },
-  { name: "Leads", value: 29 },
-  { name: "Archive", value: 18 },
-  { name: "Support", value: 12 },
-];
+export type FolderPoint = {
+  name: string;
+  value: number;
+};
 
-export function ContactGrowthChart() {
+function EmptyChart({ label }: { label: string }) {
+  return (
+    <div className="grid h-[260px] place-items-center rounded-3xl border border-dashed border-border bg-secondary/30 text-sm text-muted-foreground">
+      {label}
+    </div>
+  );
+}
+
+export function ContactGrowthChart({ data = [] }: { data?: GrowthPoint[] }) {
+  if (data.length === 0) {
+    return <EmptyChart label="No contact growth data yet" />;
+  }
+
   return (
     <ResponsiveContainer height={300} width="100%">
-      <AreaChart data={growthData}>
+      <AreaChart data={data}>
         <defs>
           <linearGradient id="contactGrowth" x1="0" x2="0" y1="0" y2="1">
             <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.32} />
@@ -62,10 +68,14 @@ export function ContactGrowthChart() {
   );
 }
 
-export function FolderActivityChart() {
+export function FolderActivityChart({ data = [] }: { data?: FolderPoint[] }) {
+  if (data.length === 0) {
+    return <EmptyChart label="No folder activity data yet" />;
+  }
+
   return (
     <ResponsiveContainer height={260} width="100%">
-      <BarChart data={folderData}>
+      <BarChart data={data}>
         <CartesianGrid stroke="hsl(var(--border))" strokeDasharray="3 3" vertical={false} />
         <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" />
         <YAxis stroke="hsl(var(--muted-foreground))" />

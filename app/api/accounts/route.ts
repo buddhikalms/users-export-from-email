@@ -1,21 +1,15 @@
-import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
-import { authOptions } from "@/auth";
 import { listSavedAccounts, saveEmailAccount } from "@/lib/server-accounts";
+import { getVerifiedSessionUserId, staleSessionMessage } from "@/lib/session-user";
 import { savedEmailAccountSchema } from "@/lib/validation";
 
 export const runtime = "nodejs";
 
-async function getSessionUserId() {
-  const session = await getServerSession(authOptions);
-  return session?.user?.id ?? null;
-}
-
 export async function GET() {
-  const userId = await getSessionUserId();
+  const userId = await getVerifiedSessionUserId();
   if (!userId) {
-    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+    return NextResponse.json({ error: staleSessionMessage }, { status: 401 });
   }
 
   const accounts = await listSavedAccounts(userId);
@@ -23,9 +17,9 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const userId = await getSessionUserId();
+  const userId = await getVerifiedSessionUserId();
   if (!userId) {
-    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+    return NextResponse.json({ error: staleSessionMessage }, { status: 401 });
   }
 
   try {

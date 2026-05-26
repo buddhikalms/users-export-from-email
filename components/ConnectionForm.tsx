@@ -81,7 +81,7 @@ const providerPresets: ProviderPreset[] = [
     port: 993,
     security: "ssl_tls",
     description: "Use for paid Zoho organization users with domain-based addresses.",
-    usernamePlaceholder: "you@yourdomain.com",
+    usernamePlaceholder: "Full mailbox email address",
     passwordPlaceholder: "Enter Zoho app-specific password if required",
   },
   {
@@ -505,7 +505,7 @@ export function ConnectionForm() {
                 <Input
                   id="label"
                   className="pl-10"
-                  placeholder="Example: Sales Inbox"
+                  placeholder="Account label"
                   value={form.label}
                   onChange={(event) => updateField("label", event.target.value)}
                 />
@@ -520,7 +520,7 @@ export function ConnectionForm() {
                   id="email"
                   autoComplete="email"
                   className="pl-10"
-                  placeholder="name@example.com"
+                  placeholder="Email address"
                   value={form.email}
                   onChange={(event) => updateEmail(event.target.value)}
                 />
@@ -549,7 +549,7 @@ export function ConnectionForm() {
                 <Input
                   id="host"
                   className="pl-10"
-                  placeholder={selectedPreset.host || "imap.example.com"}
+                  placeholder={selectedPreset.host || "IMAP host"}
                   value={form.host}
                   onChange={(event) => updateField("host", event.target.value)}
                 />

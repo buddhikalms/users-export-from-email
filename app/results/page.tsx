@@ -135,7 +135,12 @@ export default function ResultsPage() {
         </Alert>
       ) : null}
 
-      {!loading && syncResult ? <ResultsTable syncResult={syncResult} /> : null}
+      {!loading && syncResult ? (
+        <ResultsTable
+          syncResult={syncResult}
+          onFilteredResultChange={(filteredSyncResult) => saveSyncResult(filteredSyncResult)}
+        />
+      ) : null}
     </main>
   );
 }

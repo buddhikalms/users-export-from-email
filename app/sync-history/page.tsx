@@ -2,13 +2,44 @@ import { History } from "lucide-react";
 
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { SyncHistoryTable, type SyncRow } from "@/components/tables/SyncHistoryTable";
+import { db } from "@/lib/db";
 
-const rows: SyncRow[] = [
-  { workflow: "Inbox weekly scan", status: "Success", duration: "01:22", processed: 842, duplicates: 96, invalid: 8 },
-  { workflow: "Kit export batch", status: "Partial", duration: "03:14", processed: 410, duplicates: 52, invalid: 3 },
-];
+function formatDuration(startedAt: Date | null, completedAt: Date | null) {
+  if (!startedAt || !completedAt) {
+    return "-";
+  }
 
-export default function SyncHistoryPage() {
+  const seconds = Math.max(0, Math.round((completedAt.getTime() - startedAt.getTime()) / 1000));
+  const minutes = Math.floor(seconds / 60);
+  const remainder = seconds % 60;
+
+  return `${String(minutes).padStart(2, "0")}:${String(remainder).padStart(2, "0")}`;
+}
+
+function titleCase(value: string) {
+  return value
+    .toLowerCase()
+    .split("_")
+    .map((part) => part.slice(0, 1).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+export default async function SyncHistoryPage() {
+  const syncRuns = await db.syncRun.findMany({
+    orderBy: { createdAt: "desc" },
+    take: 500,
+  });
+  const rows: SyncRow[] = syncRuns.map((run) => ({
+    workflow: run.platform
+      ? `${titleCase(run.platform)} sync`
+      : run.targetName || run.targetType || "Sync run",
+    status: titleCase(run.status),
+    duration: formatDuration(run.startedAt, run.completedAt),
+    processed: run.totalContacts,
+    duplicates: run.skippedDuplicates,
+    invalid: run.failed,
+  }));
+
   return (
     <div className="space-y-6">
       <div>

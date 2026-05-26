@@ -19,9 +19,9 @@ const bodyFont = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Email Contact Exporter",
+  title: "BuddhiEmailExtractor",
   description:
-    "Connect to email accounts over IMAP, extract unique contacts from selected folders, and export them to Excel.",
+    "Enterprise email lead extraction, CRM cleanup, file export, and marketing platform sync.",
 };
 
 export default async function RootLayout({

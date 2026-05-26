@@ -141,6 +141,8 @@ export const exportExcelRequestSchema = z.object({
   filter: lastSeenFilterSchema.default({ mode: "all" }),
 });
 
+export const exportFileRequestSchema = exportExcelRequestSchema;
+
 export const ignoredEmailSchema = z.object({
   email: contactEmailSchema,
 });
@@ -234,6 +236,54 @@ export const kitAccountSyncRequestSchema = z.object({
       path: ["formId"],
     });
   }
+});
+
+export const automationRuleCreateSchema = z.object({
+  name: z.string().trim().min(2, "Rule name is required.").max(120, "Rule name is too long."),
+  trigger: z.enum(["SCHEDULED", "FOLDER_SYNCED", "CONTACT_CREATED", "TAG_MATCHED", "MANUAL"]),
+  enabled: z.boolean().optional().default(true),
+  schedule: z.string().trim().max(120, "Schedule is too long.").optional(),
+  conditionText: z.string().trim().max(500, "Conditions are too long.").optional(),
+  actionText: z.string().trim().max(500, "Actions are too long.").optional(),
+  nextRunAt: z.string().optional(),
+}).superRefine((value, context) => {
+  if (value.trigger === "SCHEDULED" && !value.schedule) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Enter a schedule for scheduled rules.",
+      path: ["schedule"],
+    });
+  }
+
+  if (value.nextRunAt && Number.isNaN(new Date(value.nextRunAt).getTime())) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Enter a valid next run date.",
+      path: ["nextRunAt"],
+    });
+  }
+});
+
+export const integrationAccountCreateSchema = z.object({
+  platform: z.enum([
+    "kit",
+    "mailchimp",
+    "brevo",
+    "beehiiv",
+    "activecampaign",
+    "convertkit_legacy",
+    "hubspot",
+    "mailerlite",
+    "constant_contact",
+    "sendgrid_marketing",
+    "campaign_monitor",
+  ]),
+  name: z.string().trim().min(2, "Account name is required.").max(80, "Account name is too long."),
+  apiKey: z.string().trim().min(1, "API key is required."),
+  apiSecret: z.string().trim().optional(),
+  serverPrefix: z.string().trim().optional(),
+  externalAccountId: z.string().trim().optional(),
+  isDefault: z.boolean().optional().default(false),
 });
 
 export const defaultConnectionSettings = {

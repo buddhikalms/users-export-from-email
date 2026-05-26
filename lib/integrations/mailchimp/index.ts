@@ -1,0 +1,1 @@
+export { mailchimpIntegration } from "./api";

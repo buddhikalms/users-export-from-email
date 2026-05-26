@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { ElementType } from "react";
 import {
-  ArrowUpRight,
   CheckCircle2,
   Clock3,
   FileSpreadsheet,
@@ -12,29 +11,22 @@ import {
 } from "lucide-react";
 
 import { ContactGrowthChart, FolderActivityChart } from "@/components/charts/DashboardCharts";
+import type { FolderPoint, GrowthPoint } from "@/components/charts/DashboardCharts";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 interface DashboardOverviewProps {
   accountCount: number;
+  contactCount: number;
+  exportCount: number;
+  folderActivity: FolderPoint[];
+  growthData: GrowthPoint[];
   kitAccountCount: number;
   ignoredEmailCount: number;
+  latestSyncTime: string;
+  topDomains: Array<{ domain: string; count: number }>;
   userName?: string | null;
 }
-
-const activity = [
-  ["Email sync completed", "Inbox and Sales folders scanned", "2 min ago", "Success"],
-  ["Kit export queued", "Potential Clients tag selected", "18 min ago", "Partial"],
-  ["Duplicate cleanup", "124 repeated addresses skipped", "1 hr ago", "Success"],
-  ["Excel workbook generated", "Folder-wise contact workbook", "Yesterday", "Success"],
-];
-
-const topSenders = [
-  ["partners.example.com", "428 contacts"],
-  ["agency.co", "286 contacts"],
-  ["gmail.com", "231 contacts"],
-  ["linkedin.com", "190 contacts"],
-];
 
 function StatCard({
   label,
@@ -65,8 +57,14 @@ function StatCard({
 
 export function DashboardOverview({
   accountCount,
+  contactCount,
+  exportCount,
+  folderActivity,
+  growthData,
   kitAccountCount,
   ignoredEmailCount,
+  latestSyncTime,
+  topDomains,
   userName,
 }: DashboardOverviewProps) {
   return (
@@ -79,8 +77,8 @@ export function DashboardOverview({
               Welcome back{userName ? `, ${userName}` : ""}.
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">
-              Monitor mailbox syncs, clean contact intelligence, Kit exports, and
-              workbook delivery from one full-width operating dashboard.
+              Monitor mailbox syncs, lead intelligence, CRM cleanup, marketing
+              platform exports, automations, and workbook delivery from one operating dashboard.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -91,9 +89,9 @@ export function DashboardOverview({
               </Link>
             </Button>
             <Button asChild variant="outline">
-              <Link href={"/settings/kit" as "/settings"}>
+              <Link href={"/integrations" as "/"}>
                 <Sparkles className="h-4 w-4" />
-                Kit Accounts
+                Integrations
               </Link>
             </Button>
           </div>
@@ -101,12 +99,12 @@ export function DashboardOverview({
       </section>
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
-        <StatCard detail="Across latest sync sessions" icon={UsersRound} label="Total Contacts" value="2,130" />
-        <StatCard detail="After global dedupe" icon={ShieldCheck} label="Unique Contacts" value="1,804" />
-        <StatCard detail={`${accountCount} saved mailboxes`} icon={MailCheck} label="Emails Synced" value="18.2k" />
-        <StatCard detail="Last 30 days" icon={Sparkles} label="Kit Subscribers Exported" value="742" />
-        <StatCard detail="Ready for exports" icon={CheckCircle2} label="Active Kit Accounts" value={String(kitAccountCount)} />
-        <StatCard detail={`${ignoredEmailCount} ignore rules`} icon={Clock3} label="Last Sync Time" value="2m" />
+        <StatCard detail="Saved in CRM" icon={UsersRound} label="Total Contacts" value={String(contactCount)} />
+        <StatCard detail="Unique by saved contact record" icon={ShieldCheck} label="Unique Contacts" value={String(contactCount)} />
+        <StatCard detail={`${accountCount} saved mailboxes`} icon={MailCheck} label="Saved Mailboxes" value={String(accountCount)} />
+        <StatCard detail="File exports recorded" icon={FileSpreadsheet} label="Exports" value={String(exportCount)} />
+        <StatCard detail="Ready for exports" icon={CheckCircle2} label="Marketing Accounts" value={String(kitAccountCount)} />
+        <StatCard detail={`${ignoredEmailCount} ignore rules`} icon={Clock3} label="Last Sync" value={latestSyncTime} />
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
@@ -118,13 +116,13 @@ export function DashboardOverview({
             </div>
             <Button size="sm" variant="outline">View analytics</Button>
           </div>
-          <ContactGrowthChart />
+          <ContactGrowthChart data={growthData} />
         </div>
 
         <div className="rounded-3xl border border-border/70 bg-card/82 p-5 shadow-sm">
           <h2 className="text-xl font-semibold">Folder Activity</h2>
           <p className="mb-5 text-sm text-muted-foreground">Top folders by contact yield</p>
-          <FolderActivityChart />
+          <FolderActivityChart data={folderActivity} />
         </div>
       </section>
 
@@ -136,38 +134,27 @@ export function DashboardOverview({
               <Link href="/sync-history">View all</Link>
             </Button>
           </div>
-          <div className="divide-y divide-border/70">
-            {activity.map(([title, detail, time, status]) => (
-              <div key={`${title}-${time}`} className="flex items-center justify-between gap-4 py-4">
-                <div>
-                  <div className="font-medium">{title}</div>
-                  <div className="text-sm text-muted-foreground">{detail}</div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Badge className={status === "Success" ? "bg-accent/15 text-accent-foreground dark:text-accent" : "bg-secondary text-secondary-foreground"}>
-                    {status}
-                  </Badge>
-                  <span className="text-xs text-muted-foreground">{time}</span>
-                </div>
-              </div>
-            ))}
+          <div className="rounded-3xl border border-dashed border-border bg-secondary/30 p-8 text-center text-sm text-muted-foreground">
+            Sync activity will appear here after mailbox or marketing sync runs are saved.
           </div>
         </div>
 
         <div className="rounded-3xl border border-border/70 bg-card/82 p-5 shadow-sm">
           <h2 className="text-xl font-semibold">Most Active Domains</h2>
-          <div className="mt-4 space-y-3">
-            {topSenders.map(([domain, count]) => (
-              <div key={domain} className="flex items-center justify-between rounded-2xl bg-secondary/70 p-3">
-                <span className="text-sm font-medium">{domain}</span>
-                <span className="text-xs text-muted-foreground">{count}</span>
-              </div>
-            ))}
-          </div>
-          <Button className="mt-5 w-full" variant="outline">
-            Domain analytics
-            <ArrowUpRight className="h-4 w-4" />
-          </Button>
+          {topDomains.length ? (
+            <div className="mt-4 space-y-3">
+              {topDomains.map((domain) => (
+                <div key={domain.domain} className="flex items-center justify-between rounded-2xl bg-secondary/70 p-3">
+                  <span className="text-sm font-medium">{domain.domain}</span>
+                  <span className="text-xs text-muted-foreground">{domain.count} contacts</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="mt-4 rounded-3xl border border-dashed border-border bg-secondary/30 p-8 text-center text-sm text-muted-foreground">
+              No contact domains saved yet.
+            </div>
+          )}
         </div>
       </section>
     </div>

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 
 import { ExportButton } from "@/components/ExportButton";
 import { KitSyncPanel } from "@/components/KitSyncPanel";
+import { integrationRegistry } from "@/lib/integrations/registry";
 import { filterSyncResultByLastSeen } from "@/lib/sync-result";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -70,6 +71,74 @@ export default function ExportPage() {
       </div>
 
       <div className="mb-6">
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>Export Destination Workflow</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-5">
+            <div className="grid gap-4 md:grid-cols-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground" htmlFor="platform">
+                  Platform
+                </label>
+                <select
+                  id="platform"
+                  className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-card"
+                  defaultValue="kit"
+                >
+                  {integrationRegistry.map((integration) => (
+                    <option key={integration.platform} value={integration.platform}>
+                      {integration.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground" htmlFor="account">
+                  Account
+                </label>
+                <select
+                  id="account"
+                  className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-card"
+                  disabled
+                  defaultValue=""
+                >
+                  <option value="">Loaded from connected accounts</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground" htmlFor="destination">
+                  Tag / List / Form
+                </label>
+                <select
+                  id="destination"
+                  className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-card"
+                  disabled
+                  defaultValue=""
+                >
+                  <option value="">Loaded from selected account</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground" htmlFor="dedupe">
+                  Cleanup
+                </label>
+                <select
+                  id="dedupe"
+                  className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-card"
+                  defaultValue="strict"
+                >
+                  <option value="strict">Strict email dedupe</option>
+                </select>
+              </div>
+            </div>
+            <div className="rounded-3xl border border-dashed border-primary/25 bg-primary/5 p-4 text-sm leading-6 text-muted-foreground">
+              Kit exports are live in this build. The same destination contract now supports
+              Mailchimp, Brevo, Beehiiv, HubSpot, MailerLite, Constant Contact, SendGrid
+              Marketing, ActiveCampaign, and Campaign Monitor as adapters are completed.
+            </div>
+          </CardContent>
+        </Card>
         <KitSyncPanel syncResult={filteredSyncResult} />
       </div>
 

@@ -1,7 +1,12 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
+import { Search, X } from "lucide-react";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { cleanEmail } from "@/lib/email-cleaner";
 import { normalizeContactEmail } from "@/lib/email-format";
 import type { EmailContact, SyncResult } from "@/types/email";
@@ -78,6 +83,103 @@ function dedupeContactsByCleanEmail(contacts: EmailContact[]) {
   );
 }
 
+function getDateOnly(value: string) {
+  if (!value) {
+    return "";
+  }
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  return date.toISOString().slice(0, 10);
+}
+
+function matchesSearch(contact: EmailContact, query: string) {
+  if (!query) {
+    return true;
+  }
+
+  const haystack = [
+    contact.name,
+    contact.email,
+    contact.sourceFolder,
+    contact.sourceType,
+    contact.forwardedBy,
+    contact.originalSender,
+    contact.subject,
+  ]
+    .join(" ")
+    .toLowerCase();
+
+  return haystack.includes(query);
+}
+
+function matchesDateRange(contact: EmailContact, fromDate: string, toDate: string) {
+  const lastSeenDate = getDateOnly(contact.lastSeen);
+
+  if (!lastSeenDate) {
+    return false;
+  }
+
+  if (fromDate && lastSeenDate < fromDate) {
+    return false;
+  }
+
+  if (toDate && lastSeenDate > toDate) {
+    return false;
+  }
+
+  return true;
+}
+
+function filterContacts(
+  contacts: EmailContact[],
+  filters: {
+    query: string;
+    fromDate: string;
+    toDate: string;
+  },
+) {
+  const query = filters.query.trim().toLowerCase();
+
+  return contacts.filter(
+    (contact) =>
+      matchesSearch(contact, query) &&
+      matchesDateRange(contact, filters.fromDate, filters.toDate),
+  );
+}
+
+function filterSyncResult(
+  syncResult: SyncResult,
+  filters: {
+    query: string;
+    fromDate: string;
+    toDate: string;
+  },
+): SyncResult {
+  const folders = syncResult.folders.map((folder) => ({
+    ...folder,
+    contacts: filterContacts(folder.contacts, filters),
+  }));
+  const allContacts = filterContacts(syncResult.allContacts, filters);
+  const visibleEmails = new Set(
+    allContacts
+      .map((contact) => normalizeContactEmail(contact.email))
+      .filter((email): email is string => Boolean(email)),
+  );
+
+  return {
+    folders,
+    allContacts,
+    duplicatesAcrossFolders: syncResult.duplicatesAcrossFolders.filter((duplicate) => {
+      const email = normalizeContactEmail(duplicate.email);
+      return email ? visibleEmails.has(email) : false;
+    }),
+  };
+}
+
 function ContactTable({
   contacts,
   emptyMessage,
@@ -138,15 +240,96 @@ function ContactTable({
   );
 }
 
-export function ResultsTable({ syncResult }: { syncResult: SyncResult }) {
-  const cleanAllContacts = dedupeContactsByCleanEmail(syncResult.allContacts);
-  const totalFolderContacts = syncResult.folders.reduce(
+export function ResultsTable({
+  syncResult,
+  onFilteredResultChange,
+}: {
+  syncResult: SyncResult;
+  onFilteredResultChange?: (filteredSyncResult: SyncResult) => void;
+}) {
+  const [query, setQuery] = useState("");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+  const filteredSyncResult = useMemo(
+    () => filterSyncResult(syncResult, { query, fromDate, toDate }),
+    [fromDate, query, syncResult, toDate],
+  );
+  const cleanAllContacts = dedupeContactsByCleanEmail(filteredSyncResult.allContacts);
+  const totalFolderContacts = filteredSyncResult.folders.reduce(
     (count, folder) => count + dedupeContactsByCleanEmail(folder.contacts).length,
     0,
   );
+  const hasFilters = Boolean(query.trim() || fromDate || toDate);
+
+  useEffect(() => {
+    onFilteredResultChange?.(filteredSyncResult);
+  }, [filteredSyncResult, onFilteredResultChange]);
 
   return (
     <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Filter Synced Contacts</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid gap-4 lg:grid-cols-[1fr_180px_180px_auto]">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground" htmlFor="sync-search">
+                Search
+              </label>
+              <div className="relative">
+                <Search className="pointer-events-none absolute left-4 top-3.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="sync-search"
+                  className="pl-10"
+                  placeholder="Search name, email, folder, sender, or subject"
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground" htmlFor="from-date">
+                Last seen from
+              </label>
+              <Input
+                id="from-date"
+                type="date"
+                value={fromDate}
+                onChange={(event) => setFromDate(event.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground" htmlFor="to-date">
+                Last seen to
+              </label>
+              <Input
+                id="to-date"
+                type="date"
+                value={toDate}
+                onChange={(event) => setToDate(event.target.value)}
+              />
+            </div>
+            <Button
+              className="self-end"
+              disabled={!hasFilters}
+              variant="outline"
+              onClick={() => {
+                setQuery("");
+                setFromDate("");
+                setToDate("");
+              }}
+            >
+              <X className="h-4 w-4" />
+              Clear
+            </Button>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Filters apply to this review table and to the export dataset used by the next step.
+          </p>
+        </CardContent>
+      </Card>
+
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="pb-2">
@@ -170,7 +353,7 @@ export function ResultsTable({ syncResult }: { syncResult: SyncResult }) {
           </CardHeader>
           <CardContent>
             <p className="text-3xl font-semibold">
-              {syncResult.duplicatesAcrossFolders.length}
+              {filteredSyncResult.duplicatesAcrossFolders.length}
             </p>
           </CardContent>
         </Card>
@@ -186,7 +369,7 @@ export function ResultsTable({ syncResult }: { syncResult: SyncResult }) {
               <TabsTrigger value="all-contacts">
                 All Contacts ({cleanAllContacts.length})
               </TabsTrigger>
-              {syncResult.folders.map((folder) => (
+              {filteredSyncResult.folders.map((folder) => (
                 <TabsTrigger key={folder.folderPath} value={folder.folderPath}>
                   {folder.displayName} ({dedupeContactsByCleanEmail(folder.contacts).length})
                 </TabsTrigger>
@@ -200,7 +383,7 @@ export function ResultsTable({ syncResult }: { syncResult: SyncResult }) {
               />
             </TabsContent>
 
-            {syncResult.folders.map((folder) => (
+            {filteredSyncResult.folders.map((folder) => (
               <TabsContent key={folder.folderPath} value={folder.folderPath}>
                 <div className="mb-4 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
                   <span>Mailbox path: {folder.folderPath}</span>
@@ -221,7 +404,7 @@ export function ResultsTable({ syncResult }: { syncResult: SyncResult }) {
           <CardTitle>Global Duplicates Across Folders</CardTitle>
         </CardHeader>
         <CardContent>
-          {syncResult.duplicatesAcrossFolders.length === 0 ? (
+          {filteredSyncResult.duplicatesAcrossFolders.length === 0 ? (
             <div className="rounded-3xl border border-dashed border-border bg-white/60 p-8 text-center text-sm text-muted-foreground">
               No duplicate email addresses were found across the selected folders.
             </div>
@@ -238,7 +421,7 @@ export function ResultsTable({ syncResult }: { syncResult: SyncResult }) {
                     </tr>
                   </thead>
                   <tbody>
-                    {syncResult.duplicatesAcrossFolders.map((duplicate) => (
+                    {filteredSyncResult.duplicatesAcrossFolders.map((duplicate) => (
                       <tr key={cleanEmail(duplicate.email)} className="border-t border-border/60">
                         <td className="px-4 py-3">{duplicate.name}</td>
                         <td className="px-4 py-3">{cleanEmail(duplicate.email)}</td>

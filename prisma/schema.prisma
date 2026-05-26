@@ -22,6 +22,102 @@ enum KitApiVersion {
   v3
 }
 
+enum ContactStatus {
+  NEW
+  QUALIFIED
+  NURTURING
+  CUSTOMER
+  UNSUBSCRIBED
+  BOUNCED
+  ARCHIVED
+}
+
+enum ContactSourceType {
+  DIRECT_EMAIL
+  FORWARDED_EMAIL
+  ORIGINAL_SENDER
+  REPLY_TO
+  MANUAL_IMPORT
+  API_IMPORT
+}
+
+enum EmailClassification {
+  BUSINESS
+  PERSONAL
+  ROLE_BASED
+  DISPOSABLE
+  UNKNOWN
+}
+
+enum MarketingPlatform {
+  KIT
+  MAILCHIMP
+  BREVO
+  BEEHIIV
+  ACTIVECAMPAIGN
+  CONVERTKIT_LEGACY
+  HUBSPOT
+  MAILERLITE
+  CONSTANT_CONTACT
+  SENDGRID_MARKETING
+  CAMPAIGN_MONITOR
+}
+
+enum IntegrationHealth {
+  UNKNOWN
+  HEALTHY
+  DEGRADED
+  FAILED
+}
+
+enum SyncStatus {
+  QUEUED
+  RUNNING
+  SUCCESS
+  PARTIAL
+  FAILED
+  CANCELLED
+}
+
+enum ExportFormat {
+  EXCEL
+  CSV
+  JSON
+}
+
+enum AutomationTrigger {
+  SCHEDULED
+  FOLDER_SYNCED
+  CONTACT_CREATED
+  TAG_MATCHED
+  MANUAL
+}
+
+enum JobType {
+  MAILBOX_SYNC
+  CONTACT_CLEANUP
+  PLATFORM_SYNC
+  FILE_EXPORT
+  AUTOMATION_RUN
+  AI_ENRICHMENT
+}
+
+enum JobStatus {
+  QUEUED
+  RUNNING
+  RETRYING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum TeamRole {
+  OWNER
+  ADMIN
+  MEMBER
+  VIEWER
+}
+
 model User {
   id            String             @id @default(cuid())
   name          String
@@ -32,8 +128,67 @@ model User {
   ignoredEmails IgnoredEmail[]
   kitSettings   KitSettings?
   kitAccounts   KitAccount[]
+  memberships   OrganizationMember[]
+  ownedOrganizations Organization[] @relation("OrganizationOwner")
+  contacts      Contact[]
+  integrationAccounts IntegrationAccount[]
+  automationRules AutomationRule[]
+  notifications Notification[]
+  apiLogs       ApiLog[]
+  backgroundJobs BackgroundJob[]
   createdAt     DateTime           @default(now())
   updatedAt     DateTime           @updatedAt
+}
+
+model Organization {
+  id          String               @id @default(cuid())
+  name        String
+  slug        String               @unique
+  ownerId     String
+  plan        String               @default("starter")
+  monthlyContactLimit Int          @default(10000)
+  monthlyApiLimit     Int          @default(50000)
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+  owner       User                 @relation("OrganizationOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  members     OrganizationMember[]
+  workspaces  Workspace[]
+
+  @@index([ownerId])
+}
+
+model OrganizationMember {
+  id             String       @id @default(cuid())
+  organizationId String
+  userId         String
+  role           TeamRole     @default(MEMBER)
+  createdAt      DateTime     @default(now())
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, userId])
+  @@index([userId])
+}
+
+model Workspace {
+  id             String       @id @default(cuid())
+  organizationId String
+  name           String
+  slug           String
+  isDefault      Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  contacts       Contact[]
+  integrationAccounts IntegrationAccount[]
+  syncRuns       SyncRun[]
+  exportRuns     ExportRun[]
+  automationRules AutomationRule[]
+  apiLogs        ApiLog[]
+  backgroundJobs BackgroundJob[]
+
+  @@unique([organizationId, slug])
+  @@index([organizationId])
 }
 
 model SavedEmailAccount {
@@ -118,4 +273,284 @@ model KitAccount {
 
   @@index([ownerId])
   @@unique([ownerId, name])
+}
+
+model Contact {
+  id                  String              @id @default(cuid())
+  ownerId             String
+  workspaceId         String?
+  email               String
+  normalizedEmail     String
+  name                String?
+  company             String?
+  domain              String?
+  emailClassification EmailClassification @default(UNKNOWN)
+  sourceType          ContactSourceType   @default(DIRECT_EMAIL)
+  sourceFolder        String?
+  forwardedBy         String?
+  originalSender      String?
+  duplicateScore      Int                 @default(0)
+  leadScore           Int                 @default(0)
+  status              ContactStatus       @default(NEW)
+  starred             Boolean             @default(false)
+  firstSeenAt         DateTime?
+  lastSeenAt          DateTime?
+  emailCount          Int                 @default(1)
+  aiCategory          String?
+  aiSummary           String?
+  aiConfidence        Float?
+  metadata            Json?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  owner               User                @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  workspace           Workspace?          @relation(fields: [workspaceId], references: [id], onDelete: SetNull)
+  notes               ContactNote[]
+  tags                ContactTagAssignment[]
+  activities          ContactActivity[]
+
+  @@unique([ownerId, normalizedEmail])
+  @@index([ownerId, domain])
+  @@index([workspaceId])
+  @@index([status])
+}
+
+model ContactNote {
+  id        String   @id @default(cuid())
+  contactId String
+  authorId  String?
+  body      String
+  createdAt DateTime @default(now())
+  contact   Contact  @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@index([contactId])
+}
+
+model ContactTag {
+  id          String   @id @default(cuid())
+  ownerId     String
+  name        String
+  color       String?
+  description String?
+  createdAt   DateTime @default(now())
+  assignments ContactTagAssignment[]
+
+  @@unique([ownerId, name])
+  @@index([ownerId])
+}
+
+model ContactTagAssignment {
+  id        String     @id @default(cuid())
+  contactId String
+  tagId     String
+  createdAt DateTime   @default(now())
+  contact   Contact    @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  tag       ContactTag @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([contactId, tagId])
+  @@index([tagId])
+}
+
+model ContactActivity {
+  id        String   @id @default(cuid())
+  contactId String
+  type      String
+  title     String
+  detail    String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+  contact   Contact  @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  @@index([contactId])
+  @@index([type])
+}
+
+model IntegrationAccount {
+  id                  String            @id @default(cuid())
+  ownerId             String
+  workspaceId         String?
+  platform            MarketingPlatform
+  name                String
+  encryptedApiKey     String
+  encryptedApiSecret  String?
+  encryptionIv        String
+  encryptionTag       String
+  secretEncryptionIv  String?
+  secretEncryptionTag String?
+  isDefault           Boolean           @default(false)
+  health              IntegrationHealth @default(UNKNOWN)
+  lastTestedAt        DateTime?
+  lastSyncedAt        DateTime?
+  rateLimitRemaining  Int?
+  externalAccountId   String?
+  metadata            Json?
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+  owner               User              @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  workspace           Workspace?        @relation(fields: [workspaceId], references: [id], onDelete: SetNull)
+  destinations        IntegrationDestination[]
+  syncRuns            SyncRun[]
+  exportRuns          ExportRun[]
+
+  @@unique([ownerId, platform, name])
+  @@index([ownerId, platform])
+  @@index([workspaceId])
+}
+
+model IntegrationDestination {
+  id                   String             @id @default(cuid())
+  integrationAccountId String
+  externalId           String
+  name                 String
+  type                 String
+  contactCount         Int?
+  metadata             Json?
+  updatedAt            DateTime           @updatedAt
+  integrationAccount   IntegrationAccount @relation(fields: [integrationAccountId], references: [id], onDelete: Cascade)
+
+  @@unique([integrationAccountId, externalId, type])
+  @@index([integrationAccountId])
+}
+
+model SyncRun {
+  id                   String              @id @default(cuid())
+  workspaceId           String?
+  integrationAccountId  String?
+  platform              MarketingPlatform?
+  status                SyncStatus          @default(QUEUED)
+  targetType            String?
+  targetId              String?
+  targetName            String?
+  totalContacts         Int                 @default(0)
+  uploaded              Int                 @default(0)
+  updated               Int                 @default(0)
+  skippedDuplicates     Int                 @default(0)
+  failed                Int                 @default(0)
+  startedAt             DateTime?
+  completedAt           DateTime?
+  errorMessage          String?
+  metadata              Json?
+  createdAt             DateTime            @default(now())
+  workspace             Workspace?          @relation(fields: [workspaceId], references: [id], onDelete: SetNull)
+  integrationAccount    IntegrationAccount? @relation(fields: [integrationAccountId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, createdAt])
+  @@index([integrationAccountId])
+  @@index([status])
+}
+
+model ExportRun {
+  id                   String              @id @default(cuid())
+  workspaceId           String?
+  integrationAccountId  String?
+  format                ExportFormat
+  status                SyncStatus          @default(QUEUED)
+  fileName              String?
+  totalContacts         Int                 @default(0)
+  exportedContacts      Int                 @default(0)
+  failedContacts        Int                 @default(0)
+  filterSnapshot        Json?
+  createdAt             DateTime            @default(now())
+  completedAt           DateTime?
+  errorMessage          String?
+  workspace             Workspace?          @relation(fields: [workspaceId], references: [id], onDelete: SetNull)
+  integrationAccount    IntegrationAccount? @relation(fields: [integrationAccountId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, createdAt])
+  @@index([format])
+}
+
+model DuplicateCleanupLog {
+  id                 String   @id @default(cuid())
+  ownerId            String
+  workspaceId         String?
+  duplicateEmail      String
+  duplicateCount      Int
+  winningContactId    String?
+  strategy            String
+  confidence          Int     @default(0)
+  metadata            Json?
+  createdAt           DateTime @default(now())
+
+  @@index([ownerId, createdAt])
+  @@index([workspaceId])
+}
+
+model ApiLog {
+  id          String    @id @default(cuid())
+  ownerId     String?
+  workspaceId String?
+  platform    MarketingPlatform?
+  action      String
+  statusCode  Int?
+  status      String
+  durationMs  Int?
+  requestId   String?
+  message     String?
+  metadata    Json?
+  createdAt   DateTime  @default(now())
+  owner       User?      @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+  workspace   Workspace? @relation(fields: [workspaceId], references: [id], onDelete: SetNull)
+
+  @@index([ownerId, createdAt])
+  @@index([workspaceId, createdAt])
+  @@index([platform])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  ownerId   String
+  type      String
+  title     String
+  body      String?
+  readAt    DateTime?
+  metadata  Json?
+  createdAt DateTime @default(now())
+  owner     User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  @@index([ownerId, readAt])
+}
+
+model AutomationRule {
+  id          String            @id @default(cuid())
+  ownerId     String
+  workspaceId String?
+  name        String
+  trigger     AutomationTrigger
+  enabled     Boolean           @default(true)
+  schedule    String?
+  conditions  Json?
+  actions     Json?
+  lastRunAt   DateTime?
+  nextRunAt   DateTime?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  owner       User              @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  workspace   Workspace?        @relation(fields: [workspaceId], references: [id], onDelete: SetNull)
+
+  @@index([ownerId, enabled])
+  @@index([workspaceId])
+}
+
+model BackgroundJob {
+  id          String     @id @default(cuid())
+  ownerId     String?
+  workspaceId String?
+  type        JobType
+  status      JobStatus  @default(QUEUED)
+  attempts    Int        @default(0)
+  maxAttempts Int        @default(3)
+  runAfter    DateTime   @default(now())
+  startedAt   DateTime?
+  completedAt DateTime?
+  payload     Json?
+  result      Json?
+  error       String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  owner       User?       @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+  workspace   Workspace?  @relation(fields: [workspaceId], references: [id], onDelete: SetNull)
+
+  @@index([status, runAfter])
+  @@index([ownerId])
+  @@index([workspaceId])
 }

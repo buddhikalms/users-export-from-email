@@ -252,7 +252,7 @@ export function KitSettingsForm() {
             <Label htmlFor="kit-account-name">Account name</Label>
             <Input
               id="kit-account-name"
-              placeholder="Example: Main Newsletter"
+              placeholder="Account name"
               value={form.name}
               onChange={(event) => updateField("name", event.target.value)}
             />

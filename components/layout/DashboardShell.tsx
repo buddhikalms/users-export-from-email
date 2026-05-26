@@ -7,6 +7,8 @@ import {
   Activity,
   BarChart3,
   Bell,
+  Bot,
+  ChevronDown,
   ChevronsLeft,
   ChevronsRight,
   CircleUserRound,
@@ -17,18 +19,22 @@ import {
   History,
   LayoutDashboard,
   ListChecks,
+  LogOut,
   MailCheck,
   Menu,
   Moon,
   Search,
   Settings,
+  Shield,
   Sparkles,
   Sun,
   Tags,
+  Workflow,
   UsersRound,
   X,
 } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
+import { signOut } from "next-auth/react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -53,11 +59,12 @@ const navGroups = [
     ],
   },
   {
-    label: "Kit",
+    label: "Marketing",
     items: [
-      { label: "Kit Integration", href: "/settings/kit", icon: Sparkles },
+      { label: "Integrations", href: "/integrations", icon: Sparkles },
       { label: "Kit Accounts", href: "/settings/kit", icon: CircleUserRound },
-      { label: "Tag Mapping", href: "/settings/kit", icon: Tags },
+      { label: "Destinations", href: "/export", icon: Tags },
+      { label: "Automation", href: "/automation", icon: Workflow },
     ],
   },
   {
@@ -65,6 +72,7 @@ const navGroups = [
     items: [
       { label: "Sync History", href: "/sync-history", icon: History },
       { label: "Analytics", href: "/analytics", icon: BarChart3 },
+      { label: "AI Readiness", href: "/automation", icon: Bot },
       { label: "Settings", href: "/settings", icon: Settings },
       { label: "Logs", href: "/logs", icon: ListChecks },
     ],
@@ -73,8 +81,8 @@ const navGroups = [
 
 const quickActions = [
   { label: "Connect email account", href: "/settings" },
-  { label: "Manage Kit accounts", href: "/settings/kit" },
-  { label: "Review exports", href: "/export" },
+  { label: "Open integrations", href: "/integrations" },
+  { label: "Build automation", href: "/automation" },
   { label: "Open analytics", href: "/analytics" },
 ];
 
@@ -99,6 +107,81 @@ function ThemeToggle() {
     >
       {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
     </Button>
+  );
+}
+
+function ProfileMenu({
+  placement = "down",
+  user,
+  compact = false,
+}: {
+  placement?: "down" | "up";
+  user: SessionUser;
+  compact?: boolean;
+}) {
+  const [open, setOpen] = useState(false);
+  const label = user.name || user.email || "User";
+  const initial = label.slice(0, 1).toUpperCase();
+
+  return (
+    <div className="relative">
+      <button
+        className={cn(
+          "flex items-center gap-3 rounded-2xl border border-border bg-card px-3 py-2 text-left shadow-sm transition hover:bg-secondary",
+          compact ? "h-10 w-10 justify-center rounded-full p-0" : "min-w-0",
+        )}
+        onClick={() => setOpen((current) => !current)}
+      >
+        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-foreground text-xs font-semibold text-background">
+          {initial}
+        </span>
+        {!compact ? (
+          <>
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-sm font-semibold">{label}</span>
+              <span className="block truncate text-xs text-muted-foreground">
+                {user.role || "USER"}
+              </span>
+            </span>
+            <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
+          </>
+        ) : null}
+      </button>
+
+      <AnimatePresence>
+        {open ? (
+          <motion.div
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            className={cn(
+              "absolute right-0 z-50 w-72 overflow-hidden rounded-3xl border border-border bg-card shadow-2xl",
+              placement === "up" ? "bottom-full mb-2" : "top-full mt-2",
+            )}
+            exit={{ opacity: 0, y: -4, scale: 0.98 }}
+            initial={{ opacity: 0, y: -4, scale: 0.98 }}
+          >
+            <div className="border-b border-border/70 p-4">
+              <div className="font-semibold">{label}</div>
+              <div className="mt-1 truncate text-sm text-muted-foreground">
+                {user.email || "Signed in"}
+              </div>
+            </div>
+            <div className="p-2">
+              <div className="flex items-center gap-3 rounded-2xl px-3 py-2 text-sm text-muted-foreground">
+                <Shield className="h-4 w-4" />
+                Role: {user.role || "USER"}
+              </div>
+              <button
+                className="flex w-full items-center gap-3 rounded-2xl px-3 py-2 text-left text-sm transition hover:bg-secondary"
+                onClick={() => signOut({ callbackUrl: "/login" })}
+              >
+                <LogOut className="h-4 w-4" />
+                Sign out
+              </button>
+            </div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
+    </div>
   );
 }
 
@@ -131,8 +214,8 @@ function Sidebar({
           </div>
           {!collapsed ? (
             <div className="min-w-0">
-              <div className="truncate text-sm font-semibold">EmailOps</div>
-              <div className="truncate text-xs text-muted-foreground">Contact intelligence</div>
+              <div className="truncate text-sm font-semibold">BuddhiEmailExtractor</div>
+              <div className="truncate text-xs text-muted-foreground">Lead extraction CRM</div>
             </div>
           ) : null}
         </Link>
@@ -184,22 +267,7 @@ function Sidebar({
       </nav>
 
       <div className="border-t border-border/70 p-4">
-        <div
-          className={cn(
-            "flex items-center gap-3 rounded-2xl bg-secondary/70 p-3",
-            collapsed ? "justify-center" : "",
-          )}
-        >
-          <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-foreground text-background">
-            {(user.name || user.email || "U").slice(0, 1).toUpperCase()}
-          </div>
-          {!collapsed ? (
-            <div className="min-w-0">
-              <div className="truncate text-sm font-semibold">{user.name || user.email}</div>
-              <div className="truncate text-xs text-muted-foreground">{user.role || "USER"}</div>
-            </div>
-          ) : null}
-        </div>
+        <ProfileMenu compact={collapsed} placement="up" user={user} />
       </div>
     </aside>
   );
@@ -365,12 +433,15 @@ export function DashboardShell({
               Search or press Ctrl K
             </button>
             <Badge className="hidden bg-accent/15 text-accent-foreground dark:text-accent sm:inline-flex">
-              Kit ready
+              Sync ready
             </Badge>
             <Button size="sm" variant="outline">
               <Bell className="h-4 w-4" />
             </Button>
             <ThemeToggle />
+            <div className="hidden sm:block">
+              <ProfileMenu compact placement="down" user={user} />
+            </div>
             <Button asChild size="sm" variant="outline">
               <Link href="/export">
                 <Download className="h-4 w-4" />

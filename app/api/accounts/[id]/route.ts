@@ -1,24 +1,18 @@
-import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
-import { authOptions } from "@/auth";
 import { deleteEmailAccount, updateEmailAccount } from "@/lib/server-accounts";
+import { getVerifiedSessionUserId, staleSessionMessage } from "@/lib/session-user";
 import { updateSavedEmailAccountSchema } from "@/lib/validation";
 
 export const runtime = "nodejs";
-
-async function getSessionUserId() {
-  const session = await getServerSession(authOptions);
-  return session?.user?.id ?? null;
-}
 
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const userId = await getSessionUserId();
+  const userId = await getVerifiedSessionUserId();
   if (!userId) {
-    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+    return NextResponse.json({ error: staleSessionMessage }, { status: 401 });
   }
 
   try {
@@ -54,9 +48,9 @@ export async function DELETE(
   _request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const userId = await getSessionUserId();
+  const userId = await getVerifiedSessionUserId();
   if (!userId) {
-    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+    return NextResponse.json({ error: staleSessionMessage }, { status: 401 });
   }
 
   try {

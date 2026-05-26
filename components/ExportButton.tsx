@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Download } from "lucide-react";
+import { Download, FileJson, FileSpreadsheet, Table } from "lucide-react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -20,7 +20,7 @@ export function ExportButton({
   } | null>(null);
   const [exporting, setExporting] = useState(false);
 
-  async function exportWorkbook() {
+  async function exportFile(format: "excel" | "csv" | "json") {
     if (filter.mode !== "all" && !filter.date) {
       setStatus({
         type: "error",
@@ -33,7 +33,7 @@ export function ExportButton({
     setStatus(null);
 
     try {
-      const response = await fetch("/api/export/excel", {
+      const response = await fetch(`/api/export/${format}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -46,7 +46,7 @@ export function ExportButton({
 
       if (!response.ok) {
         const payload = (await response.json()) as { error?: string };
-        throw new Error(payload.error ?? "Excel export failed.");
+        throw new Error(payload.error ?? `${format.toUpperCase()} export failed.`);
       }
 
       const blob = await response.blob();
@@ -55,13 +55,13 @@ export function ExportButton({
       const disposition = response.headers.get("Content-Disposition");
       const fileNameMatch = disposition?.match(/filename="(.+)"/);
       anchor.href = url;
-      anchor.download = fileNameMatch?.[1] ?? "email-contacts.xlsx";
+      anchor.download = fileNameMatch?.[1] ?? `buddhi-email-contacts.${format === "excel" ? "xlsx" : format}`;
       anchor.click();
       window.URL.revokeObjectURL(url);
 
       setStatus({
         type: "success",
-        message: "Workbook created successfully. Your download should begin immediately.",
+        message: `${format.toUpperCase()} export created successfully. Your download should begin immediately.`,
       });
     } catch (error) {
       setStatus({
@@ -69,7 +69,7 @@ export function ExportButton({
         message:
           error instanceof Error
             ? error.message
-            : "Something went wrong while exporting the workbook.",
+            : `Something went wrong while exporting the ${format.toUpperCase()} file.`,
       });
     } finally {
       setExporting(false);
@@ -78,14 +78,38 @@ export function ExportButton({
 
   return (
     <div className="space-y-4">
-      <Button
-        className="sm:min-w-56"
-        disabled={exporting || (filter.mode !== "all" && !filter.date)}
-        onClick={exportWorkbook}
-      >
-        <Download className="h-4 w-4" />
-        {exporting ? "Generating workbook..." : "Export Excel Workbook"}
-      </Button>
+      <div className="flex flex-wrap gap-3">
+        <Button
+          className="sm:min-w-48"
+          disabled={exporting || (filter.mode !== "all" && !filter.date)}
+          onClick={() => void exportFile("excel")}
+        >
+          <FileSpreadsheet className="h-4 w-4" />
+          {exporting ? "Exporting..." : "Excel"}
+        </Button>
+        <Button
+          className="sm:min-w-36"
+          disabled={exporting || (filter.mode !== "all" && !filter.date)}
+          variant="outline"
+          onClick={() => void exportFile("csv")}
+        >
+          <Table className="h-4 w-4" />
+          CSV
+        </Button>
+        <Button
+          className="sm:min-w-36"
+          disabled={exporting || (filter.mode !== "all" && !filter.date)}
+          variant="outline"
+          onClick={() => void exportFile("json")}
+        >
+          <FileJson className="h-4 w-4" />
+          JSON
+        </Button>
+        <Button disabled variant="ghost">
+          <Download className="h-4 w-4" />
+          Queue large export
+        </Button>
+      </div>
 
       {status ? (
         <Alert

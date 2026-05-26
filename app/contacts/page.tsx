@@ -1,39 +1,84 @@
+import { getServerSession } from "next-auth";
 import { MailCheck } from "lucide-react";
 
+import { authOptions } from "@/auth";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { ContactsTable, type ContactRow } from "@/components/tables/ContactsTable";
+import { db } from "@/lib/db";
+import { formatCount, formatDateTime } from "@/lib/dashboard-data";
 
-const contacts: ContactRow[] = [
-  {
-    name: "Maya Chen",
-    email: "maya@example.com",
-    folder: "Inbox / Leads",
-    source: "direct_email",
-    count: 18,
-    lastSeen: "Today",
-  },
-  {
-    name: "Nolan Brooks",
-    email: "nolan@agency.co",
-    folder: "Sales / Agency",
-    source: "forwarded_email",
-    count: 11,
-    lastSeen: "Yesterday",
-  },
-];
+function titleCase(value: string) {
+  return value
+    .toLowerCase()
+    .split("_")
+    .map((part) => part.slice(0, 1).toUpperCase() + part.slice(1))
+    .join(" ");
+}
 
-export default function ContactsPage() {
+export default async function ContactsPage() {
+  const session = await getServerSession(authOptions);
+  const userId = session?.user?.id;
+  const [contacts, businessCount, personalCount, duplicateRiskCount, starredCount] = userId
+    ? await Promise.all([
+        db.contact.findMany({
+          where: { ownerId: userId },
+          include: {
+            tags: {
+              include: {
+                tag: true,
+              },
+            },
+          },
+          orderBy: [{ starred: "desc" }, { updatedAt: "desc" }],
+          take: 500,
+        }),
+        db.contact.count({ where: { ownerId: userId, emailClassification: "BUSINESS" } }),
+        db.contact.count({ where: { ownerId: userId, emailClassification: "PERSONAL" } }),
+        db.contact.count({ where: { ownerId: userId, duplicateScore: { gt: 0 } } }),
+        db.contact.count({ where: { ownerId: userId, starred: true } }),
+      ])
+    : [[], 0, 0, 0, 0];
+  const rows: ContactRow[] = contacts.map((contact) => ({
+    name: contact.name || contact.email,
+    email: contact.email,
+    company: contact.company || "-",
+    domain: contact.domain || "-",
+    folder: contact.sourceFolder || "-",
+    source: titleCase(contact.sourceType),
+    classification: titleCase(contact.emailClassification),
+    status: titleCase(contact.status),
+    leadScore: contact.leadScore,
+    tags: contact.tags.map((assignment) => assignment.tag.name),
+    starred: contact.starred,
+    count: contact.emailCount,
+    lastSeen: formatDateTime(contact.lastSeenAt ?? contact.updatedAt),
+  }));
+
   return (
     <div className="space-y-6">
       <div>
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">CRM Layer</p>
         <h1 className="mt-2 text-4xl font-semibold tracking-tight">Contacts</h1>
         <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">
-          Search, filter, review source folders, and inspect contact enrichment before export.
+          Search, filter, review source folders, score leads, track notes, and inspect
+          enrichment before marketing sync.
         </p>
       </div>
-      {contacts.length ? (
-        <ContactsTable data={contacts} />
+      <div className="grid gap-4 md:grid-cols-4">
+        {[
+          ["Business contacts", formatCount(businessCount)],
+          ["Personal emails", formatCount(personalCount)],
+          ["Duplicate risk", formatCount(duplicateRiskCount)],
+          ["Starred leads", formatCount(starredCount)],
+        ].map(([label, value]) => (
+          <div key={label} className="rounded-3xl border border-border/70 bg-card/82 p-5 shadow-sm">
+            <div className="text-sm text-muted-foreground">{label}</div>
+            <div className="mt-3 text-3xl font-semibold">{value}</div>
+          </div>
+        ))}
+      </div>
+      {rows.length ? (
+        <ContactsTable data={rows} />
       ) : (
         <EmptyState
           actionHref="/settings"

@@ -8,30 +8,36 @@ import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { DashboardOverview } from "@/components/dashboard/DashboardOverview";
 import { db } from "@/lib/db";
+import {
+  formatDateTime,
+  getContactGrowthData,
+  getFolderActivityData,
+  getTopDomainData,
+} from "@/lib/dashboard-data";
 
 const features = [
   {
     title: "Database-backed multi-account storage",
     description:
-      "Save multiple IMAP accounts per user and keep account passwords encrypted on the server.",
+      "Save multiple mailbox and marketing accounts per user with encrypted credentials.",
     icon: Shield,
   },
   {
     title: "IMAP-first mailbox sync",
     description:
-      "Connect with incoming mail server settings, validate access, and keep mailbox operations on the server only.",
+      "Connect Outlook or any IMAP mailbox, validate access, and keep extraction server-side.",
     icon: MailCheck,
   },
   {
     title: "Folder-wise extraction",
     description:
-      "Scan Inbox, Sent Items, Archive, Junk Email, and custom folders while organizing contacts per folder.",
+      "Scan folders, detect forwarders, preserve original senders, and track contact source history.",
     icon: FolderTree,
   },
   {
-    title: "Excel export workflow",
+    title: "File and marketing exports",
     description:
-      "Generate an All Contacts sheet plus folder-specific worksheets with filters and formatted headers.",
+      "Generate Excel/CSV/JSON files and sync cleaned contacts into marketing destinations.",
     icon: FileSpreadsheet,
   },
 ];
@@ -40,17 +46,43 @@ export default async function HomePage() {
   const session = await getServerSession(authOptions);
 
   if (session?.user?.id) {
-    const [accountCount, kitAccountCount, ignoredEmailCount] = await Promise.all([
+    const [
+      accountCount,
+      contactCount,
+      exportCount,
+      folderActivity,
+      growthData,
+      ignoredEmailCount,
+      kitAccountCount,
+      latestContact,
+      topDomains,
+    ] = await Promise.all([
       db.savedEmailAccount.count({ where: { ownerId: session.user.id } }),
-      db.kitAccount.count({ where: { ownerId: session.user.id } }),
+      db.contact.count({ where: { ownerId: session.user.id } }),
+      db.exportRun.count(),
+      getFolderActivityData(session.user.id),
+      getContactGrowthData(session.user.id),
       db.ignoredEmail.count({ where: { ownerId: session.user.id } }),
+      db.kitAccount.count({ where: { ownerId: session.user.id } }),
+      db.contact.findFirst({
+        where: { ownerId: session.user.id },
+        orderBy: { lastSeenAt: "desc" },
+        select: { lastSeenAt: true, updatedAt: true },
+      }),
+      getTopDomainData(session.user.id),
     ]);
 
     return (
       <DashboardOverview
         accountCount={accountCount}
+        contactCount={contactCount}
+        exportCount={exportCount}
+        folderActivity={folderActivity}
+        growthData={growthData}
         ignoredEmailCount={ignoredEmailCount}
         kitAccountCount={kitAccountCount}
+        latestSyncTime={formatDateTime(latestContact?.lastSeenAt ?? latestContact?.updatedAt)}
+        topDomains={topDomains}
         userName={session.user.name}
       />
     );
@@ -63,16 +95,15 @@ export default async function HomePage() {
       <div className="relative mx-auto flex min-h-[calc(100vh-120px)] max-w-7xl flex-col px-6 py-12 lg:px-10">
         <div className="grid flex-1 items-center gap-10 lg:grid-cols-[1.2fr_0.8fr]">
           <section className="space-y-8">
-            <Badge>Next.js 15 / TypeScript / Auth / Prisma / IMAP</Badge>
+            <Badge>BuddhiEmailExtractor / CRM / Marketing Sync / Automation</Badge>
             <div className="space-y-5">
               <h1 className="max-w-3xl text-5xl leading-tight text-foreground md:text-6xl">
-                Securely manage multiple email accounts and export folder-wise
-                contact workbooks.
+                BuddhiEmailExtractor turns inboxes into clean CRM-ready leads.
               </h1>
               <p className="max-w-2xl text-lg leading-8 text-muted-foreground">
-                This workspace adds authenticated access, database-backed account
-                storage, encrypted password handling, IMAP folder sync, last-seen
-                filtering, and Excel export.
+                Extract contacts from Outlook and IMAP, detect original senders,
+                clean duplicates, export files, and sync lead lists to Kit,
+                Mailchimp, Brevo, Beehiiv, HubSpot, and more.
               </p>
             </div>
 
@@ -92,9 +123,9 @@ export default async function HomePage() {
 
             <div className="grid gap-4 sm:grid-cols-3">
               {[
-                ["1", "Create a secure authenticated workspace"],
-                ["2", "Save one or many IMAP accounts"],
-                ["3", "Sync folders, review results, and export"],
+                ["1", "Connect Outlook or IMAP accounts"],
+                ["2", "Clean, score, and enrich contacts"],
+                ["3", "Export files or sync marketing platforms"],
               ].map(([step, label]) => (
                 <div
                   key={step}
