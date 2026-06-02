@@ -3,8 +3,8 @@ import { Fraunces, Space_Grotesk } from "next/font/google";
 import { getServerSession } from "next-auth";
 
 import { authOptions } from "@/auth";
+import { AppChrome } from "@/components/layout/AppChrome";
 import { AuthProvider } from "@/components/AuthProvider";
-import { DashboardShell } from "@/components/layout/DashboardShell";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import "./globals.css";
 
@@ -19,9 +19,9 @@ const bodyFont = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "BuddhiEmailExtractor",
+  title: "Email Exporter - Extract, Clean & Sync Email Contacts",
   description:
-    "Enterprise email lead extraction, CRM cleanup, file export, and marketing platform sync.",
+    "Extract contacts from Outlook and IMAP mailboxes, clean duplicates, export to Excel, and sync to Kit, Mailchimp, Brevo, HubSpot, and more.",
 };
 
 export default async function RootLayout({
@@ -38,19 +38,19 @@ export default async function RootLayout({
       >
         <AuthProvider>
           <ThemeProvider>
-            {session?.user ? (
-              <DashboardShell
-                user={{
-                  email: session.user.email,
-                  name: session.user.name,
-                  role: session.user.role,
-                }}
-              >
-                {children}
-              </DashboardShell>
-            ) : (
-              children
-            )}
+            <AppChrome
+              user={
+                session?.user
+                  ? {
+                      email: session.user.email,
+                      name: session.user.name,
+                      role: session.user.role,
+                    }
+                  : null
+              }
+            >
+              {children}
+            </AppChrome>
           </ThemeProvider>
         </AuthProvider>
       </body>

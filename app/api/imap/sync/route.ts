@@ -15,6 +15,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
 
+  let settings: Awaited<ReturnType<typeof resolveConnectionSettings>> | null = null;
+
   try {
     const json = await request.json();
     const parsed = syncRequestSchema.safeParse(json);
@@ -31,7 +33,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const settings = await resolveConnectionSettings(parsed.data, session.user.id);
+    settings = await resolveConnectionSettings(parsed.data, session.user.id);
     const ignoredEmails = await getIgnoredEmailValues(session.user.id);
     const syncResult = await syncSelectedFolders(
       settings,
@@ -39,8 +41,10 @@ export async function POST(request: Request) {
       ignoredEmails,
     );
 
+    settings = null;
     return NextResponse.json(syncResult);
   } catch (error) {
+    settings = null;
     const message =
       error instanceof Error ? error.message : "Failed to sync selected folders.";
 

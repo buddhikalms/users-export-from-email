@@ -1,73 +1,46 @@
-import { getServerSession } from "next-auth";
+import type { Metadata } from "next";
 
-import { authOptions } from "@/auth";
-import { IntegrationsWorkspace } from "@/components/integrations/IntegrationsWorkspace";
-import { db } from "@/lib/db";
-import { integrationRegistry } from "@/lib/integrations/registry";
-import { prismaPlatformByIntegrationId } from "@/lib/integrations/platforms";
+import { CTASection } from "@/components/marketing/CTASection";
+import { IntegrationCard } from "@/components/marketing/IntegrationCard";
+import { Section, SectionIntro } from "@/components/marketing/Section";
 
-export default async function IntegrationsPage() {
-  const session = await getServerSession(authOptions);
-  const userId = session?.user?.id;
-  const [integrationAccounts, kitAccountCount, syncRuns, queuedJobs] = userId
-    ? await Promise.all([
-        db.integrationAccount.groupBy({
-          by: ["platform"],
-          where: { ownerId: userId },
-          _count: { _all: true },
-        }),
-        db.kitAccount.count({ where: { ownerId: userId } }),
-        db.syncRun.groupBy({
-          by: ["platform", "status"],
-          _count: { _all: true },
-        }),
-        db.backgroundJob.count({ where: { ownerId: userId, type: "PLATFORM_SYNC" } }),
-      ])
-    : [[], 0, [], 0];
-  const accountCounts = new Map<string, number>();
+export const metadata: Metadata = {
+  title: "Integrations - Email Exporter",
+  description:
+    "Sync Outlook and IMAP contacts to Kit, Mailchimp, Brevo, HubSpot, Beehiiv, ActiveCampaign, and more.",
+};
 
-  for (const account of integrationAccounts) {
-    accountCounts.set(account.platform, account._count._all);
-  }
+const integrations = [
+  ["Kit", "Sync cleaned contacts to forms and tags for creator and newsletter workflows.", "Available"],
+  ["Mailchimp", "Update audiences and segments with folder-based contact context.", "Available"],
+  ["Brevo", "Route extracted leads into Brevo lists and marketing campaigns.", "Available"],
+  ["HubSpot", "Send qualified contacts into CRM and marketing pipelines.", "Available"],
+  ["Beehiiv", "Build publisher lists from inbox conversations and submissions.", "Available"],
+  ["ActiveCampaign", "Prepare contacts for lists, tags, and automations.", "Coming Soon"],
+  ["MailerLite", "Export contacts into groups and lightweight newsletter workflows.", "Coming Soon"],
+  ["Constant Contact", "Move cleaned contacts into email campaign lists.", "Coming Soon"],
+  ["SendGrid Marketing", "Sync contact batches to SendGrid Marketing lists.", "Coming Soon"],
+  ["Campaign Monitor", "Prepare subscriber exports for Campaign Monitor lists.", "Coming Soon"],
+  ["Outlook", "Extract contacts from Outlook folders through secure IMAP access.", "Available"],
+  ["IMAP", "Connect any compatible IMAP mailbox and select folders to scan.", "Available"],
+] as const;
 
-  if (kitAccountCount > 0) {
-    accountCounts.set("KIT", (accountCounts.get("KIT") ?? 0) + kitAccountCount);
-  }
-
-  const connectedCount = Array.from(accountCounts.values()).reduce((sum, count) => sum + count, 0);
-  const successfulSyncs = syncRuns
-    .filter((run) => run.status === "SUCCESS")
-    .reduce((sum, run) => sum + run._count._all, 0);
-  const totalSyncs = syncRuns.reduce((sum, run) => sum + run._count._all, 0);
-  const syncHealth = totalSyncs > 0 ? `${Math.round((successfulSyncs / totalSyncs) * 100)}%` : "0%";
-  const integrations = integrationRegistry.map((integration) => {
-    const platform = prismaPlatformByIntegrationId[integration.platform];
-    const platformSyncs = syncRuns
-      .filter((run) => run.platform === platform)
-      .reduce((sum, run) => sum + run._count._all, 0);
-    const platformSuccesses = syncRuns
-      .filter((run) => run.platform === platform && run.status === "SUCCESS")
-      .reduce((sum, run) => sum + run._count._all, 0);
-
-    return {
-      platform: integration.platform,
-      label: integration.label,
-      description: integration.description,
-      destinationTypes: integration.destinationTypes,
-      accounts: accountCounts.get(platform) ?? 0,
-      syncs: platformSyncs,
-      health:
-        platformSyncs > 0 ? `${Math.round((platformSuccesses / platformSyncs) * 100)}%` : "No syncs",
-    };
-  });
-
+export default function IntegrationsPage() {
   return (
-    <IntegrationsWorkspace
-      connectedCount={connectedCount}
-      integrations={integrations}
-      platformCount={integrationRegistry.length}
-      queuedJobs={queuedJobs}
-      syncHealth={syncHealth}
-    />
+    <main>
+      <Section>
+        <SectionIntro
+          eyebrow="Integrations"
+          title="Connect your inbox to the marketing platforms that run your growth."
+          description="Email Exporter supports direct syncs, queue-ready workflows, and clean exports for teams using multiple accounts and client destinations."
+        />
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {integrations.map(([name, description, status]) => (
+            <IntegrationCard key={name} description={description} name={name} status={status} />
+          ))}
+        </div>
+      </Section>
+      <CTASection />
+    </main>
   );
 }

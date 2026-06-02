@@ -27,7 +27,7 @@ export async function proxy(request: NextRequest) {
     request.nextUrl.pathname.startsWith(adminPathPrefix) &&
     token.role !== "ADMIN"
   ) {
-    return NextResponse.redirect(new URL("/", request.url));
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   return NextResponse.next();
@@ -36,9 +36,15 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     "/settings/:path*",
+    "/dashboard/:path*",
     "/folders/:path*",
+    "/contacts/:path*",
     "/results/:path*",
     "/export/:path*",
+    "/automation/:path*",
+    "/analytics/:path*",
+    "/logs/:path*",
+    "/sync-history/:path*",
     "/admin/:path*",
     "/api/accounts/:path*",
     "/api/imap/:path*",

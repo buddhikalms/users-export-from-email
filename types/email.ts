@@ -65,11 +65,27 @@ export interface SavedEmailAccountSummary {
 export type ActiveConnection =
   | {
       mode: "manual";
-      settings: ConnectionSettings;
+      account: {
+        email: string;
+        host: string;
+        port: number;
+        username: string;
+      };
     }
   | {
       mode: "saved";
       account: SavedEmailAccountSummary;
+    }
+  | {
+      mode: "vault";
+      account: {
+        id: string;
+        name: string;
+        email: string;
+        host: string;
+        port: number;
+        username: string;
+      };
     };
 
 export type LastSeenFilterMode = "all" | "before" | "after";

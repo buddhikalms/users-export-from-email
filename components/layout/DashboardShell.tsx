@@ -26,6 +26,7 @@ import {
   Search,
   Settings,
   Shield,
+  ShieldCheck,
   Sparkles,
   Sun,
   Tags,
@@ -39,6 +40,7 @@ import { signOut } from "next-auth/react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/layout/ThemeProvider";
+import { useVaultStatusBadge } from "@/hooks/useVault";
 import { cn } from "@/lib/utils";
 
 type SessionUser = {
@@ -51,7 +53,7 @@ const navGroups = [
   {
     label: "Workspace",
     items: [
-      { label: "Dashboard", href: "/", icon: LayoutDashboard },
+      { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
       { label: "Email Sync", href: "/settings", icon: MailCheck },
       { label: "Folders", href: "/folders", icon: FolderTree },
       { label: "Contacts", href: "/contacts", icon: UsersRound },
@@ -61,7 +63,7 @@ const navGroups = [
   {
     label: "Marketing",
     items: [
-      { label: "Integrations", href: "/integrations", icon: Sparkles },
+      { label: "Integrations", href: "/dashboard/integrations", icon: Sparkles },
       { label: "Kit Accounts", href: "/settings/kit", icon: CircleUserRound },
       { label: "Destinations", href: "/export", icon: Tags },
       { label: "Automation", href: "/automation", icon: Workflow },
@@ -74,6 +76,7 @@ const navGroups = [
       { label: "Analytics", href: "/analytics", icon: BarChart3 },
       { label: "AI Readiness", href: "/automation", icon: Bot },
       { label: "Settings", href: "/settings", icon: Settings },
+      { label: "Security Vault", href: "/settings/security-vault", icon: ShieldCheck },
       { label: "Logs", href: "/logs", icon: ListChecks },
     ],
   },
@@ -208,13 +211,13 @@ function Sidebar({
       )}
     >
       <div className="flex h-16 items-center justify-between border-b border-border/70 px-4">
-        <Link className="flex min-w-0 items-center gap-3" href="/">
+        <Link className="flex min-w-0 items-center gap-3" href={"/dashboard" as any}>
           <div className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-primary text-primary-foreground shadow-sm">
             <Activity className="h-5 w-5" />
           </div>
           {!collapsed ? (
             <div className="min-w-0">
-              <div className="truncate text-sm font-semibold">BuddhiEmailExtractor</div>
+              <div className="truncate text-sm font-semibold">EmailExporter</div>
               <div className="truncate text-xs text-muted-foreground">Lead extraction CRM</div>
             </div>
           ) : null}
@@ -368,6 +371,7 @@ export function DashboardShell({
   user: SessionUser;
 }) {
   const pathname = usePathname();
+  const vaultUnlocked = useVaultStatusBadge();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
@@ -432,8 +436,14 @@ export function DashboardShell({
               <Search className="h-4 w-4" />
               Search or press Ctrl K
             </button>
-            <Badge className="hidden bg-accent/15 text-accent-foreground dark:text-accent sm:inline-flex">
-              Sync ready
+            <Badge
+              className={
+                vaultUnlocked
+                  ? "hidden bg-primary/10 text-primary sm:inline-flex"
+                  : "hidden bg-muted text-muted-foreground sm:inline-flex"
+              }
+            >
+              Vault {vaultUnlocked ? "unlocked" : "locked"}
             </Badge>
             <Button size="sm" variant="outline">
               <Bell className="h-4 w-4" />

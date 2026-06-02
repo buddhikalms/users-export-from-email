@@ -24,11 +24,14 @@ import {
   saveActiveConnection,
   saveConnectionSettings,
 } from "@/lib/storage";
+import { setActiveVaultConnection } from "@/lib/vault-session";
 import {
   connectionSettingsSchema,
   defaultConnectionSettings,
   savedEmailAccountSchema,
 } from "@/lib/validation";
+import { useVault } from "@/hooks/useVault";
+import { VaultUnlock } from "@/components/vault/VaultUnlock";
 import type { SavedEmailAccountSummary } from "@/types/email";
 
 type FormState = {
@@ -115,6 +118,7 @@ export function ConnectionForm() {
     message: string;
   } | null>(null);
   const [busyAction, setBusyAction] = useState<string | null>(null);
+  const vault = useVault();
 
   async function loadAccounts() {
     setLoadingAccounts(true);
@@ -187,6 +191,36 @@ export function ConnectionForm() {
     saveActiveConnection({
       mode: "saved",
       account,
+    });
+    router.push("/folders");
+  }
+
+  async function useVaultAccount(accountId: string) {
+    const account = vault.vaultData?.emailAccounts.find((item) => item.id === accountId);
+    if (!account) {
+      return;
+    }
+
+    clearSyncArtifacts();
+    setActiveVaultConnection({
+      email: account.email,
+      host: account.host,
+      port: account.port,
+      security: account.security ?? (account.secure ? "ssl_tls" : "starttls"),
+      username: account.username,
+      password: account.password,
+      rememberPassword: false,
+    });
+    saveActiveConnection({
+      mode: "vault",
+      account: {
+        id: account.id,
+        name: account.name,
+        email: account.email,
+        host: account.host,
+        port: account.port,
+        username: account.username,
+      },
     });
     router.push("/folders");
   }
@@ -396,6 +430,7 @@ export function ConnectionForm() {
 
   return (
     <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
+      <div className="space-y-6">
       <Card className="border-white/80">
         <CardHeader>
           <CardTitle>Saved Email Accounts</CardTitle>
@@ -463,6 +498,53 @@ export function ConnectionForm() {
           )}
         </CardContent>
       </Card>
+
+      <Card className="border-white/80">
+        <CardHeader>
+          <CardTitle>Security Vault Email Accounts</CardTitle>
+          <p className="text-sm leading-6 text-muted-foreground">
+            Unlock the vault to sync with a saved credential. The password stays in
+            memory and is sent to the server only for the immediate IMAP request.
+          </p>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {!vault.hasVault ? (
+            <div className="rounded-3xl border border-dashed border-border bg-white/60 p-6 text-sm text-muted-foreground">
+              No vault exists yet. Create one from the Security Vault page.
+            </div>
+          ) : !vault.isUnlocked ? (
+            <VaultUnlock
+              onUnlock={async (masterPassword) => {
+                await vault.unlockVault(masterPassword);
+              }}
+            />
+          ) : vault.vaultData?.emailAccounts.length ? (
+            vault.vaultData.emailAccounts.map((account) => (
+              <div
+                key={account.id}
+                className="flex flex-wrap items-start justify-between gap-3 rounded-[1.5rem] border border-white/70 bg-white/85 p-5"
+              >
+                <div>
+                  <h3 className="text-lg font-semibold">{account.name}</h3>
+                  <p className="text-sm text-muted-foreground">{account.email}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {account.host}:{account.port} / {account.username}
+                  </p>
+                </div>
+                <Button size="sm" onClick={() => void useVaultAccount(account.id)}>
+                  <PlayCircle className="h-4 w-4" />
+                  Use
+                </Button>
+              </div>
+            ))
+          ) : (
+            <div className="rounded-3xl border border-dashed border-border bg-white/60 p-6 text-sm text-muted-foreground">
+              No email credentials are saved in the unlocked vault.
+            </div>
+          )}
+        </CardContent>
+      </Card>
+      </div>
 
       <Card className="border-white/80">
         <CardHeader>

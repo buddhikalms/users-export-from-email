@@ -16,7 +16,7 @@ export default async function LoginPage() {
       <div className="grid gap-8 md:grid-cols-[1.05fr_0.95fr]">
         <section className="space-y-5">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">
-            BuddhiEmailExtractor
+            EmailExporter
           </p>
           <h1 className="text-4xl">Sign in to your lead extraction workspace.</h1>
           <p className="max-w-xl text-base leading-7 text-muted-foreground">

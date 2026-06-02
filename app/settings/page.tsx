@@ -19,13 +19,16 @@ export default async function SettingsPage() {
           </p>
           <h1 className="text-4xl">Saved Email Accounts & Connection Settings</h1>
           <p className="max-w-3xl text-base leading-7 text-muted-foreground">
-            Add multiple IMAP accounts to the database, keep passwords encrypted
-            server-side, and choose any saved account or one-time manual connection
-            when you want to sync folders.
+            Add one-time IMAP settings or move durable credentials into the zero-knowledge
+            Security Vault. Vault secrets are encrypted in the browser before they reach
+            the database.
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
+          <Button asChild>
+            <Link href={"/settings/security-vault" as "/settings"}>Security Vault</Link>
+          </Button>
           <Button asChild variant="outline">
             <Link href={"/settings/kit" as "/settings"}>Kit Settings</Link>
           </Button>

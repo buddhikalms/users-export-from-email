@@ -14,6 +14,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
 
+  let settings: Awaited<ReturnType<typeof resolveConnectionSettings>> | null = null;
+
   try {
     const json = await request.json();
     const parsed = testConnectionRequestSchema.safeParse(json);
@@ -29,10 +31,12 @@ export async function POST(request: Request) {
       );
     }
 
-    const settings = await resolveConnectionSettings(parsed.data, session.user.id);
+    settings = await resolveConnectionSettings(parsed.data, session.user.id);
     const result = await testImapConnection(settings);
+    settings = null;
     return NextResponse.json(result);
   } catch (error) {
+    settings = null;
     const message =
       error instanceof Error ? error.message : "Failed to test IMAP connection.";
 

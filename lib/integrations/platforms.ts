@@ -13,6 +13,7 @@ export const prismaPlatformByIntegrationId: Record<MarketingPlatformId, Marketin
   constant_contact: "CONSTANT_CONTACT",
   sendgrid_marketing: "SENDGRID_MARKETING",
   campaign_monitor: "CAMPAIGN_MONITOR",
+  zoho_campaigns: "ZOHO_CAMPAIGNS",
 };
 
 export const integrationIdByPrismaPlatform = Object.fromEntries(

@@ -5,9 +5,11 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 type Theme = "light" | "dark" | "system";
 
 const ThemeContext = createContext<{
+  resolvedTheme: "light" | "dark";
   theme: Theme;
   setTheme: (theme: Theme) => void;
 }>({
+  resolvedTheme: "light",
   theme: "system",
   setTheme: () => undefined,
 });
@@ -22,6 +24,7 @@ function resolveTheme(theme: Theme) {
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>("system");
+  const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("light");
 
   useEffect(() => {
     const storedTheme = window.localStorage.getItem("dashboard-theme") as Theme | null;
@@ -33,6 +36,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const apply = () => {
       const nextTheme = resolveTheme(theme);
+      setResolvedTheme(nextTheme);
       document.documentElement.classList.toggle("dark", nextTheme === "dark");
     };
 
@@ -45,13 +49,14 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   const value = useMemo(
     () => ({
+      resolvedTheme,
       theme,
       setTheme: (nextTheme: Theme) => {
         window.localStorage.setItem("dashboard-theme", nextTheme);
         setThemeState(nextTheme);
       },
     }),
-    [theme],
+    [resolvedTheme, theme],
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

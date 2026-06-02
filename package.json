@@ -1,11 +1,12 @@
 {
-  "name": "buddhi-email-extractor",
+  "name": "emailexporter",
   "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "test:security": "node --test tests/vault-security.test.ts",
     "typecheck": "tsc --noEmit",
     "db:start": "docker compose up -d mysql",
     "db:stop": "docker compose stop mysql",

@@ -3,9 +3,8 @@ import type {
   ConnectionSettings,
   SyncResult,
 } from "@/types/email";
+import { setActiveVaultConnection } from "@/lib/vault-session";
 
-const SESSION_SETTINGS_KEY = "outlook-sync:settings:session";
-const PERSISTED_SETTINGS_KEY = "outlook-sync:settings:persistent";
 const SELECTED_FOLDERS_KEY = "outlook-sync:selected-folders";
 const SYNC_RESULT_KEY = "outlook-sync:sync-result";
 const ACTIVE_CONNECTION_KEY = "outlook-sync:active-connection";
@@ -15,17 +14,7 @@ function canUseStorage() {
 }
 
 export function getStoredConnectionSettings(): ConnectionSettings | null {
-  if (!canUseStorage()) {
-    return null;
-  }
-
-  const persisted = window.localStorage.getItem(PERSISTED_SETTINGS_KEY);
-  if (persisted) {
-    return JSON.parse(persisted) as ConnectionSettings;
-  }
-
-  const sessionValue = window.sessionStorage.getItem(SESSION_SETTINGS_KEY);
-  return sessionValue ? (JSON.parse(sessionValue) as ConnectionSettings) : null;
+  return null;
 }
 
 export function saveConnectionSettings(settings: ConnectionSettings) {
@@ -33,20 +22,15 @@ export function saveConnectionSettings(settings: ConnectionSettings) {
     return;
   }
 
-  // Production note:
-  // Replace browser storage with encrypted server-side storage or a secrets vault
-  // if you need durable credential persistence across devices or sessions.
-  window.sessionStorage.setItem(SESSION_SETTINGS_KEY, JSON.stringify(settings));
-
-  if (settings.rememberPassword) {
-    window.localStorage.setItem(PERSISTED_SETTINGS_KEY, JSON.stringify(settings));
-  } else {
-    window.localStorage.removeItem(PERSISTED_SETTINGS_KEY);
-  }
-
+  setActiveVaultConnection(settings);
   saveActiveConnection({
     mode: "manual",
-    settings,
+    account: {
+      email: settings.email,
+      host: settings.host,
+      port: settings.port,
+      username: settings.username,
+    },
   });
 }
 
@@ -55,8 +39,6 @@ export function clearStoredConnectionSettings() {
     return;
   }
 
-  window.sessionStorage.removeItem(SESSION_SETTINGS_KEY);
-  window.localStorage.removeItem(PERSISTED_SETTINGS_KEY);
 }
 
 export function saveSelectedFolders(folders: string[]) {

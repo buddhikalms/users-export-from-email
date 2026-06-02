@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { automationTriggers, getAutomationSchedulePreset } from "@/lib/automation";
 import { normalizeContactEmail } from "@/lib/email-format";
 
 const contactEmailSchema = z.string().trim().refine((value) => {
@@ -238,11 +239,59 @@ export const kitAccountSyncRequestSchema = z.object({
   }
 });
 
+export const kitVaultCredentialsSchema = z.object({
+  apiVersion: z.enum(["v4", "v3"]).default("v4"),
+  apiKey: z.string().trim().min(1),
+  apiSecret: z.string().trim().optional(),
+}).superRefine((value, context) => {
+  if (value.apiVersion === "v3" && !value.apiSecret) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Kit V3 requires an API secret.",
+      path: ["apiSecret"],
+    });
+  }
+});
+
+export const kitVaultDestinationsRequestSchema = z.object({
+  credentials: kitVaultCredentialsSchema,
+});
+
+export const kitVaultSyncRequestSchema = z.object({
+  accountName: z.string().trim().min(1).max(80),
+  credentials: kitVaultCredentialsSchema,
+  syncResult: syncResultSchema,
+  destinationType: z.enum(["tag", "form"]),
+  tagId: z.string().trim().optional(),
+  formId: z.string().trim().optional(),
+  destinationName: z.string().trim().optional(),
+}).superRefine((value, context) => {
+  if (value.destinationType === "tag" && !value.tagId) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Select a Kit tag.",
+      path: ["tagId"],
+    });
+  }
+
+  if (value.destinationType === "form" && !value.formId) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Select a Kit form.",
+      path: ["formId"],
+    });
+  }
+});
+
 export const automationRuleCreateSchema = z.object({
   name: z.string().trim().min(2, "Rule name is required.").max(120, "Rule name is too long."),
-  trigger: z.enum(["SCHEDULED", "FOLDER_SYNCED", "CONTACT_CREATED", "TAG_MATCHED", "MANUAL"]),
+  trigger: z.enum(automationTriggers),
   enabled: z.boolean().optional().default(true),
   schedule: z.string().trim().max(120, "Schedule is too long.").optional(),
+  emailAccountId: z.string().trim().optional(),
+  marketingAccountId: z.string().trim().optional(),
+  marketingAccountType: z.enum(["kit", "integration"]).optional(),
+  marketingPlatform: z.string().trim().max(80).optional(),
   conditionText: z.string().trim().max(500, "Conditions are too long.").optional(),
   actionText: z.string().trim().max(500, "Actions are too long.").optional(),
   nextRunAt: z.string().optional(),
@@ -255,11 +304,46 @@ export const automationRuleCreateSchema = z.object({
     });
   }
 
+  if (value.trigger === "SCHEDULED" && value.schedule && !getAutomationSchedulePreset(value.schedule)) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Choose one of the supported schedule presets.",
+      path: ["schedule"],
+    });
+  }
+
   if (value.nextRunAt && Number.isNaN(new Date(value.nextRunAt).getTime())) {
     context.addIssue({
       code: z.ZodIssueCode.custom,
       message: "Enter a valid next run date.",
       path: ["nextRunAt"],
+    });
+  }
+
+  const hasExportSelection =
+    Boolean(value.emailAccountId) ||
+    Boolean(value.marketingAccountId) ||
+    Boolean(value.marketingAccountType) ||
+    Boolean(value.marketingPlatform);
+  const requiresExportSelection = hasExportSelection || value.trigger === "SCHEDULED";
+
+  if (!requiresExportSelection) {
+    return;
+  }
+
+  if (!value.emailAccountId) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Select the email account to export from.",
+      path: ["emailAccountId"],
+    });
+  }
+
+  if (!value.marketingAccountId || !value.marketingAccountType || !value.marketingPlatform) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Select the platform account to export to.",
+      path: ["marketingAccountId"],
     });
   }
 });
@@ -277,6 +361,7 @@ export const integrationAccountCreateSchema = z.object({
     "constant_contact",
     "sendgrid_marketing",
     "campaign_monitor",
+    "zoho_campaigns",
   ]),
   name: z.string().trim().min(2, "Account name is required.").max(80, "Account name is too long."),
   apiKey: z.string().trim().min(1, "API key is required."),
@@ -284,6 +369,40 @@ export const integrationAccountCreateSchema = z.object({
   serverPrefix: z.string().trim().optional(),
   externalAccountId: z.string().trim().optional(),
   isDefault: z.boolean().optional().default(false),
+});
+
+export const encryptedVaultSchema = z.object({
+  name: z.string().trim().min(1).max(80).default("Default Vault"),
+  encryptedBlob: z.string().min(1, "Encrypted vault blob is required."),
+  salt: z.string().min(16, "Vault salt is required."),
+  iv: z.string().min(12, "Vault IV is required."),
+  kdf: z.literal("PBKDF2").default("PBKDF2"),
+  iterations: z.coerce.number().int().min(100000).max(1000000).default(250000),
+});
+
+export const immediateMarketingSyncSchema = z.object({
+  platform: z.enum([
+    "kit",
+    "mailchimp",
+    "brevo",
+    "beehiiv",
+    "activecampaign",
+    "hubspot",
+    "zoho_campaigns",
+  ]),
+  accountName: z.string().trim().min(1).max(80),
+  credentials: z.object({
+    apiKey: z.string().trim().min(1),
+    apiSecret: z.string().trim().optional(),
+    serverPrefix: z.string().trim().optional(),
+    accountId: z.string().trim().optional(),
+  }),
+  syncResult: syncResultSchema,
+  destination: z.object({
+    id: z.string().trim().min(1),
+    name: z.string().trim().min(1),
+    type: z.enum(["tag", "list", "form", "audience", "segment"]),
+  }),
 });
 
 export const defaultConnectionSettings = {

@@ -8,9 +8,14 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { VaultUnlock } from "@/components/vault/VaultUnlock";
 import { readJsonResponse } from "@/lib/fetch-json";
+import { useVault } from "@/hooks/useVault";
+import { integrationRegistry } from "@/lib/integrations/registry";
+import type { IntegrationDestinationType } from "@/lib/integrations/types";
 import type { SyncResult } from "@/types/email";
 import type { KitAccountSummary, KitForm, KitSyncSummary, KitTag } from "@/types/kit";
+import type { VaultMarketingAccount } from "@/types/vault";
 
 type DestinationType = "tag" | "form";
 
@@ -18,6 +23,424 @@ type Status = {
   type: "success" | "error";
   message: string;
 };
+
+function getKitCredentials(account: VaultMarketingAccount) {
+  return {
+    apiVersion: account.apiSecret ? ("v3" as const) : ("v4" as const),
+    apiKey: account.apiKey,
+    apiSecret: account.apiSecret,
+  };
+}
+
+function VaultKitExportPanel({ syncResult }: { syncResult: SyncResult }) {
+  const vault = useVault();
+  const [selectedAccountId, setSelectedAccountId] = useState("");
+  const [destinationType, setDestinationType] = useState<DestinationType>("tag");
+  const [tags, setTags] = useState<KitTag[]>([]);
+  const [forms, setForms] = useState<KitForm[]>([]);
+  const [selectedTagId, setSelectedTagId] = useState("");
+  const [selectedFormId, setSelectedFormId] = useState("");
+  const [status, setStatus] = useState<Status | null>(null);
+  const [loadingDestinations, setLoadingDestinations] = useState(false);
+  const [syncing, setSyncing] = useState(false);
+
+  const vaultKitAccounts =
+    vault.vaultData?.marketingAccounts.filter((account) => account.platform === "kit") ?? [];
+  const selectedAccount =
+    vaultKitAccounts.find((account) => account.id === selectedAccountId) ?? null;
+
+  useEffect(() => {
+    setSelectedAccountId((current) => current || vaultKitAccounts[0]?.id || "");
+  }, [vaultKitAccounts]);
+
+  async function loadVaultDestinations(account: VaultMarketingAccount) {
+    setLoadingDestinations(true);
+    setStatus(null);
+    setTags([]);
+    setForms([]);
+    setSelectedTagId("");
+    setSelectedFormId("");
+
+    try {
+      const response = await fetch("/api/kit/vault/destinations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ credentials: getKitCredentials(account) }),
+      });
+      const payload = await readJsonResponse<{
+        tags?: KitTag[];
+        forms?: KitForm[];
+        error?: string;
+      }>(response);
+
+      if (!response.ok) {
+        throw new Error(payload.error ?? "Unable to load Kit destinations.");
+      }
+
+      setTags(payload.tags ?? []);
+      setForms(payload.forms ?? []);
+    } catch (error) {
+      setStatus({
+        type: "error",
+        message:
+          error instanceof Error ? error.message : "Unable to load Kit destinations.",
+      });
+    } finally {
+      setLoadingDestinations(false);
+    }
+  }
+
+  useEffect(() => {
+    if (selectedAccount) {
+      void loadVaultDestinations(selectedAccount);
+    }
+  }, [selectedAccountId]);
+
+  async function exportWithVaultAccount() {
+    if (!selectedAccount) {
+      setStatus({ type: "error", message: "Select a Kit account from the vault." });
+      return;
+    }
+
+    if (destinationType === "tag" && !selectedTagId) {
+      setStatus({ type: "error", message: "Select a Kit tag." });
+      return;
+    }
+
+    if (destinationType === "form" && !selectedFormId) {
+      setStatus({ type: "error", message: "Select a Kit form." });
+      return;
+    }
+
+    setSyncing(true);
+    setStatus(null);
+
+    try {
+      const response = await fetch("/api/kit/vault/sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          accountName: selectedAccount.name,
+          credentials: getKitCredentials(selectedAccount),
+          syncResult,
+          destinationType,
+          tagId: destinationType === "tag" ? selectedTagId : undefined,
+          formId: destinationType === "form" ? selectedFormId : undefined,
+          destinationName:
+            destinationType === "tag"
+              ? tags.find((tag) => tag.id === selectedTagId)?.name
+              : forms.find((form) => form.id === selectedFormId)?.name,
+        }),
+      });
+      const payload = await readJsonResponse<{ summary?: KitSyncSummary; error?: string }>(
+        response,
+      );
+
+      if (!response.ok || !payload.summary) {
+        throw new Error(payload.error ?? "Unable to export contacts to Kit.");
+      }
+
+      setStatus({
+        type: "success",
+        message: `Export complete for ${selectedAccount.name}: ${payload.summary.uploaded} uploaded, ${payload.summary.failedUploads} failed.`,
+      });
+    } catch (error) {
+      setStatus({
+        type: "error",
+        message: error instanceof Error ? error.message : "Unable to export contacts to Kit.",
+      });
+    } finally {
+      setSyncing(false);
+    }
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Secure Vault Export to Kit</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-5">
+        {!vault.hasVault ? (
+          <div className="rounded-3xl border border-dashed border-border bg-white/60 p-6 text-sm text-muted-foreground">
+            Create a Security Vault before using encrypted platform credentials.
+          </div>
+        ) : !vault.isUnlocked ? (
+          <VaultUnlock
+            onUnlock={async (masterPassword) => {
+              await vault.unlockVault(masterPassword);
+            }}
+          />
+        ) : vaultKitAccounts.length === 0 ? (
+          <div className="rounded-3xl border border-dashed border-border bg-white/60 p-6 text-sm text-muted-foreground">
+            Add a Kit account to the unlocked vault before exporting.
+          </div>
+        ) : (
+          <>
+            <div className="grid gap-5 md:grid-cols-3">
+              <div className="space-y-2">
+                <label className="text-sm font-medium" htmlFor="vault-kit-account">
+                  Vault account
+                </label>
+                <select
+                  id="vault-kit-account"
+                  className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                  value={selectedAccountId}
+                  onChange={(event) => setSelectedAccountId(event.target.value)}
+                >
+                  {vaultKitAccounts.map((account) => (
+                    <option key={account.id} value={account.id}>
+                      {account.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium" htmlFor="vault-kit-destination-type">
+                  Destination
+                </label>
+                <select
+                  id="vault-kit-destination-type"
+                  className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                  value={destinationType}
+                  onChange={(event) => setDestinationType(event.target.value as DestinationType)}
+                >
+                  <option value="tag">Tag</option>
+                  <option value="form">Form</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium" htmlFor="vault-kit-destination">
+                  Tag / Form
+                </label>
+                <select
+                  id="vault-kit-destination"
+                  className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                  disabled={loadingDestinations}
+                  value={destinationType === "tag" ? selectedTagId : selectedFormId}
+                  onChange={(event) =>
+                    destinationType === "tag"
+                      ? setSelectedTagId(event.target.value)
+                      : setSelectedFormId(event.target.value)
+                  }
+                >
+                  <option value="">
+                    {loadingDestinations ? "Loading..." : "Select destination"}
+                  </option>
+                  {(destinationType === "tag" ? tags : forms).map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {status ? (
+              <Alert
+                className={
+                  status.type === "error"
+                    ? "border-destructive/25 bg-destructive/5"
+                    : "border-primary/20 bg-primary/5"
+                }
+              >
+                <AlertTitle>
+                  {status.type === "error" ? "Vault export failed" : "Vault export complete"}
+                </AlertTitle>
+                <AlertDescription>{status.message}</AlertDescription>
+              </Alert>
+            ) : null}
+
+            <Button disabled={syncing || loadingDestinations} onClick={() => void exportWithVaultAccount()}>
+              <Send className="h-4 w-4" />
+              {syncing ? "Exporting..." : "Export With Vault Account"}
+            </Button>
+          </>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+function VaultPlatformExportPanel({ syncResult }: { syncResult: SyncResult }) {
+  const vault = useVault();
+  const [selectedAccountId, setSelectedAccountId] = useState("");
+  const [destinationType, setDestinationType] = useState<IntegrationDestinationType>("list");
+  const [destinationName, setDestinationName] = useState("");
+  const [status, setStatus] = useState<Status | null>(null);
+  const [syncing, setSyncing] = useState(false);
+
+  const accounts =
+    vault.vaultData?.marketingAccounts.filter((account) => account.platform !== "kit") ?? [];
+  const selectedAccount = accounts.find((account) => account.id === selectedAccountId) ?? null;
+  const selectedAdapter = selectedAccount
+    ? integrationRegistry.find((adapter) => adapter.platform === selectedAccount.platform)
+    : null;
+  const destinationTypes = selectedAdapter?.destinationTypes ?? ["list"];
+
+  useEffect(() => {
+    setSelectedAccountId((current) => current || accounts[0]?.id || "");
+  }, [accounts]);
+
+  useEffect(() => {
+    setDestinationType(destinationTypes[0] ?? "list");
+  }, [selectedAccount?.platform]);
+
+  async function exportWithVaultAccount() {
+    if (!selectedAccount || !selectedAdapter) {
+      setStatus({ type: "error", message: "Select a platform account from the vault." });
+      return;
+    }
+
+    if (!destinationName.trim()) {
+      setStatus({ type: "error", message: "Enter the destination name or ID." });
+      return;
+    }
+
+    setSyncing(true);
+    setStatus(null);
+
+    try {
+      const response = await fetch("/api/integrations/vault/sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          platform: selectedAccount.platform,
+          accountName: selectedAccount.name,
+          credentials: {
+            apiKey: selectedAccount.apiKey,
+            apiSecret: selectedAccount.apiSecret,
+            serverPrefix: selectedAccount.serverPrefix,
+            accountId: selectedAccount.accountId,
+          },
+          syncResult,
+          destination: {
+            id: destinationName.trim(),
+            name: destinationName.trim(),
+            type: destinationType,
+          },
+        }),
+      });
+      const payload = await readJsonResponse<{
+        summary?: { uploaded: number; failed: number; skippedDuplicates: number };
+        error?: string;
+      }>(response);
+
+      if (!response.ok || !payload.summary) {
+        throw new Error(payload.error ?? "Unable to export contacts.");
+      }
+
+      setStatus({
+        type: "success",
+        message: `${selectedAdapter.label} export queued: ${payload.summary.skippedDuplicates} duplicates skipped, ${payload.summary.failed} failed.`,
+      });
+    } catch (error) {
+      setStatus({
+        type: "error",
+        message: error instanceof Error ? error.message : "Unable to export contacts.",
+      });
+    } finally {
+      setSyncing(false);
+    }
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Secure Vault Export to Other Platforms</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-5">
+        {!vault.hasVault ? (
+          <div className="rounded-3xl border border-dashed border-border bg-white/60 p-6 text-sm text-muted-foreground">
+            Create a Security Vault before using encrypted platform credentials.
+          </div>
+        ) : !vault.isUnlocked ? (
+          <VaultUnlock
+            onUnlock={async (masterPassword) => {
+              await vault.unlockVault(masterPassword);
+            }}
+          />
+        ) : accounts.length === 0 ? (
+          <div className="rounded-3xl border border-dashed border-border bg-white/60 p-6 text-sm text-muted-foreground">
+            Add Mailchimp, Brevo, HubSpot, Beehiiv, or ActiveCampaign credentials to
+            the unlocked vault before exporting.
+          </div>
+        ) : (
+          <>
+            <div className="grid gap-5 md:grid-cols-3">
+              <div className="space-y-2">
+                <label className="text-sm font-medium" htmlFor="vault-platform-account">
+                  Vault account
+                </label>
+                <select
+                  id="vault-platform-account"
+                  className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                  value={selectedAccountId}
+                  onChange={(event) => setSelectedAccountId(event.target.value)}
+                >
+                  {accounts.map((account) => (
+                    <option key={account.id} value={account.id}>
+                      {account.name} / {account.platform}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium" htmlFor="vault-platform-destination-type">
+                  Destination type
+                </label>
+                <select
+                  id="vault-platform-destination-type"
+                  className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                  value={destinationType}
+                  onChange={(event) =>
+                    setDestinationType(event.target.value as IntegrationDestinationType)
+                  }
+                >
+                  {destinationTypes.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium" htmlFor="vault-platform-destination">
+                  Destination name or ID
+                </label>
+                <input
+                  id="vault-platform-destination"
+                  className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                  value={destinationName}
+                  onChange={(event) => setDestinationName(event.target.value)}
+                />
+              </div>
+            </div>
+
+            {status ? (
+              <Alert
+                className={
+                  status.type === "error"
+                    ? "border-destructive/25 bg-destructive/5"
+                    : "border-primary/20 bg-primary/5"
+                }
+              >
+                <AlertTitle>
+                  {status.type === "error" ? "Vault export failed" : "Vault export complete"}
+                </AlertTitle>
+                <AlertDescription>{status.message}</AlertDescription>
+              </Alert>
+            ) : null}
+
+            <Button disabled={syncing} onClick={() => void exportWithVaultAccount()}>
+              <Send className="h-4 w-4" />
+              {syncing ? "Exporting..." : "Export With Vault Account"}
+            </Button>
+          </>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
 
 export function KitSyncPanel({ syncResult }: { syncResult: SyncResult }) {
   const [accounts, setAccounts] = useState<KitAccountSummary[]>([]);
@@ -194,6 +617,9 @@ export function KitSyncPanel({ syncResult }: { syncResult: SyncResult }) {
   }
 
   return (
+    <>
+    <VaultKitExportPanel syncResult={syncResult} />
+    <VaultPlatformExportPanel syncResult={syncResult} />
     <Card>
       <CardHeader>
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -426,5 +852,6 @@ export function KitSyncPanel({ syncResult }: { syncResult: SyncResult }) {
         ) : null}
       </CardContent>
     </Card>
+    </>
   );
 }

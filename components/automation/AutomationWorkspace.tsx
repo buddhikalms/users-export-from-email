@@ -20,6 +20,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import {
+  automationSchedulePresets,
+  type AutomationTriggerValue,
+} from "@/lib/automation";
 import { formatCount, formatDateTime } from "@/lib/dashboard-data";
 
 type AutomationRuleView = {
@@ -30,13 +34,37 @@ type AutomationRuleView = {
   schedule: string | null;
   lastRunAt: string | null;
   nextRunAt: string | null;
+  emailAccountId: string | null;
+  marketingAccountId: string | null;
+  marketingAccountType: string | null;
+  marketingPlatform: string | null;
+};
+
+type EmailAccountOption = {
+  id: string;
+  label: string;
+  email: string;
+  isDefault: boolean;
+};
+
+type PlatformAccountOption = {
+  id: string;
+  name: string;
+  platform: string;
+  platformLabel: string;
+  accountType: "kit" | "integration";
+  isDefault: boolean;
 };
 
 type FormState = {
   name: string;
-  trigger: "SCHEDULED" | "FOLDER_SYNCED" | "CONTACT_CREATED" | "TAG_MATCHED" | "MANUAL";
+  trigger: AutomationTriggerValue;
   enabled: boolean;
   schedule: string;
+  emailAccountId: string;
+  marketingAccountId: string;
+  marketingAccountType: "kit" | "integration" | "";
+  marketingPlatform: string;
   conditionText: string;
   actionText: string;
   nextRunAt: string;
@@ -47,10 +75,49 @@ const emptyForm: FormState = {
   trigger: "MANUAL",
   enabled: true,
   schedule: "",
+  emailAccountId: "",
+  marketingAccountId: "",
+  marketingAccountType: "",
+  marketingPlatform: "",
   conditionText: "",
   actionText: "",
   nextRunAt: "",
 };
+
+const ruleTemplates: Array<{
+  title: string;
+  description: string;
+  trigger: AutomationTriggerValue;
+  name: string;
+  schedule?: string;
+  conditionText?: string;
+  actionText?: string;
+}> = [
+  {
+    title: "Scheduled platform export",
+    description: "Export users from a selected mailbox into Kit or another connected platform.",
+    trigger: "SCHEDULED",
+    name: "Scheduled platform export",
+    schedule: "hourly",
+    actionText: "Export users from the selected email account to the selected platform.",
+  },
+  {
+    title: "New contact cleanup",
+    description: "Prepare contacts for review as soon as they are created.",
+    trigger: "CONTACT_CREATED",
+    name: "Clean up new contacts",
+    conditionText: "When a new contact is created",
+    actionText: "Normalize contact fields and mark duplicates for review.",
+  },
+  {
+    title: "Folder destination rule",
+    description: "Keep a folder-based workflow ready for marketing syncs.",
+    trigger: "FOLDER_SYNCED",
+    name: "Folder sync follow-up",
+    conditionText: "When a watched folder finishes syncing",
+    actionText: "Apply folder tags and queue marketing destination sync.",
+  },
+];
 
 function titleCase(value: string) {
   return value
@@ -60,14 +127,31 @@ function titleCase(value: string) {
     .join(" ");
 }
 
+function toDateTimeLocalValue(date: Date) {
+  const offsetMs = date.getTimezoneOffset() * 60 * 1000;
+  return new Date(date.getTime() - offsetMs).toISOString().slice(0, 16);
+}
+
+function getDefaultNextRun(minutesFromNow = 60) {
+  return toDateTimeLocalValue(new Date(Date.now() + minutesFromNow * 60 * 1000));
+}
+
+function getPresetMinutes(schedule: string) {
+  return automationSchedulePresets.find((preset) => preset.schedule === schedule)?.minutes ?? 60;
+}
+
 export function AutomationWorkspace({
   aiJobCount,
+  emailAccounts,
   jobCount,
+  platformAccounts,
   rules,
   scheduledCount,
 }: {
   aiJobCount: number;
+  emailAccounts: EmailAccountOption[];
   jobCount: number;
+  platformAccounts: PlatformAccountOption[];
   rules: AutomationRuleView[];
   scheduledCount: number;
 }) {
@@ -87,12 +171,66 @@ export function AutomationWorkspace({
     ],
     [aiJobCount, jobCount, rules.length, scheduledCount],
   );
+  const emailAccountById = useMemo(
+    () => new Map(emailAccounts.map((account) => [account.id, account])),
+    [emailAccounts],
+  );
+  const platformAccountByKey = useMemo(
+    () =>
+      new Map(
+        platformAccounts.map((account) => [`${account.accountType}:${account.id}`, account]),
+      ),
+    [platformAccounts],
+  );
+  const selectedPlatformAccount = form.marketingAccountId
+    ? platformAccountByKey.get(`${form.marketingAccountType}:${form.marketingAccountId}`)
+    : null;
 
-  function openRuleForm(trigger: FormState["trigger"]) {
+  function getDefaultRoute() {
+    const emailAccount = emailAccounts.find((account) => account.isDefault) ?? emailAccounts[0];
+    const platformAccount =
+      platformAccounts.find((account) => account.isDefault) ?? platformAccounts[0];
+
+    return {
+      emailAccountId: emailAccount?.id ?? "",
+      marketingAccountId: platformAccount?.id ?? "",
+      marketingAccountType: platformAccount?.accountType ?? "",
+      marketingPlatform: platformAccount?.platform ?? "",
+    };
+  }
+
+  function openRuleForm(trigger: AutomationTriggerValue) {
+    const schedule = trigger === "SCHEDULED" ? "hourly" : "";
+    const route = getDefaultRoute();
+
     setForm({
       ...emptyForm,
+      ...route,
       trigger,
-      name: trigger === "SCHEDULED" ? "Scheduled sync" : "",
+      schedule,
+      name: trigger === "SCHEDULED" ? "Scheduled platform export" : "",
+      actionText:
+        trigger === "SCHEDULED" ? "Export users from the selected email account to the selected platform." : "",
+      nextRunAt: trigger === "SCHEDULED" ? getDefaultNextRun(60) : "",
+    });
+    setStatus(null);
+    setModalOpen(true);
+  }
+
+  function openTemplate(template: (typeof ruleTemplates)[number]) {
+    const schedule = template.schedule ?? "";
+    const route = getDefaultRoute();
+
+    setForm({
+      ...emptyForm,
+      ...route,
+      trigger: template.trigger,
+      name: template.name,
+      schedule,
+      conditionText: template.conditionText ?? "",
+      actionText: template.actionText ?? "",
+      nextRunAt:
+        template.trigger === "SCHEDULED" ? getDefaultNextRun(getPresetMinutes(schedule)) : "",
     });
     setStatus(null);
     setModalOpen(true);
@@ -182,6 +320,28 @@ export function AutomationWorkspace({
         ))}
       </section>
 
+      <section className="grid gap-4 lg:grid-cols-3">
+        {ruleTemplates.map((template) => (
+          <button
+            key={template.title}
+            className="rounded-[1.75rem] border border-border/80 bg-card/80 p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
+            onClick={() => openTemplate(template)}
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <h2 className="font-semibold">{template.title}</h2>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                  {template.description}
+                </p>
+              </div>
+              <Badge className="shrink-0 bg-secondary text-secondary-foreground">
+                {titleCase(template.trigger)}
+              </Badge>
+            </div>
+          </button>
+        ))}
+      </section>
+
       <section className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
         <Card>
           <CardHeader>
@@ -207,6 +367,15 @@ export function AutomationWorkspace({
                       </p>
                       {rule.schedule ? (
                         <p className="mt-1 text-xs text-muted-foreground">Schedule: {rule.schedule}</p>
+                      ) : null}
+                      {rule.emailAccountId && rule.marketingAccountId ? (
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          Export route:{" "}
+                          {emailAccountById.get(rule.emailAccountId)?.label ?? "Selected email"} to{" "}
+                          {platformAccountByKey.get(
+                            `${rule.marketingAccountType}:${rule.marketingAccountId}`,
+                          )?.platformLabel ?? rule.marketingPlatform ?? "selected platform"}
+                        </p>
                       ) : null}
                     </div>
                     <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
@@ -271,7 +440,7 @@ export function AutomationWorkspace({
 
       {modalOpen ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/30 px-4 backdrop-blur-sm">
-          <div className="w-full max-w-2xl rounded-3xl border border-border bg-card shadow-2xl">
+          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl border border-border bg-card shadow-2xl">
             <div className="flex items-start justify-between gap-4 border-b border-border/70 p-5">
               <div>
                 <h2 className="text-xl font-semibold">Create Automation Rule</h2>
@@ -304,10 +473,20 @@ export function AutomationWorkspace({
                     className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-card"
                     value={form.trigger}
                     onChange={(event) =>
-                      setForm((current) => ({
-                        ...current,
-                        trigger: event.target.value as FormState["trigger"],
-                      }))
+                      setForm((current) => {
+                        const trigger = event.target.value as AutomationTriggerValue;
+                        const schedule = trigger === "SCHEDULED" ? current.schedule || "hourly" : "";
+
+                        return {
+                          ...current,
+                          trigger,
+                          schedule,
+                          nextRunAt:
+                            trigger === "SCHEDULED" && !current.nextRunAt
+                              ? getDefaultNextRun(getPresetMinutes(schedule))
+                              : current.nextRunAt,
+                        };
+                      })
                     }
                   >
                     <option value="MANUAL">Manual</option>
@@ -331,16 +510,89 @@ export function AutomationWorkspace({
                   />
                 </div>
               </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="email-account">
+                    Email account
+                  </label>
+                  <select
+                    id="email-account"
+                    className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-card"
+                    value={form.emailAccountId}
+                    onChange={(event) =>
+                      setForm((current) => ({ ...current, emailAccountId: event.target.value }))
+                    }
+                  >
+                    <option value="">Select email account</option>
+                    {emailAccounts.map((account) => (
+                      <option key={account.id} value={account.id}>
+                        {account.label} ({account.email}){account.isDefault ? " - default" : ""}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="platform-account">
+                    Platform account
+                  </label>
+                  <select
+                    id="platform-account"
+                    className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-card"
+                    value={
+                      form.marketingAccountId
+                        ? `${form.marketingAccountType}:${form.marketingAccountId}`
+                        : ""
+                    }
+                    onChange={(event) => {
+                      const account = platformAccountByKey.get(event.target.value);
+
+                      setForm((current) => ({
+                        ...current,
+                        marketingAccountId: account?.id ?? "",
+                        marketingAccountType: account?.accountType ?? "",
+                        marketingPlatform: account?.platform ?? "",
+                      }));
+                    }}
+                  >
+                    <option value="">Select Kit or other account</option>
+                    {platformAccounts.map((account) => (
+                      <option key={`${account.accountType}:${account.id}`} value={`${account.accountType}:${account.id}`}>
+                        {account.platformLabel} - {account.name}
+                        {account.isDefault ? " - default" : ""}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div className="rounded-2xl bg-secondary/70 p-4 text-sm text-muted-foreground">
+                {selectedPlatformAccount
+                  ? `Users will be exported to ${selectedPlatformAccount.platformLabel} using ${selectedPlatformAccount.name}.`
+                  : "Select a platform account to enable automatic user export."}
+              </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium" htmlFor="schedule">
                   Schedule
                 </label>
-                <Input
+                <select
+                  className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:opacity-60 dark:bg-card"
+                  disabled={form.trigger !== "SCHEDULED"}
                   id="schedule"
-                  placeholder="Required for scheduled rules"
                   value={form.schedule}
-                  onChange={(event) => setForm((current) => ({ ...current, schedule: event.target.value }))}
-                />
+                  onChange={(event) =>
+                    setForm((current) => ({
+                      ...current,
+                      schedule: event.target.value,
+                      nextRunAt: getDefaultNextRun(getPresetMinutes(event.target.value)),
+                    }))
+                  }
+                >
+                  <option value="">Manual or event based</option>
+                  {automationSchedulePresets.map((preset) => (
+                    <option key={preset.value} value={preset.schedule}>
+                      {preset.label}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium" htmlFor="conditions">

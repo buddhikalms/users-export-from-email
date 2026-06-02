@@ -9,7 +9,8 @@ export type MarketingPlatformId =
   | "mailerlite"
   | "constant_contact"
   | "sendgrid_marketing"
-  | "campaign_monitor";
+  | "campaign_monitor"
+  | "zoho_campaigns";
 
 export type IntegrationDestinationType = "tag" | "list" | "form" | "audience" | "segment";
 

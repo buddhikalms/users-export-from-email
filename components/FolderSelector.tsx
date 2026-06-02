@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { saveSelectedFolders } from "@/lib/storage";
+import { getActiveVaultConnection } from "@/lib/vault-session";
 import type { ActiveConnection, MailFolder } from "@/types/email";
 
 interface FolderSelectorProps {
@@ -40,8 +41,10 @@ export function FolderSelector({
         },
         body: JSON.stringify(
           connection.mode === "manual"
-            ? { settings: connection.settings }
-            : { savedAccountId: connection.account.id },
+            ? { settings: getActiveVaultConnection() }
+            : connection.mode === "vault"
+              ? { settings: getActiveVaultConnection() }
+              : { savedAccountId: connection.account.id },
         ),
       });
 
@@ -118,7 +121,9 @@ export function FolderSelector({
           </p>
           <p className="mt-2 text-xs uppercase tracking-[0.18em] text-primary">
             {connection.mode === "manual"
-              ? `Manual session: ${connection.settings.email}`
+              ? `Manual session: ${connection.account.email}`
+              : connection.mode === "vault"
+                ? `Vault account: ${connection.account.name} (${connection.account.email})`
               : `Saved account: ${connection.account.label} (${connection.account.email})`}
           </p>
         </div>

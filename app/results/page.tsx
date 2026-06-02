@@ -13,6 +13,7 @@ import {
   getStoredActiveConnection,
   saveSyncResult,
 } from "@/lib/storage";
+import { getActiveVaultConnection } from "@/lib/vault-session";
 import type { ActiveConnection, SyncResult } from "@/types/email";
 
 export default function ResultsPage() {
@@ -36,7 +37,9 @@ export default function ResultsPage() {
           },
           body: JSON.stringify({
             ...(activeConnection.mode === "manual"
-              ? { settings: activeConnection.settings }
+              ? { settings: getActiveVaultConnection() }
+              : activeConnection.mode === "vault"
+                ? { settings: getActiveVaultConnection() }
               : { savedAccountId: activeConnection.account.id }),
             folders: currentFolders,
           }),
@@ -98,7 +101,9 @@ export default function ResultsPage() {
           {connection ? (
             <p className="text-xs uppercase tracking-[0.18em] text-primary">
               {connection.mode === "manual"
-                ? `Manual session: ${connection.settings.email}`
+                ? `Manual session: ${connection.account.email}`
+                : connection.mode === "vault"
+                  ? `Vault account: ${connection.account.name} (${connection.account.email})`
                 : `Saved account: ${connection.account.label} (${connection.account.email})`}
             </p>
           ) : null}

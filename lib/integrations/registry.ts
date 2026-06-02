@@ -48,6 +48,12 @@ export const integrationRegistry: IntegrationAdapter[] = [
     description: "Update subscribers and custom fields in Campaign Monitor lists.",
     destinationTypes: ["list"],
   }),
+  createQueueReadyAdapter({
+    platform: "zoho_campaigns",
+    label: "Zoho Campaigns",
+    description: "Sync cleaned contacts into Zoho Campaigns mailing lists and segments.",
+    destinationTypes: ["list", "segment"],
+  }),
 ];
 
 export function getIntegrationAdapter(platform: MarketingPlatformId) {
