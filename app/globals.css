@@ -85,3 +85,52 @@ body::before {
   scrollbar-width: thin;
   scrollbar-color: hsl(var(--border)) transparent;
 }
+
+@keyframes gradient-drift {
+  0%,
+  100% {
+    transform: translate3d(-50%, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-46%, 18px, 0) scale(1.08);
+  }
+}
+
+@keyframes gradient-drift-reverse {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(26px, -18px, 0) scale(1.1);
+  }
+}
+
+@keyframes light-sweep {
+  0% {
+    transform: translateX(-35vw) rotate(12deg);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.75;
+  }
+  70% {
+    opacity: 0.35;
+  }
+  100% {
+    transform: translateX(115vw) rotate(12deg);
+    opacity: 0;
+  }
+}
+
+.animate-gradient-drift {
+  animation: gradient-drift 12s ease-in-out infinite;
+}
+
+.animate-gradient-drift-reverse {
+  animation: gradient-drift-reverse 14s ease-in-out infinite;
+}
+
+.animate-light-sweep {
+  animation: light-sweep 8s ease-in-out infinite;
+}

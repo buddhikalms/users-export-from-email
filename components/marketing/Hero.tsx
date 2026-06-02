@@ -9,6 +9,13 @@ export function Hero() {
   return (
     <section className="relative overflow-hidden">
       <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,#ffffff_0%,#eef6ff_48%,#ffffff_100%)] dark:bg-[linear-gradient(180deg,#020617_0%,#0f172a_54%,#020617_100%)]" />
+      <div className="absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(37,99,235,0.07)_1px,transparent_1px),linear-gradient(90deg,rgba(37,99,235,0.07)_1px,transparent_1px)] bg-[size:54px_54px] opacity-60 dark:opacity-25" />
+        <div className="animate-gradient-drift absolute left-1/2 top-10 h-[420px] w-[720px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(59,130,246,0.28),rgba(34,211,238,0.14)_38%,transparent_68%)] blur-3xl" />
+        <div className="animate-gradient-drift-reverse absolute -left-32 top-28 h-80 w-80 rounded-full bg-[radial-gradient(circle,rgba(14,165,233,0.22),transparent_65%)] blur-3xl" />
+        <div className="animate-gradient-drift absolute -right-28 top-20 h-96 w-96 rounded-full bg-[radial-gradient(circle,rgba(37,99,235,0.2),transparent_66%)] blur-3xl" />
+        <div className="animate-light-sweep absolute top-0 h-full w-40 rotate-12 bg-gradient-to-r from-transparent via-white/45 to-transparent blur-xl dark:via-cyan-200/10" />
+      </div>
       <div className="mx-auto max-w-7xl px-4 pb-16 pt-20 sm:px-6 lg:px-8 lg:pb-24 lg:pt-28">
         <div className="mx-auto max-w-4xl text-center">
           <Reveal>

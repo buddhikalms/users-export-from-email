@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -39,9 +39,10 @@ export function LoginForm() {
   }
 
   return (
-    <Card>
+    <Card className="border-slate-200 bg-white/90 shadow-2xl shadow-slate-950/10 dark:border-white/10 dark:bg-slate-950/80">
       <CardHeader>
-        <CardTitle>Sign In</CardTitle>
+        <CardTitle className="text-slate-950 dark:text-white">Sign In</CardTitle>
+        <CardDescription>Use your Email Exporter workspace credentials.</CardDescription>
       </CardHeader>
       <CardContent>
         <form className="space-y-5" onSubmit={handleSubmit}>

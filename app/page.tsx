@@ -17,6 +17,7 @@ import {
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { AnimatedBanner } from "@/components/marketing/AnimatedBanner";
 import { CTASection } from "@/components/marketing/CTASection";
 import { DashboardMockup } from "@/components/marketing/DashboardMockup";
 import { FAQ } from "@/components/marketing/FAQ";
@@ -48,6 +49,7 @@ export default function MarketingHomePage() {
   return (
     <main>
       <Hero />
+      <AnimatedBanner />
 
       <Section className="py-10">
         <Stagger className="flex flex-wrap justify-center gap-3">
