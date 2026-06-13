@@ -144,6 +144,20 @@ export const exportExcelRequestSchema = z.object({
 
 export const exportFileRequestSchema = exportExcelRequestSchema;
 
+export const exportGoogleSheetsRequestSchema = exportFileRequestSchema.extend({
+  spreadsheetTitle: z
+    .string()
+    .trim()
+    .min(1, "Spreadsheet title is required.")
+    .max(120, "Spreadsheet title is too long.")
+    .optional(),
+  shareWithEmail: z
+    .string()
+    .trim()
+    .email("Enter a valid Google account email.")
+    .optional(),
+});
+
 export const ignoredEmailSchema = z.object({
   email: contactEmailSchema,
 });

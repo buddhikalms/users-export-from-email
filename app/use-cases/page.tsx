@@ -57,6 +57,7 @@ const useCases = [
     pain: "Client contacts are spread across campaign inboxes, team folders, and forwarded leads.",
     outcome: "Build client-ready contact databases, map folders to tags, and sync each client to the correct marketing account.",
     workflow: ["Connect client mailbox", "Scan campaign folders", "Remove duplicates", "Sync to Kit or Mailchimp"],
+    advantages: ["Client-specific exports", "Folder-to-tag mapping", "Less CSV cleanup"],
     result: "Turn inbox history into billable contact lists in one afternoon.",
   },
   {
@@ -66,6 +67,7 @@ const useCases = [
     pain: "Journalists, partners, and contributors are buried inside years of replies and forwarded email chains.",
     outcome: "Discover original senders, clean press contacts, and export outreach-ready lists by beat or publication.",
     workflow: ["Scan media folders", "Detect forwarded senders", "Clean duplicates", "Export press list"],
+    advantages: ["Find hidden journalists", "Keep publication context", "Refresh old media lists"],
     result: "Build fresher media lists without starting from a blank spreadsheet.",
   },
   {
@@ -75,6 +77,7 @@ const useCases = [
     pain: "Subscriber, sponsor, author, and contributor conversations arrive in separate inbox folders.",
     outcome: "Segment contacts by folder and sync newsletter-ready lists to Beehiiv, Brevo, or Mailchimp.",
     workflow: ["Extract submissions", "Segment sponsors", "Clean mailto links", "Sync newsletter contacts"],
+    advantages: ["Separate sponsors and authors", "Clean subscriber rows", "Sync to newsletter tools"],
     result: "Convert editorial inboxes into organized audience growth data.",
   },
   {
@@ -84,6 +87,7 @@ const useCases = [
     pain: "Candidate and company details sit inside outreach threads, reply chains, and old project folders.",
     outcome: "Capture candidates, hiring managers, and company contacts with source-folder context.",
     workflow: ["Scan role folders", "Normalize emails", "Remove repeats", "Export company contacts"],
+    advantages: ["Recover candidate leads", "Group by role folder", "Build follow-up lists"],
     result: "Recover useful recruiting data from conversations your team already had.",
   },
   {
@@ -93,6 +97,7 @@ const useCases = [
     pain: "Warm leads are scattered across sales, support, partner, and founder inboxes.",
     outcome: "Turn conversations into clean contact lists and send qualified leads into HubSpot or campaign tools.",
     workflow: ["Extract lead folders", "Score domains", "Clean duplicates", "Sync to CRM"],
+    advantages: ["Find warm leads", "Preserve sales context", "Reduce duplicate CRM rows"],
     result: "Create follow-up lists from real conversations, not cold guesses.",
   },
   {
@@ -102,6 +107,7 @@ const useCases = [
     pain: "Research emails, forwarded notes, and source lists become messy CSV files with repeated addresses.",
     outcome: "Normalize addresses, remove mailto issues, and export clean rows for directory workflows.",
     workflow: ["Scan source folders", "Clean mailto data", "Group by folder", "Export CSV"],
+    advantages: ["Cleaner directory files", "Normalized email values", "Source-folder grouping"],
     result: "Produce cleaner directory contact files with less manual cleanup.",
   },
   {
@@ -111,6 +117,7 @@ const useCases = [
     pain: "Prospects, collaborators, and referrals are spread across old conversations.",
     outcome: "Build a lightweight contact database and export it for follow-up or newsletter outreach.",
     workflow: ["Connect one mailbox", "Scan client folders", "Remove duplicates", "Export to Excel"],
+    advantages: ["Simple one-mailbox setup", "Fast lead list creation", "Excel-ready output"],
     result: "Start with one mailbox and get a usable lead list fast.",
   },
   {
@@ -120,6 +127,7 @@ const useCases = [
     pain: "Early customer signals live inside support, sales, demo, and intro emails.",
     outcome: "Extract beta users, partners, and prospects, then sync them into marketing campaigns.",
     workflow: ["Scan support folders", "Segment beta users", "Deduplicate", "Sync to campaigns"],
+    advantages: ["Segment beta users", "Capture partner leads", "Feed launch campaigns"],
     result: "Turn early conversations into a growth list you can actually use.",
   },
 ] as const;
@@ -205,6 +213,35 @@ export default function UseCasesPage() {
         </div>
       </Section>
 
+      <Section className="pt-0">
+        <SectionIntro
+          eyebrow="Advantages"
+          title="Why each team gets value quickly."
+          description="Each use case starts with the same simple idea: your inbox already contains useful contacts, but they need structure before they are useful for outreach, reporting, or marketing sync."
+        />
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {[
+            ["Faster list building", "Create a usable contact list from existing inbox folders instead of rebuilding it manually."],
+            ["Better data quality", "Remove duplicates, broken mailto values, repeated senders, and messy forwarded-chain contacts."],
+            ["Useful segmentation", "Keep source folders attached so lists can become tags, audiences, client files, or campaign segments."],
+            ["Flexible delivery", "Send the final contacts to Excel, CSV, JSON, Google Sheets, Kit, Mailchimp, Brevo, HubSpot, and more."],
+          ].map(([title, description]) => (
+            <article
+              key={title}
+              className="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-white/[0.04]"
+            >
+              <CheckCircle2 className="h-5 w-5 text-blue-600 dark:text-blue-300" />
+              <h2 className="mt-4 font-semibold text-slate-950 dark:text-white">
+                {title}
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">
+                {description}
+              </p>
+            </article>
+          ))}
+        </div>
+      </Section>
+
       <Section>
         <SectionIntro
           eyebrow="Choose Your Workflow"
@@ -252,6 +289,22 @@ export default function UseCasesPage() {
                       <div key={step} className="rounded-xl bg-white px-3 py-2 text-sm text-slate-700 shadow-sm dark:bg-white/10 dark:text-slate-200">
                         {step}
                       </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mt-5">
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">
+                    Advantages
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {item.advantages.map((advantage) => (
+                      <span
+                        key={advantage}
+                        className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-700 dark:border-white/10 dark:bg-white/10 dark:text-slate-200"
+                      >
+                        {advantage}
+                      </span>
                     ))}
                   </div>
                 </div>

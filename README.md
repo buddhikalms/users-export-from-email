@@ -22,6 +22,7 @@ Next.js 16 App Router application for securely managing multiple email IMAP acco
 - Encrypted email account passwords before database persistence
 - Manual one-time IMAP connection or saved-account sync
 - Folder-wise contact extraction and Excel export
+- Google Sheets export with one tab per synced folder
 - Last-seen date filtering before export
 - Direct Kit subscriber sync with tags, forms, folder mappings, and encrypted API key storage
 - Admin overview page for users and stored accounts
@@ -52,6 +53,8 @@ Required keys:
 - `IMAP_SOCKET_TIMEOUT_MS`
 - `KIT_API_KEY` (optional fallback/documentation placeholder; saved user keys are stored encrypted)
 - `KIT_API_SECRET` (reserved for Kit API workflows that require a secret)
+- `GOOGLE_SERVICE_ACCOUNT_EMAIL` (required for Google Sheets export)
+- `GOOGLE_PRIVATE_KEY` or `GOOGLE_PRIVATE_KEY_BASE64` (required for Google Sheets export)
 
 ## Database Setup
 
@@ -100,6 +103,17 @@ npm run dev
 7. Choose a saved account or use a one-time manual connection.
 8. Select folders, sync, filter by last seen date if needed, and export the workbook.
 9. Optional: open `/settings/kit`, connect one or more Kit accounts, then use `Export Contacts to Kit` from `/export`.
+10. Optional: configure Google Sheets credentials, then use `Google Sheet` from `/export`.
+
+## Google Sheets Export
+
+1. Create a Google Cloud service account.
+2. Enable the Google Sheets API and Google Drive API for that project.
+3. Add `GOOGLE_SERVICE_ACCOUNT_EMAIL` and `GOOGLE_PRIVATE_KEY` to `.env`.
+4. Restart the app.
+5. Open `/export` after a mailbox sync and click `Google Sheet`.
+
+The export creates a spreadsheet owned by the service account, writes an `All Contacts` tab plus one tab per synced folder, and shares editor access with the signed-in user's email address.
 
 ## Default IMAP Settings
 

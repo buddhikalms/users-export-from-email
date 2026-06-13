@@ -39,11 +39,57 @@ const features = [
   ["Folder-wise extraction", "Preserve source folders so lists can become tags, segments, or client exports.", FolderTree],
   ["Forwarded chain detection", "Detect original senders hidden inside forwarded email conversations.", Repeat],
   ["Duplicate cleanup", "Remove repeated contacts, mailto artifacts, and noisy role-based addresses.", CheckCircle2],
-  ["Excel/CSV export", "Download clean folder-wise exports for handoff, analysis, or CRM import.", FileSpreadsheet],
+  ["Spreadsheet export", "Export clean contacts to Excel, CSV, JSON, or Google Sheets for analysis and handoff.", FileSpreadsheet],
   ["Marketing sync", "Push contacts directly into Kit, Mailchimp, Brevo, HubSpot, Beehiiv, and more.", Sparkles],
 ] as const;
 
 const integrations = ["Kit", "Mailchimp", "Brevo", "HubSpot", "Beehiiv", "ActiveCampaign"];
+
+const simpleWorkflow = [
+  {
+    title: "1. Connect your mailbox",
+    description:
+      "Use Outlook or any IMAP inbox. You can scan one mailbox or work with saved accounts for repeat exports.",
+    icon: MailCheck,
+  },
+  {
+    title: "2. Pick folders to scan",
+    description:
+      "Choose folders like Clients, Leads, Partnerships, Support, or Newsletters so every contact keeps useful context.",
+    icon: FolderTree,
+  },
+  {
+    title: "3. Review cleaned contacts",
+    description:
+      "The app normalizes email addresses, removes duplicates, and detects original senders in forwarded messages.",
+    icon: CheckCircle2,
+  },
+  {
+    title: "4. Export or sync",
+    description:
+      "Create Excel, CSV, JSON, or Google Sheets files, or send contacts directly into your marketing platforms.",
+    icon: FileSpreadsheet,
+  },
+] as const;
+
+const advantages = [
+  [
+    "Clear source tracking",
+    "Know whether a contact came from Inbox, Leads, Clients, a forwarded chain, or a reply-to address.",
+  ],
+  [
+    "Less manual spreadsheet work",
+    "Skip copy-paste cleanup, repeated rows, broken mailto values, and confusing folder exports.",
+  ],
+  [
+    "Ready for marketing tools",
+    "Turn folders into tags, lists, audiences, forms, or segments when syncing to connected platforms.",
+  ],
+  [
+    "Privacy-first workflow",
+    "Mailbox credentials and platform API keys stay in server-side encrypted storage and vault flows.",
+  ],
+] as const;
 
 export default function MarketingHomePage() {
   return (
@@ -60,6 +106,37 @@ export default function MarketingHomePage() {
               </Badge>
             </StaggerItem>
           ))}
+        </Stagger>
+      </Section>
+
+      <Section className="pt-8">
+        <Reveal>
+          <SectionIntro
+            eyebrow="Plain English"
+            title="What does Email Exporter actually do?"
+            description="It turns real mailbox conversations into a clean contact list. You choose the inbox folders, the app finds usable contacts, removes noise, and gives you a spreadsheet or platform sync that is ready to use."
+          />
+        </Reveal>
+        <Stagger className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {simpleWorkflow.map((item) => {
+            const Icon = item.icon;
+
+            return (
+              <StaggerItem key={item.title}>
+                <article className="h-full rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-950/10 dark:border-white/10 dark:bg-white/[0.04]">
+                  <div className="grid h-11 w-11 place-items-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-400/10 dark:text-blue-300">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <h3 className="mt-4 text-lg font-semibold text-slate-950 dark:text-white">
+                    {item.title}
+                  </h3>
+                  <p className="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-300">
+                    {item.description}
+                  </p>
+                </article>
+              </StaggerItem>
+            );
+          })}
         </Stagger>
       </Section>
 
@@ -108,6 +185,31 @@ export default function MarketingHomePage() {
         </Stagger>
       </Section>
 
+      <Section className="py-12">
+        <Reveal>
+          <SectionIntro
+            eyebrow="Advantages"
+            title="Why teams use it instead of exporting contacts manually."
+            description="Email Exporter is built for people who need reliable contact data from messy inboxes, not just a one-time download button."
+          />
+        </Reveal>
+        <Stagger className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {advantages.map(([title, description]) => (
+            <StaggerItem key={title}>
+              <article className="h-full rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-white/[0.04]">
+                <CheckCircle2 className="h-5 w-5 text-blue-600 dark:text-blue-300" />
+                <h3 className="mt-4 font-semibold text-slate-950 dark:text-white">
+                  {title}
+                </h3>
+                <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">
+                  {description}
+                </p>
+              </article>
+            </StaggerItem>
+          ))}
+        </Stagger>
+      </Section>
+
       <Section>
         <div className="grid gap-12 lg:grid-cols-[1fr_1fr] lg:items-center">
           <Reveal>
@@ -117,13 +219,14 @@ export default function MarketingHomePage() {
             <SectionIntro
               align="left"
               eyebrow="How It Works"
-              title="From mailbox folders to clean platform sync in minutes."
+              title="The dashboard shows the whole export workflow."
+              description="The screenshot-style preview shows the same path your team follows: connect a mailbox, scan folders, review contacts, clean duplicates, and send the final list to a spreadsheet or marketing tool."
             />
             <Stagger className="grid gap-4">
               {[
-                ["1", "Select an Outlook or IMAP account and choose the folders to scan."],
-                ["2", "Extract contacts, detect forwarded senders, and remove duplicates."],
-                ["3", "Export to Excel/CSV or sync to your selected marketing platform."],
+                ["1", "Select an Outlook or IMAP account and choose exactly which folders to scan."],
+                ["2", "Review contacts with source folder, sender type, first seen, and last seen details."],
+                ["3", "Export to Excel, CSV, JSON, Google Sheets, or sync to your selected platform."],
               ].map(([step, text]) => (
                 <StaggerItem key={step}>
                   <div className="flex gap-4 rounded-2xl border border-slate-200 bg-white p-5 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-950/10 dark:border-white/10 dark:bg-white/[0.04]">

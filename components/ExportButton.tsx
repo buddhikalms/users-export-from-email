@@ -1,7 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Download, FileJson, FileSpreadsheet, Table } from "lucide-react";
+import {
+  Download,
+  ExternalLink,
+  FileJson,
+  FileSpreadsheet,
+  Table,
+} from "lucide-react";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -17,8 +23,11 @@ export function ExportButton({
   const [status, setStatus] = useState<{
     type: "error" | "success";
     message: string;
+    href?: string;
   } | null>(null);
-  const [exporting, setExporting] = useState(false);
+  const [exportingFormat, setExportingFormat] = useState<
+    "excel" | "csv" | "json" | "google-sheets" | null
+  >(null);
 
   async function exportFile(format: "excel" | "csv" | "json") {
     if (filter.mode !== "all" && !filter.date) {
@@ -29,7 +38,7 @@ export function ExportButton({
       return;
     }
 
-    setExporting(true);
+    setExportingFormat(format);
     setStatus(null);
 
     try {
@@ -72,7 +81,72 @@ export function ExportButton({
             : `Something went wrong while exporting the ${format.toUpperCase()} file.`,
       });
     } finally {
-      setExporting(false);
+      setExportingFormat(null);
+    }
+  }
+
+  async function exportGoogleSheet() {
+    if (filter.mode !== "all" && !filter.date) {
+      setStatus({
+        type: "error",
+        message: "Select a last seen date before exporting with a before/after filter.",
+      });
+      return;
+    }
+
+    setExportingFormat("google-sheets");
+    setStatus(null);
+
+    try {
+      const response = await fetch("/api/export/google-sheets", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          syncResult,
+          filter,
+        }),
+      });
+
+      const payload = (await response.json()) as {
+        error?: string;
+        spreadsheet?: {
+          spreadsheetUrl: string;
+          sharedWithEmail?: string;
+        };
+        summary?: {
+          contacts: number;
+          sheets: number;
+        };
+      };
+
+      if (!response.ok || !payload.spreadsheet) {
+        throw new Error(payload.error ?? "Google Sheets export failed.");
+      }
+
+      const sharedText = payload.spreadsheet.sharedWithEmail
+        ? ` Shared with ${payload.spreadsheet.sharedWithEmail}.`
+        : "";
+      const summaryText = payload.summary
+        ? `${payload.summary.contacts} contacts exported across ${payload.summary.sheets} sheets.`
+        : "Google Sheet created successfully.";
+
+      setStatus({
+        type: "success",
+        message: `${summaryText}${sharedText}`,
+        href: payload.spreadsheet.spreadsheetUrl,
+      });
+    } catch (error) {
+      setStatus({
+        type: "error",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Something went wrong while creating the Google Sheet.",
+      });
+    } finally {
+      setExportingFormat(null);
     }
   }
 
@@ -81,15 +155,24 @@ export function ExportButton({
       <div className="flex flex-wrap gap-3">
         <Button
           className="sm:min-w-48"
-          disabled={exporting || (filter.mode !== "all" && !filter.date)}
+          disabled={exportingFormat !== null || (filter.mode !== "all" && !filter.date)}
+          onClick={() => void exportGoogleSheet()}
+        >
+          <ExternalLink className="h-4 w-4" />
+          {exportingFormat === "google-sheets" ? "Creating..." : "Google Sheet"}
+        </Button>
+        <Button
+          className="sm:min-w-48"
+          disabled={exportingFormat !== null || (filter.mode !== "all" && !filter.date)}
+          variant="outline"
           onClick={() => void exportFile("excel")}
         >
           <FileSpreadsheet className="h-4 w-4" />
-          {exporting ? "Exporting..." : "Excel"}
+          {exportingFormat === "excel" ? "Exporting..." : "Excel"}
         </Button>
         <Button
           className="sm:min-w-36"
-          disabled={exporting || (filter.mode !== "all" && !filter.date)}
+          disabled={exportingFormat !== null || (filter.mode !== "all" && !filter.date)}
           variant="outline"
           onClick={() => void exportFile("csv")}
         >
@@ -98,7 +181,7 @@ export function ExportButton({
         </Button>
         <Button
           className="sm:min-w-36"
-          disabled={exporting || (filter.mode !== "all" && !filter.date)}
+          disabled={exportingFormat !== null || (filter.mode !== "all" && !filter.date)}
           variant="outline"
           onClick={() => void exportFile("json")}
         >
@@ -122,7 +205,20 @@ export function ExportButton({
           <AlertTitle>
             {status.type === "error" ? "Export failed" : "Export ready"}
           </AlertTitle>
-          <AlertDescription>{status.message}</AlertDescription>
+          <AlertDescription>
+            <span>{status.message}</span>
+            {status.href ? (
+              <a
+                className="ml-2 inline-flex items-center gap-1 font-medium text-primary underline-offset-4 hover:underline"
+                href={status.href}
+                rel="noreferrer"
+                target="_blank"
+              >
+                Open Sheet
+                <ExternalLink className="h-3.5 w-3.5" />
+              </a>
+            ) : null}
+          </AlertDescription>
         </Alert>
       ) : null}
     </div>
