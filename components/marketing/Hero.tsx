@@ -1,79 +1,127 @@
-import Link from "next/link";
-import { ArrowRight, CheckCircle2, PlayCircle } from "lucide-react";
+"use client";
 
-import { Button } from "@/components/ui/button";
-import { DashboardMockup } from "@/components/marketing/DashboardMockup";
-import { Float, Reveal } from "@/components/marketing/Motion";
+import { Sparkles } from "lucide-react";
+import {
+  motion,
+  useMotionValue,
+  useReducedMotion,
+  useSpring,
+  useTransform,
+} from "framer-motion";
+
+import { CTAButtons } from "@/components/marketing/CTAButtons";
+import { HeroBackground } from "@/components/marketing/HeroBackground";
+import { HeroIllustration } from "@/components/marketing/HeroIllustration";
+import { Stats } from "@/components/marketing/Stats";
+import { WorkflowAnimation } from "@/components/marketing/WorkflowAnimation";
 
 export function Hero() {
+  const reduceMotion = useReducedMotion();
+  const pointerX = useMotionValue(0);
+  const pointerY = useMotionValue(0);
+  const x = useSpring(pointerX, { stiffness: 70, damping: 22 });
+  const y = useSpring(pointerY, { stiffness: 70, damping: 22 });
+  const illustrationX = useTransform(x, [-1, 1], [-10, 10]);
+  const illustrationY = useTransform(y, [-1, 1], [-8, 8]);
+  const rotateX = useTransform(y, [-1, 1], [2.5, -2.5]);
+  const rotateY = useTransform(x, [-1, 1], [-3.5, 3.5]);
+
   return (
-    <section className="relative overflow-hidden">
-      <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,#ffffff_0%,#eef6ff_48%,#ffffff_100%)] dark:bg-[linear-gradient(180deg,#020617_0%,#0f172a_54%,#020617_100%)]" />
-      <div className="absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(37,99,235,0.07)_1px,transparent_1px),linear-gradient(90deg,rgba(37,99,235,0.07)_1px,transparent_1px)] bg-[size:54px_54px] opacity-60 dark:opacity-25" />
-        <div className="absolute inset-x-0 top-0 h-80 bg-[linear-gradient(180deg,rgba(59,130,246,0.16),transparent)]" />
-        <div className="animate-light-sweep absolute top-0 h-full w-40 rotate-12 bg-gradient-to-r from-transparent via-white/45 to-transparent blur-xl dark:via-cyan-200/10" />
-      </div>
-      <div className="mx-auto max-w-7xl px-4 pb-16 pt-20 sm:px-6 lg:px-8 lg:pb-24 lg:pt-28">
-        <div className="mx-auto max-w-4xl text-center">
-          <Reveal>
-            <div className="mx-auto mb-5 inline-flex items-center rounded-full border border-blue-200 bg-white px-3 py-1 text-sm font-medium text-blue-700 shadow-sm dark:border-blue-400/20 dark:bg-white/10 dark:text-blue-200">
-              Outlook, IMAP, Excel, Kit, Zoho Campaigns, Brevo
-            </div>
-          </Reveal>
-          <Reveal delay={0.08} y={24}>
-            <h1 className="text-5xl font-semibold tracking-tight text-slate-950 dark:text-white md:text-7xl">
-              Export Clean Contact Lists From Outlook and Any IMAP Inbox
-            </h1>
-          </Reveal>
-          <Reveal delay={0.16}>
-            <p className="mx-auto mt-6 max-w-3xl text-lg leading-8 text-slate-600 dark:text-slate-300">
-              ChatUp scans selected mailbox folders, finds direct and forwarded
-              senders, removes duplicates, keeps folder context, then exports your
-              contacts to Excel, CSV, JSON, Google Sheets, or marketing platforms.
-            </p>
-          </Reveal>
-          <Reveal delay={0.2}>
-            <div className="mx-auto mt-6 grid max-w-3xl gap-3 text-left sm:grid-cols-3">
-              {[
-                "Choose only the folders you need",
-                "See exactly where every contact came from",
-                "Export a ready-to-use spreadsheet",
-              ].map((item) => (
-                <div
-                  key={item}
-                  className="flex items-start gap-2 rounded-xl border border-slate-200 bg-white/80 p-3 text-sm font-medium text-slate-700 shadow-sm dark:border-white/10 dark:bg-white/10 dark:text-slate-200"
-                >
-                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-blue-600 dark:text-blue-300" />
-                  <span>{item}</span>
-                </div>
-              ))}
-            </div>
-          </Reveal>
-          <Reveal delay={0.24}>
-            <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-              <Button asChild size="lg" className="bg-gradient-to-r from-slate-950 to-blue-700 text-white hover:opacity-90">
-                <Link href={"/dashboard" as any}>
-                  Start Free
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
-              <Button asChild size="lg" variant="outline">
-                <Link href={"/contact" as any}>
-                  <PlayCircle className="h-4 w-4" />
-                  View Demo
-                </Link>
-              </Button>
-            </div>
-          </Reveal>
+    <section
+      className="relative isolate overflow-hidden border-b border-slate-200/70"
+      onMouseMove={(event) => {
+        if (reduceMotion) return;
+        const rect = event.currentTarget.getBoundingClientRect();
+        pointerX.set(((event.clientX - rect.left) / rect.width - 0.5) * 2);
+        pointerY.set(((event.clientY - rect.top) / rect.height - 0.5) * 2);
+      }}
+      onMouseLeave={() => {
+        pointerX.set(0);
+        pointerY.set(0);
+      }}
+    >
+      <HeroBackground x={x} y={y} />
+      <div className="mx-auto max-w-[1400px] px-4 pb-12 pt-16 sm:px-6 lg:px-8 lg:pb-16 lg:pt-20">
+        <div className="grid items-center gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-4 xl:grid-cols-[0.94fr_1.06fr]">
+          <motion.div
+            className="relative z-20 mx-auto max-w-2xl text-center lg:mx-0 lg:text-left"
+            initial="hidden"
+            animate="show"
+            variants={{
+              hidden: {},
+              show: { transition: { staggerChildren: 0.09 } },
+            }}
+          >
+            <motion.h1
+              className="mt-7 text-[2.75rem] font-bold leading-[1.02] tracking-[-0.045em] text-slate-950 sm:text-6xl lg:text-[4.2rem] xl:text-[4.7rem]"
+              variants={{
+                hidden: { opacity: 0, y: 24 },
+                show: { opacity: 1, y: 0 },
+              }}
+              transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+            >
+              Discover Valuable Contacts{" "}
+              <span className="bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500 bg-clip-text text-transparent">
+                Hidden Inside Your Inbox
+              </span>
+            </motion.h1>
+            <motion.p
+              className="mx-auto mt-6 max-w-xl text-base leading-7 text-slate-600 sm:text-lg sm:leading-8 lg:mx-0"
+              variants={{
+                hidden: { opacity: 0, y: 18 },
+                show: { opacity: 1, y: 0 },
+              }}
+            >
+              ChatUp helps businesses automatically extract valuable contacts
+              from Outlook, Microsoft 365, Exchange, and IMAP email accounts,
+              remove duplicates, organize contacts, and sync directly to your
+              favorite marketing platforms.
+            </motion.p>
+            <motion.div
+              className="mt-8 flex justify-center lg:justify-start"
+              variants={{
+                hidden: { opacity: 0, x: -18 },
+                show: { opacity: 1, x: 0 },
+              }}
+            >
+              <CTAButtons />
+            </motion.div>
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, y: 14 },
+                show: { opacity: 1, y: 0 },
+              }}
+            >
+              <Stats />
+            </motion.div>
+          </motion.div>
+
+          <motion.div
+            className="relative z-10 mx-auto w-full max-w-2xl [perspective:1200px]"
+            style={
+              reduceMotion
+                ? undefined
+                : { x: illustrationX, y: illustrationY, rotateX, rotateY }
+            }
+            initial={{ opacity: 0, scale: 0.94, y: 24 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{
+              duration: 0.8,
+              delay: 0.18,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+          >
+            <HeroIllustration />
+          </motion.div>
         </div>
-        <div className="mt-14">
-          <Reveal delay={0.32} y={30}>
-            <Float>
-              <DashboardMockup />
-            </Float>
-          </Reveal>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.6 }}
+        >
+          <WorkflowAnimation />
+        </motion.div>
       </div>
     </section>
   );
