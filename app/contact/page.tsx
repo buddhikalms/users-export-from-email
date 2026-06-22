@@ -6,8 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Section, SectionIntro } from "@/components/marketing/Section";
 
 export const metadata: Metadata = {
-  title: "Contact - Email Exporter",
-  description: "Contact Email Exporter support or book a demo for inbox contact extraction and marketing sync.",
+  title: "Contact - ChatUp",
+  description: "Contact ChatUp support or book a demo for inbox contact extraction and marketing sync.",
 };
 
 export default function ContactPage() {
@@ -29,7 +29,7 @@ export default function ContactPage() {
           </form>
           <div className="grid gap-4">
             {[
-              [Mail, "Email", "support@email-exporter.example"],
+              [Mail, "Email", "support@chatup.example"],
               [MessageSquare, "Support", "Get help with mailbox connection, exports, and integrations."],
               [CalendarClock, "Demo booking", "Book a walkthrough for agency, publisher, or team workflows."],
             ].map(([Icon, title, body]) => (

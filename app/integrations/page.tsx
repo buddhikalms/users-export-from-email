@@ -5,7 +5,7 @@ import { IntegrationCard } from "@/components/marketing/IntegrationCard";
 import { Section, SectionIntro } from "@/components/marketing/Section";
 
 export const metadata: Metadata = {
-  title: "Integrations - Email Exporter",
+  title: "Integrations - ChatUp",
   description:
     "Sync Outlook and IMAP contacts to Kit, Mailchimp, Brevo, HubSpot, Beehiiv, ActiveCampaign, and more.",
 };
@@ -32,7 +32,7 @@ export default function IntegrationsPage() {
         <SectionIntro
           eyebrow="Integrations"
           title="Connect your inbox to the marketing platforms that run your growth."
-          description="Email Exporter supports direct syncs, queue-ready workflows, and clean exports for teams using multiple accounts and client destinations."
+          description="ChatUp supports direct syncs, queue-ready workflows, and clean exports for teams using multiple accounts and client destinations."
         />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {integrations.map(([name, description, status]) => (

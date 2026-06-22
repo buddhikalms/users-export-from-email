@@ -1,4 +1,4 @@
-# Email Contact Exporter
+# ChatUp
 
 Next.js 16 App Router application for securely managing multiple email IMAP accounts, extracting unique contacts from selected folders, and exporting folder-wise results to Excel.
 
@@ -155,5 +155,5 @@ Zoho paid organization/domain accounts:
 The Kit sync cleans and normalizes emails, skips common system senders, dedupes contacts, upserts subscribers in Kit, applies selected tags, optionally adds subscribers to a selected form, retries failed uploads once, and returns a summary with upload logs.
 
 
-## Keywords - search on email exporter 
+## Keywords - search on ChatUp
 Subject wise filter and keywords filter

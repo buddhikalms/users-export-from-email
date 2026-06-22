@@ -217,7 +217,7 @@ function Sidebar({
           </div>
           {!collapsed ? (
             <div className="min-w-0">
-              <div className="truncate text-sm font-semibold">EmailExporter</div>
+              <div className="truncate text-sm font-semibold">ChatUp</div>
               <div className="truncate text-xs text-muted-foreground">Lead extraction CRM</div>
             </div>
           ) : null}

@@ -19,7 +19,7 @@ const bodyFont = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Email Exporter - Extract, Clean & Sync Email Contacts",
+  title: "ChatUp - Extract, Clean & Sync Email Contacts",
   description:
     "Extract contacts from Outlook and IMAP mailboxes, clean duplicates, export to Excel, and sync to Kit, Mailchimp, Brevo, HubSpot, and more.",
 };

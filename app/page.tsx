@@ -3,337 +3,161 @@ import Link from "next/link";
 import {
   ArrowRight,
   BarChart3,
+  BriefcaseBusiness,
+  Building2,
   CheckCircle2,
+  Clock3,
+  ContactRound,
   FileSpreadsheet,
   FolderTree,
-  KeyRound,
+  Layers3,
   MailCheck,
-  Repeat,
+  Newspaper,
+  RefreshCw,
+  SearchCheck,
   ShieldCheck,
   Sparkles,
-  Tags,
+  Target,
+  UserSearch,
   UsersRound,
 } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { AnimatedBanner } from "@/components/marketing/AnimatedBanner";
-import { CTASection } from "@/components/marketing/CTASection";
-import { DashboardMockup } from "@/components/marketing/DashboardMockup";
-import { FAQ } from "@/components/marketing/FAQ";
-import { FeatureCard } from "@/components/marketing/FeatureCard";
-import { Hero } from "@/components/marketing/Hero";
-import { IntegrationCard } from "@/components/marketing/IntegrationCard";
+import { BenefitCard } from "@/components/marketing/BenefitCard";
+import { EcosystemDiagram } from "@/components/marketing/EcosystemDiagram";
+import { PlatformCard } from "@/components/marketing/PlatformCard";
 import { Reveal, Stagger, StaggerItem } from "@/components/marketing/Motion";
-import { PricingCard } from "@/components/marketing/PricingCard";
 import { Section, SectionIntro } from "@/components/marketing/Section";
+import { UseCaseCard } from "@/components/marketing/UseCaseCard";
+import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
-  title: "Email Exporter - Extract, Clean & Sync Email Contacts",
-  description:
-    "Extract contacts from Outlook and IMAP mailboxes, clean duplicates, export to Excel, and sync to Kit, Mailchimp, Brevo, HubSpot, and more.",
+  title: "ChatUp - Turn Your Inbox Into a Contact Database",
+  description: "Extract, clean, organize, export, and sync contacts from Outlook and IMAP mailboxes.",
 };
 
-const features = [
-  ["Outlook/IMAP sync", "Connect Outlook or any IMAP mailbox and scan selected folders server-side.", MailCheck],
-  ["Folder-wise extraction", "Preserve source folders so lists can become tags, segments, or client exports.", FolderTree],
-  ["Forwarded chain detection", "Detect original senders hidden inside forwarded email conversations.", Repeat],
-  ["Duplicate cleanup", "Remove repeated contacts, mailto artifacts, and noisy role-based addresses.", CheckCircle2],
-  ["Spreadsheet export", "Export clean contacts to Excel, CSV, JSON, or Google Sheets for analysis and handoff.", FileSpreadsheet],
-  ["Marketing sync", "Push contacts directly into Kit, Mailchimp, Brevo, HubSpot, Beehiiv, and more.", Sparkles],
+const platformFeatures = [
+  ["Email Sync", "Connect Outlook and IMAP mailboxes, then scan the folders that matter.", MailCheck],
+  ["Smart Contact Discovery", "Find direct senders, reply-to addresses, and contacts inside forwarded threads.", SearchCheck],
+  ["Duplicate Cleanup", "Normalize addresses and merge repeated contacts into one dependable record.", Sparkles],
+  ["Folder-Based Organization", "Keep mailbox context so folders become useful lists, tags, and segments.", FolderTree],
+  ["Marketing Platform Sync", "Send clean contacts to Kit, Mailchimp, Brevo, HubSpot, and more.", RefreshCw],
+  ["Export History", "See what was exported, where it went, and how your contact database is growing.", BarChart3],
 ] as const;
 
-const integrations = ["Kit", "Mailchimp", "Brevo", "HubSpot", "Beehiiv", "ActiveCampaign"];
-
-const simpleWorkflow = [
-  {
-    title: "1. Connect your mailbox",
-    description:
-      "Use Outlook or any IMAP inbox. You can scan one mailbox or work with saved accounts for repeat exports.",
-    icon: MailCheck,
-  },
-  {
-    title: "2. Pick folders to scan",
-    description:
-      "Choose folders like Clients, Leads, Partnerships, Support, or Newsletters so every contact keeps useful context.",
-    icon: FolderTree,
-  },
-  {
-    title: "3. Review cleaned contacts",
-    description:
-      "The app normalizes email addresses, removes duplicates, and detects original senders in forwarded messages.",
-    icon: CheckCircle2,
-  },
-  {
-    title: "4. Export or sync",
-    description:
-      "Create Excel, CSV, JSON, or Google Sheets files, or send contacts directly into your marketing platforms.",
-    icon: FileSpreadsheet,
-  },
+const benefits = [
+  ["Save hours of manual work", "Replace copy, paste, and spreadsheet cleanup with a repeatable workflow.", Clock3],
+  ["Build cleaner marketing lists", "Turn scattered conversations into structured, campaign-ready audiences.", Target],
+  ["Remove duplicates automatically", "Keep one accurate contact record without repeated rows or noisy aliases.", CheckCircle2],
+  ["Sync directly to your tools", "Move contacts into your marketing stack without another manual handoff.", Layers3],
 ] as const;
 
-const advantages = [
-  [
-    "Clear source tracking",
-    "Know whether a contact came from Inbox, Leads, Clients, a forwarded chain, or a reply-to address.",
-  ],
-  [
-    "Less manual spreadsheet work",
-    "Skip copy-paste cleanup, repeated rows, broken mailto values, and confusing folder exports.",
-  ],
-  [
-    "Ready for marketing tools",
-    "Turn folders into tags, lists, audiences, forms, or segments when syncing to connected platforms.",
-  ],
-  [
-    "Privacy-first workflow",
-    "Mailbox credentials and platform API keys stay in server-side encrypted storage and vault flows.",
-  ],
+const useCases = [
+  ["Marketing Agencies", "Build clean audiences from client inboxes and route them to the right account.", BriefcaseBusiness],
+  ["PR Teams", "Find journalists, partners, and media contacts across years of conversations.", UsersRound],
+  ["Publishers", "Turn subscriber and contributor correspondence into organized contact lists.", Newspaper],
+  ["Recruiters", "Surface candidate and company contacts from outreach and hiring folders.", UserSearch],
+  ["Sales Teams", "Recover warm leads and decision-makers already active in your inbox.", Building2],
+  ["Business Directories", "Create structured, exportable records from ongoing email relationships.", ContactRound],
 ] as const;
 
 export default function MarketingHomePage() {
   return (
-    <main>
-      <Hero />
-      <AnimatedBanner />
+    <main className="overflow-hidden bg-white dark:bg-slate-950">
+      <section className="relative isolate border-b border-slate-200/70 bg-[linear-gradient(180deg,#f8fbff_0%,#ffffff_86%)] dark:border-white/10 dark:bg-[linear-gradient(180deg,#07101f_0%,#020617_86%)]">
+        <div className="absolute inset-0 -z-10 bg-[linear-gradient(rgba(37,99,235,0.055)_1px,transparent_1px),linear-gradient(90deg,rgba(37,99,235,0.055)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:linear-gradient(to_bottom,black,transparent_80%)]" />
+        <div className="absolute left-1/2 top-10 -z-10 h-72 w-72 -translate-x-1/2 rounded-full bg-blue-300/25 blur-[100px] dark:bg-blue-600/20" />
+        <div className="mx-auto max-w-7xl px-4 pb-16 pt-20 sm:px-6 lg:px-8 lg:pb-24 lg:pt-28">
+          <div className="mx-auto max-w-5xl text-center">
+            <Reveal>
+              <span className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white/90 px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-blue-700 shadow-sm dark:border-blue-400/20 dark:bg-white/5 dark:text-blue-300">
+                <ShieldCheck className="h-4 w-4" /> Privacy-first contact intelligence
+              </span>
+            </Reveal>
+            <Reveal delay={0.08} y={24}>
+              <h1 className="mt-7 text-5xl font-semibold leading-[1.02] tracking-[-0.04em] text-slate-950 dark:text-white sm:text-6xl lg:text-[5.25rem]">
+                Turn Your Inbox Into a <span className="text-blue-600 dark:text-blue-400">Powerful Contact Database</span>
+              </h1>
+            </Reveal>
+            <Reveal delay={0.16}>
+              <p className="mx-auto mt-7 max-w-3xl text-lg leading-8 text-slate-600 dark:text-slate-300 sm:text-xl">
+                Extract contacts from Outlook and IMAP mailboxes, clean duplicates, export to Excel, and sync directly to Kit, Mailchimp, Brevo, HubSpot, and more.
+              </p>
+            </Reveal>
+            <Reveal delay={0.22}>
+              <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
+                <Button asChild size="lg" variant="outline" className="border-slate-300 bg-white">
+                  <Link href="/contact">View Live Demo</Link>
+                </Button>
+                <Button asChild size="lg" className="bg-blue-600 text-white shadow-lg shadow-blue-600/20 hover:bg-blue-700">
+                  <Link href="/register">Start Free <ArrowRight className="h-4 w-4" /></Link>
+                </Button>
+              </div>
+            </Reveal>
+            <Reveal delay={0.3}>
+              <div className="mx-auto mt-14 grid max-w-4xl grid-cols-2 gap-px overflow-hidden rounded-3xl border border-slate-200 bg-slate-200 shadow-[0_32px_90px_-48px_rgba(15,23,42,0.45)] dark:border-white/10 dark:bg-white/10 sm:grid-cols-4">
+                {[["10+", "connected workflows"], ["One-click", "duplicate cleanup"], ["CSV / XLSX", "flexible exports"], ["Encrypted", "credential vault"]].map(([value, label]) => (
+                  <div key={label} className="bg-white px-4 py-5 dark:bg-slate-900">
+                    <p className="text-lg font-semibold text-slate-950 dark:text-white">{value}</p>
+                    <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{label}</p>
+                  </div>
+                ))}
+              </div>
+            </Reveal>
+          </div>
+        </div>
+      </section>
 
-      <Section className="py-10">
-        <Stagger className="flex flex-wrap justify-center gap-3">
-          {["Marketing agencies", "PR teams", "Publishers", "Recruiters", "Sales teams"].map((item) => (
-            <StaggerItem key={item}>
-              <Badge className="rounded-full bg-slate-100 px-4 py-2 text-slate-700 dark:bg-white/10 dark:text-slate-200">
-                {item}
-              </Badge>
-            </StaggerItem>
-          ))}
+      <Section>
+        <Reveal><SectionIntro eyebrow="One connected platform" title="Everything Your Contact Workflow Needs" description="From first mailbox connection to final campaign sync, every step lives in one clear workflow." /></Reveal>
+        <Stagger className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {platformFeatures.map(([title, description, Icon]) => <StaggerItem key={title}><PlatformCard title={title} description={description} icon={Icon} /></StaggerItem>)}
+        </Stagger>
+      </Section>
+
+      <section className="relative border-y border-slate-200/70 bg-slate-50/80 py-20 dark:border-white/10 dark:bg-white/[0.025] lg:py-28">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.1),transparent_42%)]" />
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <Reveal><SectionIntro eyebrow="ChatUp Ecosystem" title="Your inbox, connected to everything that comes next" description="Bring every contact workflow into one coordinated system." /></Reveal>
+          <Reveal delay={0.1}>
+            <div className="mx-auto -mt-3 max-w-4xl rounded-2xl border border-blue-200 bg-blue-50/80 px-5 py-4 text-center shadow-sm dark:border-blue-400/20 dark:bg-blue-400/10">
+              <p className="text-sm font-medium leading-6 text-slate-700 dark:text-slate-200 sm:text-base">
+                <span className="font-semibold text-blue-700 dark:text-blue-300">One tool</span> to import and export email contacts, sync with email marketing platforms, clean duplicate records, protect data in a secure vault, monitor analytics, and manage multiple connected accounts.
+              </p>
+            </div>
+          </Reveal>
+          <EcosystemDiagram />
+        </div>
+      </section>
+
+      <Section>
+        <Reveal><SectionIntro align="left" eyebrow="Immediate impact" title="Four things you’ll feel on day one" description="Less repetitive work, cleaner data, and a much shorter path from conversation to campaign." /></Reveal>
+        <Stagger className="grid gap-x-8 md:grid-cols-2 lg:grid-cols-4">
+          {benefits.map(([title, description, Icon], index) => <StaggerItem key={title}><BenefitCard index={index + 1} title={title} description={description} icon={Icon} /></StaggerItem>)}
         </Stagger>
       </Section>
 
       <Section className="pt-8">
-        <Reveal>
-          <SectionIntro
-            eyebrow="Plain English"
-            title="What does Email Exporter actually do?"
-            description="It turns real mailbox conversations into a clean contact list. You choose the inbox folders, the app finds usable contacts, removes noise, and gives you a spreadsheet or platform sync that is ready to use."
-          />
-        </Reveal>
-        <Stagger className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {simpleWorkflow.map((item) => {
-            const Icon = item.icon;
-
-            return (
-              <StaggerItem key={item.title}>
-                <article className="h-full rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-950/10 dark:border-white/10 dark:bg-white/[0.04]">
-                  <div className="grid h-11 w-11 place-items-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-400/10 dark:text-blue-300">
-                    <Icon className="h-5 w-5" />
-                  </div>
-                  <h3 className="mt-4 text-lg font-semibold text-slate-950 dark:text-white">
-                    {item.title}
-                  </h3>
-                  <p className="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-300">
-                    {item.description}
-                  </p>
-                </article>
-              </StaggerItem>
-            );
-          })}
-        </Stagger>
-      </Section>
-
-      <Section>
-        <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-          <Reveal>
-            <SectionIntro
-              align="left"
-              eyebrow="The Problem"
-              title="Your best contacts are scattered across inbox folders."
-              description="Teams collect valuable leads through direct email, forwarded conversations, subscriptions, replies, introductions, and client handoffs. Without extraction and cleanup, that data stays trapped."
-            />
-          </Reveal>
-          <Stagger className="grid gap-4 sm:grid-cols-2">
-            {[
-              ["Messy exports", "Manual CSV work creates duplicates and missing source context."],
-              ["Hidden senders", "Forwarded chains bury the original contact behind another person."],
-              ["Platform drift", "Kit, Mailchimp, Brevo, and HubSpot accounts get updated inconsistently."],
-              ["Credential risk", "API keys and mailbox passwords need a secure workflow."],
-            ].map(([title, description]) => (
-              <StaggerItem key={title}>
-                <article className="rounded-2xl border border-slate-200 bg-white p-5 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-950/10 dark:border-white/10 dark:bg-white/[0.04]">
-                  <h3 className="font-semibold text-slate-950 dark:text-white">{title}</h3>
-                  <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">{description}</p>
-                </article>
-              </StaggerItem>
-            ))}
-          </Stagger>
-        </div>
-      </Section>
-
-      <Section>
-        <Reveal>
-          <SectionIntro
-            eyebrow="Features"
-            title="Everything you need to extract, clean, export, and sync contacts."
-            description="Email Exporter turns mailbox activity into organized, marketing-ready data with secure multi-account workflows."
-          />
-        </Reveal>
-        <Stagger className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {features.map(([title, description, Icon]) => (
-            <StaggerItem key={title}>
-              <FeatureCard description={description} icon={Icon} title={title} />
-            </StaggerItem>
-          ))}
-        </Stagger>
-      </Section>
-
-      <Section className="py-12">
-        <Reveal>
-          <SectionIntro
-            eyebrow="Advantages"
-            title="Why teams use it instead of exporting contacts manually."
-            description="Email Exporter is built for people who need reliable contact data from messy inboxes, not just a one-time download button."
-          />
-        </Reveal>
-        <Stagger className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {advantages.map(([title, description]) => (
-            <StaggerItem key={title}>
-              <article className="h-full rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-white/[0.04]">
-                <CheckCircle2 className="h-5 w-5 text-blue-600 dark:text-blue-300" />
-                <h3 className="mt-4 font-semibold text-slate-950 dark:text-white">
-                  {title}
-                </h3>
-                <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">
-                  {description}
-                </p>
-              </article>
-            </StaggerItem>
-          ))}
-        </Stagger>
-      </Section>
-
-      <Section>
-        <div className="grid gap-12 lg:grid-cols-[1fr_1fr] lg:items-center">
-          <Reveal>
-            <DashboardMockup />
-          </Reveal>
-          <Reveal delay={0.12}>
-            <SectionIntro
-              align="left"
-              eyebrow="How It Works"
-              title="The dashboard shows the whole export workflow."
-              description="The screenshot-style preview shows the same path your team follows: connect a mailbox, scan folders, review contacts, clean duplicates, and send the final list to a spreadsheet or marketing tool."
-            />
-            <Stagger className="grid gap-4">
-              {[
-                ["1", "Select an Outlook or IMAP account and choose exactly which folders to scan."],
-                ["2", "Review contacts with source folder, sender type, first seen, and last seen details."],
-                ["3", "Export to Excel, CSV, JSON, Google Sheets, or sync to your selected platform."],
-              ].map(([step, text]) => (
-                <StaggerItem key={step}>
-                  <div className="flex gap-4 rounded-2xl border border-slate-200 bg-white p-5 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-950/10 dark:border-white/10 dark:bg-white/[0.04]">
-                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-blue-600 text-sm font-semibold text-white">{step}</span>
-                    <p className="text-sm leading-6 text-slate-600 dark:text-slate-300">{text}</p>
-                  </div>
-                </StaggerItem>
-              ))}
-            </Stagger>
-          </Reveal>
-        </div>
-      </Section>
-
-      <Section>
-        <Reveal>
-          <SectionIntro
-            eyebrow="Integrations"
-            title="Sync cleaned contacts to the tools your team already uses."
-            description="Connect multiple accounts and route folder-based contacts into lists, tags, forms, audiences, or segments."
-          />
-        </Reveal>
+        <Reveal><SectionIntro eyebrow="Made for real workflows" title="Built for teams that live in email" description="Wherever valuable relationships arrive by email, ChatUp turns them into usable data." /></Reveal>
         <Stagger className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {integrations.map((name) => (
-            <StaggerItem key={name}>
-              <IntegrationCard description={`Send cleaned contacts and folder context to ${name} workflows.`} name={name} />
-            </StaggerItem>
-          ))}
+          {useCases.map(([title, description, Icon]) => <StaggerItem key={title}><UseCaseCard title={title} description={description} icon={Icon} /></StaggerItem>)}
         </Stagger>
       </Section>
 
-      <Section className="max-w-none bg-slate-950 text-white">
-        <Stagger className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-3 lg:px-8">
-          {[
-            [ShieldCheck, "Encrypted credential vault", "Protect mailbox and API credentials with a privacy-first vault workflow."],
-            [KeyRound, "No plain-text secrets", "Avoid plain-text IMAP passwords and marketing platform API keys."],
-            [BarChart3, "Export and sync history", "Track completed exports, platform jobs, and contact growth over time."],
-          ].map(([Icon, title, description]) => (
-            <StaggerItem key={title as string}>
-              <article className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 transition hover:-translate-y-1 hover:bg-white/[0.07]">
-                <Icon className="h-6 w-6 text-blue-300" />
-                <h3 className="mt-4 text-lg font-semibold">{title as string}</h3>
-                <p className="mt-2 text-sm leading-6 text-slate-300">{description as string}</p>
-              </article>
-            </StaggerItem>
-          ))}
-        </Stagger>
-      </Section>
-
-      <Section>
+      <Section className="pb-20 pt-8 lg:pb-28">
         <Reveal>
-          <SectionIntro eyebrow="Use Cases" title="Built for teams that live inside email." />
-        </Reveal>
-        <Stagger className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {[
-            ["Agencies", "Extract client campaign contacts and sync them to the right account."],
-            ["PR teams", "Build journalist and partner lists from years of inbox history."],
-            ["Recruiters", "Capture candidate and company contacts from outreach folders."],
-            ["SaaS founders", "Turn early customer conversations into segmented lead lists."],
-          ].map(([title, description]) => (
-            <StaggerItem key={title}>
-              <article className="rounded-2xl border border-slate-200 bg-white p-5 transition hover:-translate-y-1 hover:shadow-xl hover:shadow-blue-950/10 dark:border-white/10 dark:bg-white/[0.04]">
-                <UsersRound className="h-5 w-5 text-blue-600 dark:text-blue-300" />
-                <h3 className="mt-4 font-semibold text-slate-950 dark:text-white">{title}</h3>
-                <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">{description}</p>
-              </article>
-            </StaggerItem>
-          ))}
-        </Stagger>
-      </Section>
-
-      <Section>
-        <Reveal>
-          <SectionIntro eyebrow="Pricing" title="Start small, scale into automated marketing sync." />
-        </Reveal>
-        <Stagger className="grid gap-4 lg:grid-cols-3">
-          <StaggerItem>
-            <PricingCard description="For one mailbox and clean file exports." features={["1 mailbox", "1 marketing integration", "Excel/CSV export", "Basic duplicate cleanup"]} name="Starter" price="$19/mo" />
-          </StaggerItem>
-          <StaggerItem>
-            <PricingCard description="For teams syncing multiple accounts." featured features={["Multiple mailboxes", "Multiple Kit/Mailchimp/Brevo accounts", "Folder-to-tag mapping", "Scheduled exports"]} name="Professional" price="$49/mo" />
-          </StaggerItem>
-          <StaggerItem>
-            <PricingCard description="For agencies and larger teams." features={["Unlimited mailboxes", "Automation rules", "Advanced analytics", "Priority support"]} name="Agency" price="$129/mo" />
-          </StaggerItem>
-        </Stagger>
-        <Reveal delay={0.15}>
-          <div className="mt-8 text-center">
-            <Button asChild variant="outline">
-              <Link href={"/pricing" as any}>
-                View all plans
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Button>
+          <div className="relative overflow-hidden rounded-[2rem] bg-slate-950 px-6 py-16 text-center text-white shadow-[0_32px_90px_-38px_rgba(37,99,235,0.55)] sm:px-12 lg:py-20 dark:bg-blue-600">
+            <div className="absolute -left-24 -top-24 h-72 w-72 rounded-full bg-blue-600/40 blur-3xl dark:bg-white/15" />
+            <div className="absolute -bottom-32 -right-20 h-80 w-80 rounded-full bg-orange-400/20 blur-3xl" />
+            <FileSpreadsheet className="relative mx-auto h-8 w-8 text-blue-300 dark:text-white" />
+            <h2 className="relative mx-auto mt-6 max-w-3xl text-3xl font-semibold tracking-tight sm:text-5xl">Start discovering contacts hidden inside your inbox today.</h2>
+            <p className="relative mx-auto mt-5 max-w-2xl text-slate-300 dark:text-blue-50">Connect a mailbox, choose your folders, and build a cleaner contact database in minutes.</p>
+            <div className="relative mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+              <Button asChild size="lg" variant="outline" className="border-white/20 bg-white/10 text-white hover:bg-white/20 dark:bg-white dark:text-blue-700"><Link href="/contact">View Demo</Link></Button>
+              <Button asChild size="lg" className="bg-white text-slate-950 hover:bg-blue-50 dark:bg-slate-950 dark:text-white"><Link href="/register">Get Started <ArrowRight className="h-4 w-4" /></Link></Button>
+            </div>
           </div>
         </Reveal>
       </Section>
-
-      <Section>
-        <Reveal>
-          <SectionIntro eyebrow="FAQ" title="Questions before turning inboxes into contact lists?" />
-        </Reveal>
-        <Reveal delay={0.12}>
-          <FAQ />
-        </Reveal>
-      </Section>
-
-      <CTASection />
     </main>
   );
 }

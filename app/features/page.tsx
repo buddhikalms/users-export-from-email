@@ -18,7 +18,7 @@ import { FeatureCard } from "@/components/marketing/FeatureCard";
 import { Section, SectionIntro } from "@/components/marketing/Section";
 
 export const metadata: Metadata = {
-  title: "Features - Email Exporter",
+  title: "Features - ChatUp",
   description:
     "Explore Outlook sync, folder-wise extraction, duplicate cleanup, Excel exports, marketing sync, analytics, and secure credential vault features.",
 };
@@ -44,7 +44,7 @@ export default function FeaturesPage() {
         <SectionIntro
           eyebrow="Features"
           title="A complete workflow for inbox-to-platform contact operations."
-          description="Email Exporter handles extraction, cleaning, export, sync, security, history, and analytics in one focused workspace."
+          description="ChatUp handles extraction, cleaning, export, sync, security, history, and analytics in one focused workspace."
         />
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {features.map(([title, description, Icon]) => (

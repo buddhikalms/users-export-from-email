@@ -44,7 +44,7 @@ export function DashboardMockup() {
         <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-5 py-4 dark:border-white/10 dark:bg-slate-950">
           <div>
             <div className="text-sm font-semibold text-slate-950 dark:text-white">
-              Email Exporter Dashboard
+              ChatUp Dashboard
             </div>
             <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">
               Scan mailbox folders, review contacts, then export or sync.

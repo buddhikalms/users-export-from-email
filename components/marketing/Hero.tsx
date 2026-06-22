@@ -28,7 +28,7 @@ export function Hero() {
           </Reveal>
           <Reveal delay={0.16}>
             <p className="mx-auto mt-6 max-w-3xl text-lg leading-8 text-slate-600 dark:text-slate-300">
-              Email Exporter scans selected mailbox folders, finds direct and forwarded
+              ChatUp scans selected mailbox folders, finds direct and forwarded
               senders, removes duplicates, keeps folder context, then exports your
               contacts to Excel, CSV, JSON, Google Sheets, or marketing platforms.
             </p>

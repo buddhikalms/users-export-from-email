@@ -6,9 +6,9 @@ import { FeatureCard } from "@/components/marketing/FeatureCard";
 import { Section, SectionIntro } from "@/components/marketing/Section";
 
 export const metadata: Metadata = {
-  title: "Security - Email Exporter",
+  title: "Security - ChatUp",
   description:
-    "Learn how Email Exporter protects API keys, IMAP passwords, and sync workflows with encrypted credential vault architecture.",
+    "Learn how ChatUp protects API keys, IMAP passwords, and sync workflows with encrypted credential vault architecture.",
 };
 
 const items = [
@@ -25,7 +25,7 @@ export default function SecurityPage() {
         <SectionIntro
           eyebrow="Security"
           title="Privacy-first architecture for mailbox and platform credentials."
-          description="Email Exporter is designed for teams that need useful contact extraction without casual handling of IMAP passwords or marketing API keys."
+          description="ChatUp is designed for teams that need useful contact extraction without casual handling of IMAP passwords or marketing API keys."
         />
         <div className="grid gap-4 md:grid-cols-2">
           {items.map(([title, description, Icon]) => (

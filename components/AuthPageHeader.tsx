@@ -16,7 +16,7 @@ export function AuthPageHeader() {
         <span className="grid h-10 w-10 place-items-center rounded-2xl bg-slate-950 text-white shadow-sm dark:bg-white dark:text-slate-950">
           <Send className="h-4 w-4" />
         </span>
-        <span>Email Exporter</span>
+        <span>ChatUp</span>
       </Link>
       <div className="flex items-center gap-2">
         <Button asChild size="sm" variant="outline">

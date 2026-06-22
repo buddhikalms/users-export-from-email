@@ -46,7 +46,7 @@ export function MarketingFooter() {
             <span className="grid h-9 w-9 place-items-center rounded-xl bg-slate-950 text-white dark:bg-white dark:text-slate-950">
               <Send className="h-4 w-4" />
             </span>
-            <span>Email Exporter</span>
+            <span>ChatUp</span>
           </Link>
           <p className="mt-4 max-w-sm text-sm leading-6 text-slate-600 dark:text-slate-300">
             Extract. Clean. Sync. Turn Outlook and IMAP folders into clean, marketing-ready contact data.
@@ -68,7 +68,7 @@ export function MarketingFooter() {
         </div>
       </div>
       <div className="mx-auto flex max-w-7xl flex-col gap-3 border-t border-slate-200 px-4 py-6 text-xs text-slate-500 dark:border-white/10 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-        <span>© 2026 Email Exporter. All rights reserved.</span>
+        <span>© 2026 ChatUp. All rights reserved.</span>
         <span>Privacy-first email contact extraction and marketing sync.</span>
       </div>
     </footer>

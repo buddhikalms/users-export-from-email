@@ -1,8 +1,8 @@
 const faqs = [
   {
-    question: "Does Email Exporter work with Outlook?",
+    question: "Does ChatUp work with Outlook?",
     answer:
-      "Yes. Email Exporter connects to Outlook through IMAP and can scan selected folders to extract sender, reply-to, and forwarded-chain contacts.",
+      "Yes. ChatUp connects to Outlook through IMAP and can scan selected folders to extract sender, reply-to, and forwarded-chain contacts.",
   },
   {
     question: "Can I export contacts to Excel or CSV?",
@@ -12,7 +12,7 @@ const faqs = [
   {
     question: "Which marketing platforms are supported?",
     answer:
-      "Email Exporter supports Kit, Mailchimp, Brevo, HubSpot, Beehiiv, and several queue-ready platform workflows.",
+      "ChatUp supports Kit, Mailchimp, Brevo, HubSpot, Beehiiv, and several queue-ready platform workflows.",
   },
   {
     question: "Are API keys and IMAP passwords stored safely?",

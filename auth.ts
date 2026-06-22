@@ -1,14 +1,20 @@
+import { randomUUID } from "node:crypto";
 import NextAuth, { type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 import { z } from "zod";
 
-import { verifyPassword } from "@/lib/auth";
+import { getNextUserRole, hashPassword, verifyPassword } from "@/lib/auth";
 import { db } from "@/lib/db";
 
 const credentialsSchema = z.object({
   email: z.string().trim().email(),
   password: z.string().min(8),
 });
+
+export const googleAuthEnabled = Boolean(
+  process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET,
+);
 
 export const authOptions: NextAuthOptions = {
   session: {
@@ -57,12 +63,54 @@ export const authOptions: NextAuthOptions = {
         };
       },
     }),
+    ...(googleAuthEnabled
+      ? [
+          GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID!,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+          }),
+        ]
+      : []),
   ],
   callbacks: {
+    async signIn({ account, user }) {
+      if (account?.provider !== "google") {
+        return true;
+      }
+
+      if (!user.email) {
+        return false;
+      }
+
+      const existingUser = await db.user.findUnique({
+        where: { email: user.email },
+        select: { id: true },
+      });
+
+      if (!existingUser) {
+        await db.user.create({
+          data: {
+            email: user.email,
+            name: user.name?.trim() || user.email.split("@")[0],
+            passwordHash: await hashPassword(randomUUID()),
+            role: await getNextUserRole(),
+          },
+        });
+      }
+
+      return true;
+    },
     async jwt({ token, user }) {
       if (user) {
-        token.role = user.role;
-        token.sub = user.id;
+        const databaseUser = user.email
+          ? await db.user.findUnique({
+              where: { email: user.email },
+              select: { id: true, role: true },
+            })
+          : null;
+
+        token.role = databaseUser?.role ?? user.role ?? "USER";
+        token.sub = databaseUser?.id ?? user.id;
       }
 
       return token;

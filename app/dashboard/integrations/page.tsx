@@ -7,7 +7,7 @@ import { integrationRegistry } from "@/lib/integrations/registry";
 import { prismaPlatformByIntegrationId } from "@/lib/integrations/platforms";
 
 export const metadata = {
-  title: "Integrations - Email Exporter",
+  title: "Integrations - ChatUp",
   description: "Manage connected marketing accounts and platform sync jobs.",
 };
 

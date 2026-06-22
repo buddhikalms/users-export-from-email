@@ -5,7 +5,7 @@ import { ArrowRight } from "lucide-react";
 import { Section, SectionIntro } from "@/components/marketing/Section";
 
 export const metadata: Metadata = {
-  title: "Blog - Email Exporter",
+  title: "Blog - ChatUp",
   description: "Guides for exporting Outlook contacts, cleaning duplicates, and syncing email leads to marketing tools.",
 };
 

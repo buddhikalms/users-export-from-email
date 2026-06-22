@@ -12,7 +12,7 @@ import {
 } from "@/lib/dashboard-data";
 
 export const metadata = {
-  title: "Dashboard - Email Exporter",
+  title: "Dashboard - ChatUp",
   description: "Monitor mailbox syncs, extracted contacts, exports, and marketing integrations.",
 };
 

@@ -5,9 +5,9 @@ import { PricingPlans } from "@/components/marketing/PricingPlans";
 import { Section, SectionIntro } from "@/components/marketing/Section";
 
 export const metadata: Metadata = {
-  title: "Pricing - Email Exporter",
+  title: "Pricing - ChatUp",
   description:
-    "Compare Starter, Professional, Agency, and Enterprise plans for Email Exporter.",
+    "Compare Starter, Professional, Agency, and Enterprise plans for ChatUp.",
 };
 
 export default function PricingPage() {
