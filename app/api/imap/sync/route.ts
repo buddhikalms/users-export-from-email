@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 import { authOptions } from "@/auth";
+import { persistSyncedContacts } from "@/lib/contact-store";
 import { getIgnoredEmailValues } from "@/lib/ignored-emails";
 import { getImapErrorStatus, syncSelectedFolders } from "@/lib/imap";
 import { resolveConnectionSettings } from "@/lib/imap-request";
@@ -48,6 +49,7 @@ export async function POST(request: Request) {
       parsed.data.folders,
       ignoredEmails,
     );
+    await persistSyncedContacts(session.user.id, syncResult);
 
     await completeSyncRun(syncRunId, {
       totalContacts: syncResult.allContacts.length,

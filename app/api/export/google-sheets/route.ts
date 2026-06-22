@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 
 import { authOptions } from "@/auth";
 import { exportSyncResultToGoogleSheet } from "@/lib/google-sheets";
+import { recordCompletedExport } from "@/lib/export-history";
 import { filterSyncResultByLastSeen } from "@/lib/sync-result";
 import { exportGoogleSheetsRequestSchema } from "@/lib/validation";
 
@@ -45,6 +46,12 @@ export async function POST(request: Request) {
       syncResult: filteredSyncResult,
       title: parsed.data.spreadsheetTitle ?? createSpreadsheetTitle(),
       shareWithEmail,
+    });
+    await recordCompletedExport({
+      ownerId: session.user.id,
+      format: "GOOGLE_SHEETS",
+      totalContacts: filteredSyncResult.allContacts.length,
+      fileName: spreadsheet.title,
     });
 
     return NextResponse.json({

@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 import { authOptions } from "@/auth";
+import { recordCompletedExport } from "@/lib/export-history";
 import { filterSyncResultByLastSeen } from "@/lib/sync-result";
 import { exportFileRequestSchema } from "@/lib/validation";
 
@@ -28,10 +29,12 @@ export async function POST(request: Request) {
     parsed.data.filter,
   );
   const timestamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
+  const fileName = `chatup-email-contacts-${timestamp}.json`;
+  await recordCompletedExport({ ownerId: session.user.id, format: "JSON", totalContacts: filteredSyncResult.allContacts.length, fileName });
 
   return NextResponse.json(filteredSyncResult, {
     headers: {
-      "Content-Disposition": `attachment; filename="buddhi-email-contacts-${timestamp}.json"`,
+      "Content-Disposition": `attachment; filename="${fileName}"`,
     },
   });
 }

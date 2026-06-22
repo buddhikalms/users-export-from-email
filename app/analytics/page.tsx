@@ -13,6 +13,14 @@ import {
   getTopDomainData,
 } from "@/lib/dashboard-data";
 
+function titleCase(value: string) {
+  return value
+    .toLowerCase()
+    .split("_")
+    .map((part) => part.slice(0, 1).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
 export default async function AnalyticsPage() {
   const session = await getServerSession(authOptions);
   const userId = session?.user?.id;
@@ -24,26 +32,31 @@ export default async function AnalyticsPage() {
     growthData,
     successfulSyncCount,
     syncCount,
+    platformUsage,
     topDomains,
     usedPlatformCount,
   ] = userId
     ? await Promise.all([
         db.contact.count({ where: { ownerId: userId } }),
         db.duplicateCleanupLog.count({ where: { ownerId: userId } }),
-        db.exportRun.count(),
+        db.exportRun.count({ where: { ownerId: userId } }),
         getFolderActivityData(userId),
         getContactGrowthData(userId),
-        db.syncRun.count({ where: { status: "SUCCESS" } }),
-        db.syncRun.count(),
+        db.syncRun.count({ where: { ownerId: userId, status: "SUCCESS" } }),
+        db.syncRun.count({ where: { ownerId: userId } }),
+        db.syncRun.groupBy({
+          by: ["platform"],
+          where: { ownerId: userId, platform: { not: null } },
+          _count: { _all: true },
+          orderBy: { _count: { platform: "desc" } },
+        }),
         getTopDomainData(userId),
-        db.integrationAccount
-          .groupBy({
-            by: ["platform"],
-            where: { ownerId: userId },
-          })
-          .then((groups) => groups.length),
+        Promise.all([
+          db.integrationAccount.groupBy({ by: ["platform"], where: { ownerId: userId } }),
+          db.kitAccount.count({ where: { ownerId: userId } }),
+        ]).then(([groups, kitAccounts]) => groups.length + (kitAccounts > 0 ? 1 : 0)),
       ])
-    : [0, 0, 0, [], [], 0, 0, [], 0];
+    : [0, 0, 0, [], [], 0, 0, [], [], 0];
   const syncSuccessRate =
     syncCount > 0 ? `${Math.round((successfulSyncCount / syncCount) * 100)}%` : "0%";
   const statCards: Array<[string, string, ElementType]> = [
@@ -52,6 +65,7 @@ export default async function AnalyticsPage() {
     ["Duplicates cleaned", formatCount(duplicateCleanupCount), ShieldCheck],
     ["Platforms used", formatCount(usedPlatformCount), Layers3],
   ];
+  const maxPlatformSyncs = Math.max(1, ...platformUsage.map((item) => item._count._all));
 
   return (
     <div className="space-y-6">
@@ -89,8 +103,22 @@ export default async function AnalyticsPage() {
       <div className="grid gap-6 xl:grid-cols-3">
         <div className="rounded-3xl border border-border/70 bg-card/82 p-5 shadow-sm">
           <h2 className="text-xl font-semibold">Platform Usage</h2>
-          <div className="mt-4 rounded-3xl border border-dashed border-border bg-secondary/30 p-8 text-center text-sm text-muted-foreground">
-            Platform usage appears after integration sync runs are saved.
+          <div className="mt-5 space-y-4">
+            {platformUsage.length ? platformUsage.map((item) => (
+              <div key={item.platform ?? "unknown"}>
+                <div className="flex items-center justify-between gap-3 text-sm">
+                  <span className="font-medium">{titleCase(item.platform ?? "Unknown")}</span>
+                  <span className="text-muted-foreground">{formatCount(item._count._all)} syncs</span>
+                </div>
+                <div className="mt-2 h-2 overflow-hidden rounded-full bg-secondary">
+                  <div className="h-full rounded-full bg-primary" style={{ width: `${Math.max(8, (item._count._all / maxPlatformSyncs) * 100)}%` }} />
+                </div>
+              </div>
+            )) : (
+              <div className="rounded-3xl border border-dashed border-border bg-secondary/30 p-8 text-center text-sm text-muted-foreground">
+                No platform syncs recorded yet.
+              </div>
+            )}
           </div>
         </div>
         <div className="rounded-3xl border border-border/70 bg-card/82 p-5 shadow-sm">
@@ -124,13 +152,15 @@ export default async function AnalyticsPage() {
           </div>
         </div>
       </div>
-      <EmptyState
-        actionHref="/export"
-        actionLabel="Open export center"
-        description="Additional analytics populate as sync and export history is persisted."
-        icon={BarChart3}
-        title="Analytics are using saved system data only"
-      />
+      {contactCount === 0 && syncCount === 0 && exportCount === 0 ? (
+        <EmptyState
+          actionHref="/export"
+          actionLabel="Open export center"
+          description="Analytics populate after your first mailbox sync or export."
+          icon={BarChart3}
+          title="No analytics recorded yet"
+        />
+      ) : null}
     </div>
   );
 }

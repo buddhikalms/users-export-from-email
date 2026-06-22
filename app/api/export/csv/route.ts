@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 import { authOptions } from "@/auth";
+import { recordCompletedExport } from "@/lib/export-history";
 import { filterSyncResultByLastSeen } from "@/lib/sync-result";
 import { exportFileRequestSchema } from "@/lib/validation";
 
@@ -64,11 +65,13 @@ export async function POST(request: Request) {
   );
   const csv = [headers.join(","), ...rows].join("\r\n");
   const timestamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
+  const fileName = `chatup-email-contacts-${timestamp}.csv`;
+  await recordCompletedExport({ ownerId: session.user.id, format: "CSV", totalContacts: filteredSyncResult.allContacts.length, fileName });
 
   return new NextResponse(csv, {
     headers: {
       "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": `attachment; filename="buddhi-email-contacts-${timestamp}.csv"`,
+      "Content-Disposition": `attachment; filename="${fileName}"`,
     },
   });
 }

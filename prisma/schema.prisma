@@ -84,6 +84,7 @@ enum ExportFormat {
   EXCEL
   CSV
   JSON
+  GOOGLE_SHEETS
 }
 
 enum AutomationTrigger {
@@ -139,6 +140,7 @@ model User {
   apiLogs       ApiLog[]
   backgroundJobs BackgroundJob[]
   syncRuns      SyncRun[]
+  exportRuns    ExportRun[]
   createdAt     DateTime           @default(now())
   updatedAt     DateTime           @updatedAt
 }
@@ -463,6 +465,7 @@ model SyncRun {
 
 model ExportRun {
   id                   String              @id @default(cuid())
+  ownerId              String?
   workspaceId           String?
   integrationAccountId  String?
   format                ExportFormat
@@ -475,10 +478,12 @@ model ExportRun {
   createdAt             DateTime            @default(now())
   completedAt           DateTime?
   errorMessage          String?
+  owner                 User?               @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   workspace             Workspace?          @relation(fields: [workspaceId], references: [id], onDelete: SetNull)
   integrationAccount    IntegrationAccount? @relation(fields: [integrationAccountId], references: [id], onDelete: SetNull)
 
   @@index([workspaceId, createdAt])
+  @@index([ownerId, createdAt])
   @@index([format])
 }
 

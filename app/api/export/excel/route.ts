@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 
 import { authOptions } from "@/auth";
 import { createWorkbookBuffer } from "@/lib/excel";
+import { recordCompletedExport } from "@/lib/export-history";
 import { filterSyncResultByLastSeen } from "@/lib/sync-result";
 import { exportExcelRequestSchema } from "@/lib/validation";
 
@@ -36,13 +37,15 @@ export async function POST(request: Request) {
     );
     const workbook = await createWorkbookBuffer(filteredSyncResult);
     const timestamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
+    const fileName = `chatup-email-contacts-${timestamp}.xlsx`;
+    await recordCompletedExport({ ownerId: session.user.id, format: "EXCEL", totalContacts: filteredSyncResult.allContacts.length, fileName });
 
     return new NextResponse(workbook, {
       status: 200,
       headers: {
         "Content-Type":
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        "Content-Disposition": `attachment; filename="email-contacts-${timestamp}.xlsx"`,
+        "Content-Disposition": `attachment; filename="${fileName}"`,
       },
     });
   } catch (error) {
