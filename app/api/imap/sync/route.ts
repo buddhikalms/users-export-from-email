@@ -5,6 +5,7 @@ import { authOptions } from "@/auth";
 import { getIgnoredEmailValues } from "@/lib/ignored-emails";
 import { getImapErrorStatus, syncSelectedFolders } from "@/lib/imap";
 import { resolveConnectionSettings } from "@/lib/imap-request";
+import { completeSyncRun, failSyncRun, startSyncRun } from "@/lib/sync-history";
 import { syncRequestSchema } from "@/lib/validation";
 
 export const runtime = "nodejs";
@@ -16,6 +17,7 @@ export async function POST(request: Request) {
   }
 
   let settings: Awaited<ReturnType<typeof resolveConnectionSettings>> | null = null;
+  let syncRunId: string | null = null;
 
   try {
     const json = await request.json();
@@ -34,6 +36,12 @@ export async function POST(request: Request) {
     }
 
     settings = await resolveConnectionSettings(parsed.data, session.user.id);
+    const syncRun = await startSyncRun({
+      ownerId: session.user.id,
+      targetName: parsed.data.folders.join(", "),
+      targetType: "MAILBOX_SYNC",
+    });
+    syncRunId = syncRun.id;
     const ignoredEmails = await getIgnoredEmailValues(session.user.id);
     const syncResult = await syncSelectedFolders(
       settings,
@@ -41,10 +49,17 @@ export async function POST(request: Request) {
       ignoredEmails,
     );
 
+    await completeSyncRun(syncRunId, {
+      totalContacts: syncResult.allContacts.length,
+      uploaded: syncResult.allContacts.length,
+      skippedDuplicates: syncResult.duplicatesAcrossFolders.length,
+    });
+
     settings = null;
     return NextResponse.json(syncResult);
   } catch (error) {
     settings = null;
+    await failSyncRun(syncRunId, error);
     const message =
       error instanceof Error ? error.message : "Failed to sync selected folders.";
 

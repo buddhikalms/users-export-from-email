@@ -14,7 +14,6 @@ const navItems = [
   ["Pricing", "/pricing"],
   ["Security", "/security"],
   ["Use Cases", "/use-cases"],
-  ["Blog", "/blog"],
 ] as const;
 
 export function MarketingHeader({ signedIn = false }: { signedIn?: boolean }) {
@@ -38,7 +37,11 @@ export function MarketingHeader({ signedIn = false }: { signedIn?: boolean }) {
 
         <nav className="hidden items-center gap-7 text-sm font-medium text-slate-600 dark:text-slate-300 lg:flex">
           {navItems.map(([label, href]) => (
-            <Link key={href} className="hover:text-slate-950 dark:hover:text-white" href={href as any}>
+            <Link
+              key={href}
+              className="hover:text-slate-950 dark:hover:text-white"
+              href={href as any}
+            >
               {label}
             </Link>
           ))}
@@ -51,13 +54,24 @@ export function MarketingHeader({ signedIn = false }: { signedIn?: boolean }) {
             onClick={toggleTheme}
             title={isDark ? "Switch to light theme" : "Switch to dark theme"}
           >
-            {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            {isDark ? (
+              <Sun className="h-4 w-4" />
+            ) : (
+              <Moon className="h-4 w-4" />
+            )}
           </Button>
           <Button asChild variant="ghost">
-            <Link href={(signedIn ? "/dashboard" : "/login") as any}>{signedIn ? "Dashboard" : "Login"}</Link>
+            <Link href={(signedIn ? "/dashboard" : "/login") as any}>
+              {signedIn ? "Dashboard" : "Login"}
+            </Link>
           </Button>
-          <Button asChild className="bg-gradient-to-r from-slate-950 to-blue-700 text-white hover:opacity-90">
-            <Link href={(signedIn ? "/dashboard" : "/register") as any}>Start Free</Link>
+          <Button
+            asChild
+            className="bg-gradient-to-r from-slate-950 to-blue-700 text-white hover:opacity-90"
+          >
+            <Link href={(signedIn ? "/dashboard" : "/register") as any}>
+              Start Free
+            </Link>
           </Button>
         </div>
 
@@ -68,7 +82,11 @@ export function MarketingHeader({ signedIn = false }: { signedIn?: boolean }) {
             onClick={toggleTheme}
             title={isDark ? "Switch to light theme" : "Switch to dark theme"}
           >
-            {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            {isDark ? (
+              <Sun className="h-4 w-4" />
+            ) : (
+              <Moon className="h-4 w-4" />
+            )}
           </Button>
           <Button size="sm" variant="ghost" onClick={() => setOpen(true)}>
             <Menu className="h-5 w-5" />
@@ -95,7 +113,11 @@ export function MarketingHeader({ signedIn = false }: { signedIn?: boolean }) {
             >
               <div className="flex items-center justify-between">
                 <span className="font-semibold">ChatUp</span>
-                <Button size="sm" variant="ghost" onClick={() => setOpen(false)}>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setOpen(false)}
+                >
                   <X className="h-5 w-5" />
                 </Button>
               </div>
@@ -113,14 +135,22 @@ export function MarketingHeader({ signedIn = false }: { signedIn?: boolean }) {
               </nav>
               <div className="mt-6 grid gap-3">
                 <Button variant="outline" onClick={toggleTheme}>
-                  {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                  {isDark ? (
+                    <Sun className="h-4 w-4" />
+                  ) : (
+                    <Moon className="h-4 w-4" />
+                  )}
                   {isDark ? "Light theme" : "Dark theme"}
                 </Button>
                 <Button asChild variant="outline">
-                  <Link href={(signedIn ? "/dashboard" : "/login") as any}>{signedIn ? "Dashboard" : "Login"}</Link>
+                  <Link href={(signedIn ? "/dashboard" : "/login") as any}>
+                    {signedIn ? "Dashboard" : "Login"}
+                  </Link>
                 </Button>
                 <Button asChild>
-                  <Link href={(signedIn ? "/dashboard" : "/register") as any}>Start Free</Link>
+                  <Link href={(signedIn ? "/dashboard" : "/register") as any}>
+                    Start Free
+                  </Link>
                 </Button>
               </div>
             </motion.div>

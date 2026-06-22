@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
 import { IntegrationsWorkspace } from "@/components/integrations/IntegrationsWorkspace";
 import { db } from "@/lib/db";
-import { integrationRegistry } from "@/lib/integrations/registry";
+import { launchIntegrationRegistry } from "@/lib/integrations/registry";
 import { prismaPlatformByIntegrationId } from "@/lib/integrations/platforms";
 
 export const metadata = {
@@ -45,7 +45,7 @@ export default async function DashboardIntegrationsPage() {
     .reduce((sum, run) => sum + run._count._all, 0);
   const totalSyncs = syncRuns.reduce((sum, run) => sum + run._count._all, 0);
   const syncHealth = totalSyncs > 0 ? `${Math.round((successfulSyncs / totalSyncs) * 100)}%` : "0%";
-  const integrations = integrationRegistry.map((integration) => {
+  const integrations = launchIntegrationRegistry.map((integration) => {
     const platform = prismaPlatformByIntegrationId[integration.platform];
     const platformSyncs = syncRuns
       .filter((run) => run.platform === platform)
@@ -70,7 +70,7 @@ export default async function DashboardIntegrationsPage() {
     <IntegrationsWorkspace
       connectedCount={connectedCount}
       integrations={integrations}
-      platformCount={integrationRegistry.length}
+      platformCount={launchIntegrationRegistry.length}
       queuedJobs={queuedJobs}
       syncHealth={syncHealth}
     />

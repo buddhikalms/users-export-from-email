@@ -16,7 +16,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "ChatUp - Extract, Clean & Sync Email Contacts",
   description:
-    "Extract contacts from Outlook and IMAP mailboxes, clean duplicates, export to Excel, and sync to Kit, Mailchimp, Brevo, HubSpot, and more.",
+    "Extract contacts from Outlook and IMAP mailboxes, clean duplicates, export to Excel, and sync to Kit, Zoho Campaigns, and Brevo.",
 };
 
 export default async function RootLayout({

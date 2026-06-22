@@ -12,7 +12,7 @@ const faqs = [
   {
     question: "Which marketing platforms are supported?",
     answer:
-      "ChatUp supports Kit, Mailchimp, Brevo, HubSpot, Beehiiv, and several queue-ready platform workflows.",
+      "ChatUp supports Kit, Zoho Campaigns, and Brevo. Additional marketing platforms are coming soon.",
   },
   {
     question: "Are API keys and IMAP passwords stored safely?",

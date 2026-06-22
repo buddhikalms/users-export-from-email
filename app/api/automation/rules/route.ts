@@ -90,8 +90,9 @@ export async function POST(request: Request) {
             ? {
                 description: parsed.data.conditionText,
                 emailAccountId: parsed.data.emailAccountId || null,
+                folders: parsed.data.folders,
               }
-            : undefined,
+            : { emailAccountId: parsed.data.emailAccountId || null, folders: parsed.data.folders },
           actions:
             parsed.data.actionText || isExportRule
               ? {
@@ -100,6 +101,9 @@ export async function POST(request: Request) {
                   marketingAccountId: parsed.data.marketingAccountId || null,
                   marketingAccountType: parsed.data.marketingAccountType || null,
                   marketingPlatform: parsed.data.marketingPlatform || null,
+                  destinationId: parsed.data.destinationId || null,
+                  destinationName: parsed.data.destinationName || null,
+                  destinationType: parsed.data.destinationType || null,
                   action: isExportRule ? "EXPORT_CONTACTS_TO_PLATFORM" : null,
                 }
               : undefined,
@@ -127,9 +131,13 @@ export async function POST(request: Request) {
               actionText: parsed.data.actionText,
               conditionText: parsed.data.conditionText,
               emailAccountId: parsed.data.emailAccountId,
+              folders: parsed.data.folders,
               marketingAccountId: parsed.data.marketingAccountId,
               marketingAccountType: parsed.data.marketingAccountType,
               marketingPlatform: parsed.data.marketingPlatform,
+              destinationId: parsed.data.destinationId,
+              destinationName: parsed.data.destinationName,
+              destinationType: parsed.data.destinationType,
               ruleId: createdRule.id,
               schedule,
               trigger: parsed.data.trigger,

@@ -5,6 +5,7 @@ import { authOptions } from "@/auth";
 import { getKitAccountCredentials } from "@/lib/kit-accounts";
 import { kitAccountSyncRequestSchema } from "@/lib/validation";
 import { prepareContactsForKit, syncSubscribersToKit } from "@/lib/kit";
+import { completeSyncRun, failSyncRun, startSyncRun } from "@/lib/sync-history";
 
 export const runtime = "nodejs";
 
@@ -16,6 +17,8 @@ export async function POST(
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
+
+  let syncRunId: string | null = null;
 
   try {
     const json = await request.json();
@@ -30,12 +33,21 @@ export async function POST(
 
     const { id } = await params;
     const credentials = await getKitAccountCredentials(session.user.id, id);
+    const syncRun = await startSyncRun({ ownerId: session.user.id, platform: "KIT", targetName: parsed.data.destinationName, targetType: parsed.data.destinationType });
+    syncRunId = syncRun.id;
     const prepared = prepareContactsForKit(parsed.data.syncResult, {
       defaultTagId: parsed.data.destinationType === "tag" ? parsed.data.tagId : undefined,
       defaultFormId: parsed.data.destinationType === "form" ? parsed.data.formId : undefined,
       folderTagMappings: [],
     });
     const summary = await syncSubscribersToKit(credentials, prepared.contacts);
+
+    await completeSyncRun(syncRunId, {
+      totalContacts: prepared.summary.totalContacts,
+      uploaded: summary.uploaded,
+      skippedDuplicates: prepared.summary.skippedDuplicates,
+      failed: summary.failedUploads + prepared.summary.invalidEmails,
+    });
 
     return NextResponse.json({
       summary: {
@@ -50,6 +62,7 @@ export async function POST(
       },
     });
   } catch (error) {
+    await failSyncRun(syncRunId, error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Unable to sync contacts to Kit." },
       { status: 500 },

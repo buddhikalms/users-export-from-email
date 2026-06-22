@@ -67,9 +67,13 @@ export function getNextRunFromSchedule(
 export function buildAutomationRulePayload({
   actionText,
   emailAccountId,
+  folders,
   marketingAccountId,
   marketingAccountType,
   marketingPlatform,
+  destinationId,
+  destinationName,
+  destinationType,
   conditionText,
   ruleId,
   schedule,
@@ -78,9 +82,13 @@ export function buildAutomationRulePayload({
   actionText?: string;
   conditionText?: string;
   emailAccountId?: string;
+  folders?: string[];
   marketingAccountId?: string;
   marketingAccountType?: "kit" | "integration";
   marketingPlatform?: string;
+  destinationId?: string;
+  destinationName?: string;
+  destinationType?: string;
   ruleId: string;
   schedule?: string | null;
   trigger: AutomationTriggerValue;
@@ -92,9 +100,13 @@ export function buildAutomationRulePayload({
     conditionText: conditionText || null,
     actionText: actionText || null,
     emailAccountId: emailAccountId || null,
+    folders: folders ?? [],
     marketingAccountId: marketingAccountId || null,
     marketingAccountType: marketingAccountType || null,
     marketingPlatform: marketingPlatform || null,
+    destinationId: destinationId || null,
+    destinationName: destinationName || null,
+    destinationType: destinationType || null,
     action: emailAccountId && marketingAccountId ? "EXPORT_CONTACTS_TO_PLATFORM" : null,
   };
 }

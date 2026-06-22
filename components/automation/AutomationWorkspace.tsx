@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { ElementType } from "react";
 import {
@@ -35,9 +35,13 @@ type AutomationRuleView = {
   lastRunAt: string | null;
   nextRunAt: string | null;
   emailAccountId: string | null;
+  folders: string[];
   marketingAccountId: string | null;
   marketingAccountType: string | null;
   marketingPlatform: string | null;
+  destinationId: string | null;
+  destinationName: string | null;
+  destinationType: string | null;
 };
 
 type EmailAccountOption = {
@@ -62,9 +66,13 @@ type FormState = {
   enabled: boolean;
   schedule: string;
   emailAccountId: string;
+  folders: string[];
   marketingAccountId: string;
   marketingAccountType: "kit" | "integration" | "";
   marketingPlatform: string;
+  destinationId: string;
+  destinationName: string;
+  destinationType: "tag" | "list" | "form" | "audience" | "segment" | "";
   conditionText: string;
   actionText: string;
   nextRunAt: string;
@@ -76,9 +84,13 @@ const emptyForm: FormState = {
   enabled: true,
   schedule: "",
   emailAccountId: "",
+  folders: [],
   marketingAccountId: "",
   marketingAccountType: "",
   marketingPlatform: "",
+  destinationId: "",
+  destinationName: "",
+  destinationType: "",
   conditionText: "",
   actionText: "",
   nextRunAt: "",
@@ -159,6 +171,10 @@ export function AutomationWorkspace({
   const [form, setForm] = useState<FormState>(emptyForm);
   const [modalOpen, setModalOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [folderOptions, setFolderOptions] = useState<Array<{ path: string; name: string }>>([]);
+  const [destinationOptions, setDestinationOptions] = useState<Array<{ id: string; name: string; type: "tag" | "list" | "form" | "audience" | "segment" }>>([]);
+  const [loadingFolders, setLoadingFolders] = useState(false);
+  const [loadingDestinations, setLoadingDestinations] = useState(false);
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(
     null,
   );
@@ -185,6 +201,69 @@ export function AutomationWorkspace({
   const selectedPlatformAccount = form.marketingAccountId
     ? platformAccountByKey.get(`${form.marketingAccountType}:${form.marketingAccountId}`)
     : null;
+
+  useEffect(() => {
+    if (!modalOpen || !form.emailAccountId) {
+      setFolderOptions([]);
+      return;
+    }
+
+    let cancelled = false;
+    setLoadingFolders(true);
+    void fetch("/api/imap/folders", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ savedAccountId: form.emailAccountId }),
+    })
+      .then(async (response) => {
+        const payload = (await response.json()) as { folders?: Array<{ path: string; name: string }>; error?: string };
+        if (!response.ok) throw new Error(payload.error ?? "Unable to load folders.");
+        if (!cancelled) setFolderOptions(payload.folders ?? []);
+      })
+      .catch((error) => {
+        if (!cancelled) setStatus({ type: "error", message: error instanceof Error ? error.message : "Unable to load folders." });
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingFolders(false);
+      });
+
+    return () => { cancelled = true; };
+  }, [form.emailAccountId, modalOpen]);
+
+  useEffect(() => {
+    if (!modalOpen || !selectedPlatformAccount) {
+      setDestinationOptions([]);
+      return;
+    }
+
+    let cancelled = false;
+    setLoadingDestinations(true);
+    const readJson = async <T,>(response: Response) => {
+      const payload = (await response.json()) as T & { error?: string };
+      if (!response.ok) throw new Error(payload.error ?? "Unable to load destinations.");
+      return payload;
+    };
+    const request = selectedPlatformAccount.accountType === "kit"
+      ? Promise.all([
+          fetch(`/api/kit/accounts/${selectedPlatformAccount.id}/tags`).then((response) => readJson<{ tags?: Array<{ id: string | number; name: string }> }>(response)),
+          fetch(`/api/kit/accounts/${selectedPlatformAccount.id}/forms`).then((response) => readJson<{ forms?: Array<{ id: string | number; name: string }> }>(response)),
+        ]).then(([tagPayload, formPayload]) => [
+          ...(tagPayload.tags ?? []).map((tag) => ({ id: String(tag.id), name: tag.name, type: "tag" as const })),
+          ...(formPayload.forms ?? []).map((form) => ({ id: String(form.id), name: form.name, type: "form" as const })),
+        ])
+      : fetch(`/api/integrations/accounts/${selectedPlatformAccount.id}/destinations`).then(async (response) => {
+          const payload = (await response.json()) as { destinations?: Array<{ id: string; name: string; type: "tag" | "list" | "form" | "audience" | "segment" }>; error?: string };
+          if (!response.ok) throw new Error(payload.error ?? "Unable to load destinations.");
+          return payload.destinations ?? [];
+        });
+
+    void request
+      .then((destinations) => { if (!cancelled) setDestinationOptions(destinations); })
+      .catch((error) => { if (!cancelled) setStatus({ type: "error", message: error instanceof Error ? error.message : "Unable to load destinations." }); })
+      .finally(() => { if (!cancelled) setLoadingDestinations(false); });
+
+    return () => { cancelled = true; };
+  }, [modalOpen, selectedPlatformAccount?.accountType, selectedPlatformAccount?.id]);
 
   function getDefaultRoute() {
     const emailAccount = emailAccounts.find((account) => account.isDefault) ?? emailAccounts[0];
@@ -377,6 +456,12 @@ export function AutomationWorkspace({
                           )?.platformLabel ?? rule.marketingPlatform ?? "selected platform"}
                         </p>
                       ) : null}
+                      {rule.folders.length ? (
+                        <p className="mt-1 text-xs text-muted-foreground">Folders: {rule.folders.join(", ")}</p>
+                      ) : null}
+                      {rule.destinationName ? (
+                        <p className="mt-1 text-xs text-muted-foreground">Destination: {rule.destinationName} ({rule.destinationType})</p>
+                      ) : null}
                     </div>
                     <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
                       <Badge className="bg-secondary text-secondary-foreground">
@@ -453,6 +538,12 @@ export function AutomationWorkspace({
               </Button>
             </div>
             <div className="grid gap-4 p-5">
+              {status?.type === "error" ? (
+                <Alert className="border-destructive/25 bg-destructive/5">
+                  <AlertTitle>Unable to load selection</AlertTitle>
+                  <AlertDescription>{status.message}</AlertDescription>
+                </Alert>
+              ) : null}
               <div className="space-y-2">
                 <label className="text-sm font-medium" htmlFor="rule-name">
                   Rule name
@@ -519,9 +610,11 @@ export function AutomationWorkspace({
                     id="email-account"
                     className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-card"
                     value={form.emailAccountId}
-                    onChange={(event) =>
-                      setForm((current) => ({ ...current, emailAccountId: event.target.value }))
-                    }
+                    onChange={(event) => setForm((current) => ({
+                      ...current,
+                      emailAccountId: event.target.value,
+                      folders: [],
+                    }))}
                   >
                     <option value="">Select email account</option>
                     {emailAccounts.map((account) => (
@@ -551,6 +644,9 @@ export function AutomationWorkspace({
                         marketingAccountId: account?.id ?? "",
                         marketingAccountType: account?.accountType ?? "",
                         marketingPlatform: account?.platform ?? "",
+                        destinationId: "",
+                        destinationName: "",
+                        destinationType: "",
                       }));
                     }}
                   >
@@ -559,6 +655,61 @@ export function AutomationWorkspace({
                       <option key={`${account.accountType}:${account.id}`} value={`${account.accountType}:${account.id}`}>
                         {account.platformLabel} - {account.name}
                         {account.isDefault ? " - default" : ""}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <span className="text-sm font-medium">Email folders</span>
+                  <div className="max-h-44 space-y-2 overflow-y-auto rounded-2xl border border-input bg-white/70 p-3 dark:bg-card">
+                    {loadingFolders ? (
+                      <p className="text-sm text-muted-foreground">Loading folders...</p>
+                    ) : folderOptions.length ? (
+                      folderOptions.map((folder) => (
+                        <label key={folder.path} className="flex items-center gap-2 text-sm">
+                          <input
+                            type="checkbox"
+                            checked={form.folders.includes(folder.path)}
+                            onChange={(event) => setForm((current) => ({
+                              ...current,
+                              folders: event.target.checked
+                                ? [...current.folders, folder.path]
+                                : current.folders.filter((path) => path !== folder.path),
+                            }))}
+                          />
+                          <span>{folder.name}</span>
+                        </label>
+                      ))
+                    ) : (
+                      <p className="text-sm text-muted-foreground">Select an email account.</p>
+                    )}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="destination-account-target">
+                    Tag, list, or form
+                  </label>
+                  <select
+                    id="destination-account-target"
+                    className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-card"
+                    disabled={!selectedPlatformAccount || loadingDestinations}
+                    value={form.destinationId ? `${form.destinationType}:${form.destinationId}` : ""}
+                    onChange={(event) => {
+                      const destination = destinationOptions.find((item) => `${item.type}:${item.id}` === event.target.value);
+                      setForm((current) => ({
+                        ...current,
+                        destinationId: destination?.id ?? "",
+                        destinationName: destination?.name ?? "",
+                        destinationType: destination?.type ?? "",
+                      }));
+                    }}
+                  >
+                    <option value="">{loadingDestinations ? "Loading destinations..." : "Select destination"}</option>
+                    {destinationOptions.map((destination) => (
+                      <option key={`${destination.type}:${destination.id}`} value={`${destination.type}:${destination.id}`}>
+                        {destination.name} ({destination.type})
                       </option>
                     ))}
                   </select>

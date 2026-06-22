@@ -44,7 +44,7 @@ type FormState = {
 };
 
 const emptyForm: FormState = {
-  platform: "mailchimp",
+  platform: "kit",
   name: "",
   apiKey: "",
   apiSecret: "",
@@ -85,7 +85,7 @@ export function IntegrationsWorkspace({
   );
 
   function openConnect(platform?: MarketingPlatformId) {
-    const nextPlatform = platform ?? integrations[0]?.platform ?? "mailchimp";
+    const nextPlatform = platform ?? integrations[0]?.platform ?? "kit";
     const label = integrations.find((item) => item.platform === nextPlatform)?.label ?? "";
 
     setForm({

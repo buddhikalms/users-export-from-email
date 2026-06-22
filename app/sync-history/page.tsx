@@ -1,5 +1,7 @@
 import { History } from "lucide-react";
+import { getServerSession } from "next-auth";
 
+import { authOptions } from "@/auth";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { SyncHistoryTable, type SyncRow } from "@/components/tables/SyncHistoryTable";
 import { db } from "@/lib/db";
@@ -25,7 +27,9 @@ function titleCase(value: string) {
 }
 
 export default async function SyncHistoryPage() {
+  const session = await getServerSession(authOptions);
   const syncRuns = await db.syncRun.findMany({
+    where: { ownerId: session?.user?.id ?? "__missing_user__" },
     orderBy: { createdAt: "desc" },
     take: 500,
   });

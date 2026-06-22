@@ -34,7 +34,7 @@ const destinations = [
   ["Google Sheets", "Created"],
   ["Excel workbook", "Ready"],
   ["Kit", "Synced"],
-  ["Mailchimp", "Queued"],
+  ["Zoho Campaigns", "Queued"],
 ] as const;
 
 export function DashboardMockup() {

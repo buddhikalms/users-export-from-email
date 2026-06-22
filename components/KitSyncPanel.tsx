@@ -270,7 +270,9 @@ function VaultPlatformExportPanel({ syncResult }: { syncResult: SyncResult }) {
   const [syncing, setSyncing] = useState(false);
 
   const accounts =
-    vault.vaultData?.marketingAccounts.filter((account) => account.platform !== "kit") ?? [];
+    vault.vaultData?.marketingAccounts.filter(
+      (account) => account.platform === "zoho_campaigns" || account.platform === "brevo",
+    ) ?? [];
   const selectedAccount = accounts.find((account) => account.id === selectedAccountId) ?? null;
   const selectedAdapter = selectedAccount
     ? integrationRegistry.find((adapter) => adapter.platform === selectedAccount.platform)

@@ -37,7 +37,7 @@ const planMatches = [
     plan: "Professional",
     fit: "Growth teams",
     price: "$49/mo",
-    description: "Best for teams using multiple mailboxes, Kit, Mailchimp, Brevo, and scheduled exports.",
+    description: "Best for teams using multiple mailboxes, Kit, Zoho Campaigns, Brevo, and scheduled exports.",
     featured: true,
   },
   {
@@ -56,7 +56,7 @@ const useCases = [
     plan: "Agency",
     pain: "Client contacts are spread across campaign inboxes, team folders, and forwarded leads.",
     outcome: "Build client-ready contact databases, map folders to tags, and sync each client to the correct marketing account.",
-    workflow: ["Connect client mailbox", "Scan campaign folders", "Remove duplicates", "Sync to Kit or Mailchimp"],
+    workflow: ["Connect client mailbox", "Scan campaign folders", "Remove duplicates", "Sync to Kit or Zoho"],
     advantages: ["Client-specific exports", "Folder-to-tag mapping", "Less CSV cleanup"],
     result: "Turn inbox history into billable contact lists in one afternoon.",
   },
@@ -75,7 +75,7 @@ const useCases = [
     icon: Newspaper,
     plan: "Professional",
     pain: "Subscriber, sponsor, author, and contributor conversations arrive in separate inbox folders.",
-    outcome: "Segment contacts by folder and sync newsletter-ready lists to Beehiiv, Brevo, or Mailchimp.",
+    outcome: "Segment contacts by folder and sync newsletter-ready lists to Kit, Zoho Campaigns, or Brevo.",
     workflow: ["Extract submissions", "Segment sponsors", "Clean mailto links", "Sync newsletter contacts"],
     advantages: ["Separate sponsors and authors", "Clean subscriber rows", "Sync to newsletter tools"],
     result: "Convert editorial inboxes into organized audience growth data.",
@@ -95,7 +95,7 @@ const useCases = [
     icon: BarChart3,
     plan: "Professional",
     pain: "Warm leads are scattered across sales, support, partner, and founder inboxes.",
-    outcome: "Turn conversations into clean contact lists and send qualified leads into HubSpot or campaign tools.",
+    outcome: "Turn conversations into clean contact lists and send qualified leads into supported campaign tools.",
     workflow: ["Extract lead folders", "Score domains", "Clean duplicates", "Sync to CRM"],
     advantages: ["Find warm leads", "Preserve sales context", "Reduce duplicate CRM rows"],
     result: "Create follow-up lists from real conversations, not cold guesses.",
@@ -136,7 +136,7 @@ const outcomes = [
   "Extract contacts from Outlook and IMAP folders",
   "Clean duplicates before they reach your CRM",
   "Keep folder context for tags and segments",
-  "Sync to Kit, Mailchimp, Brevo, HubSpot, Beehiiv, and more",
+  "Sync to Kit, Zoho Campaigns, and Brevo",
 ] as const;
 
 export default function UseCasesPage() {
@@ -224,7 +224,7 @@ export default function UseCasesPage() {
             ["Faster list building", "Create a usable contact list from existing inbox folders instead of rebuilding it manually."],
             ["Better data quality", "Remove duplicates, broken mailto values, repeated senders, and messy forwarded-chain contacts."],
             ["Useful segmentation", "Keep source folders attached so lists can become tags, audiences, client files, or campaign segments."],
-            ["Flexible delivery", "Send the final contacts to Excel, CSV, JSON, Google Sheets, Kit, Mailchimp, Brevo, HubSpot, and more."],
+            ["Flexible delivery", "Send final contacts to Excel, CSV, JSON, Google Sheets, Kit, Zoho Campaigns, or Brevo."],
           ].map(([title, description]) => (
             <article
               key={title}

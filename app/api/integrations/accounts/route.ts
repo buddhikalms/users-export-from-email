@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import { encryptSecret } from "@/lib/crypto";
 import { db } from "@/lib/db";
-import { getIntegrationAdapter } from "@/lib/integrations/registry";
+import { getIntegrationAdapter, isLaunchPlatform } from "@/lib/integrations/registry";
 import {
   prismaPlatformByIntegrationId,
   toPrismaIntegrationHealth,
@@ -27,6 +27,10 @@ export async function POST(request: Request) {
         { error: parsed.error.issues[0]?.message ?? "Invalid integration account." },
         { status: 400 },
       );
+    }
+
+    if (!isLaunchPlatform(parsed.data.platform)) {
+      return NextResponse.json({ error: "This integration is coming soon." }, { status: 400 });
     }
 
     const adapter = getIntegrationAdapter(parsed.data.platform);

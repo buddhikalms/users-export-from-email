@@ -21,8 +21,8 @@ const nodes = [
   { title: "Duplicate Cleanup", icon: Sparkles, side: "right", top: 28 },
   { title: "Excel / CSV Export", icon: FileSpreadsheet, side: "left", top: 48 },
   { title: "Kit Sync", icon: RefreshCw, side: "right", top: 48 },
-  { title: "Mailchimp Sync", icon: UsersRound, side: "left", top: 68 },
-  { title: "Brevo / HubSpot Sync", icon: DatabaseZap, side: "right", top: 68 },
+  { title: "Zoho Campaigns", icon: UsersRound, side: "left", top: 68 },
+  { title: "Brevo Sync", icon: DatabaseZap, side: "right", top: 68 },
   { title: "Analytics Dashboard", icon: BarChart3, side: "left", top: 88 },
   { title: "Secure Vault", icon: ShieldCheck, side: "right", top: 88 },
 ] as const;

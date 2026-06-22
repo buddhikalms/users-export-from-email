@@ -3,8 +3,10 @@ import { NextResponse } from "next/server";
 
 import { authOptions } from "@/auth";
 import { normalizeContactEmail } from "@/lib/email-format";
-import { getIntegrationAdapter } from "@/lib/integrations/registry";
+import { getIntegrationAdapter, isLaunchPlatform } from "@/lib/integrations/registry";
 import { immediateMarketingSyncSchema } from "@/lib/validation";
+import { completeSyncRun, failSyncRun, startSyncRun } from "@/lib/sync-history";
+import { prismaPlatformByIntegrationId } from "@/lib/integrations/platforms";
 
 export const runtime = "nodejs";
 
@@ -27,6 +29,7 @@ export async function POST(request: Request) {
     serverPrefix?: string;
     accountId?: string;
   } | null = null;
+  let syncRunId: string | null = null;
 
   try {
     const json = await request.json();
@@ -39,12 +42,23 @@ export async function POST(request: Request) {
       );
     }
 
+    if (!isLaunchPlatform(parsed.data.platform)) {
+      return NextResponse.json({ error: "This integration is coming soon." }, { status: 400 });
+    }
+
     const adapter = getIntegrationAdapter(parsed.data.platform);
     if (!adapter) {
       return NextResponse.json({ error: "Unsupported integration platform." }, { status: 400 });
     }
 
     credentials = parsed.data.credentials;
+    const syncRun = await startSyncRun({
+      ownerId: session.user.id,
+      platform: prismaPlatformByIntegrationId[parsed.data.platform],
+      targetName: parsed.data.destination.name,
+      targetType: parsed.data.destination.type,
+    });
+    syncRunId = syncRun.id;
     const contacts = parsed.data.syncResult.allContacts.flatMap((contact) => {
       const email = normalizeContactEmail(contact.email);
       if (!email) {
@@ -68,6 +82,8 @@ export async function POST(request: Request) {
       destination: parsed.data.destination,
     });
 
+    await completeSyncRun(syncRunId, summary);
+
     credentials = null;
     return NextResponse.json({
       summary: {
@@ -80,6 +96,7 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     credentials = null;
+    await failSyncRun(syncRunId, error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Unable to export contacts." },
       { status: 500 },

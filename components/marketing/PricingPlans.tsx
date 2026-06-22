@@ -19,7 +19,7 @@ const plans = [
     yearly: "$490/yr",
     description: "For growing teams with multiple accounts.",
     featured: true,
-    features: ["Multiple mailboxes", "Multiple Kit/Mailchimp/Brevo accounts", "Folder-to-tag mapping", "Sync history", "Advanced duplicate cleanup", "Scheduled exports"],
+    features: ["Multiple mailboxes", "Multiple Kit/Zoho/Brevo accounts", "Folder-to-tag mapping", "Sync history", "Advanced duplicate cleanup", "Scheduled exports"],
   },
   {
     name: "Agency",

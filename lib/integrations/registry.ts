@@ -56,6 +56,16 @@ export const integrationRegistry: IntegrationAdapter[] = [
   }),
 ];
 
+export const launchPlatformIds = ["kit", "zoho_campaigns", "brevo"] as const;
+
+export function isLaunchPlatform(platform: MarketingPlatformId) {
+  return launchPlatformIds.some((launchPlatform) => launchPlatform === platform);
+}
+
+export const launchIntegrationRegistry = launchPlatformIds
+  .map((platform) => integrationRegistry.find((integration) => integration.platform === platform))
+  .filter((integration): integration is IntegrationAdapter => Boolean(integration));
+
 export function getIntegrationAdapter(platform: MarketingPlatformId) {
   return integrationRegistry.find((integration) => integration.platform === platform);
 }

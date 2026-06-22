@@ -23,6 +23,8 @@ const platformLabels: Record<MarketingPlatform, string> = {
   zoho_campaigns: "Zoho Campaigns",
 };
 
+const launchPlatforms: MarketingPlatform[] = ["kit", "zoho_campaigns", "brevo"];
+
 function newId() {
   if (typeof window !== "undefined" && window.crypto?.randomUUID) {
     return window.crypto.randomUUID();
@@ -295,9 +297,9 @@ export function CredentialManager({
                   }))
                 }
               >
-                {Object.entries(platformLabels).map(([value, label]) => (
-                  <option key={value} value={value}>
-                    {label}
+                {launchPlatforms.map((platform) => (
+                  <option key={platform} value={platform}>
+                    {platformLabels[platform]}
                   </option>
                 ))}
               </select>

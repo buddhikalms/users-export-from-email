@@ -40,7 +40,7 @@ const platformFeatures = [
   ["Smart Contact Discovery", "Find direct senders, reply-to addresses, and contacts inside forwarded threads.", SearchCheck],
   ["Duplicate Cleanup", "Normalize addresses and merge repeated contacts into one dependable record.", Sparkles],
   ["Folder-Based Organization", "Keep mailbox context so folders become useful lists, tags, and segments.", FolderTree],
-  ["Marketing Platform Sync", "Send clean contacts to Kit, Mailchimp, Brevo, HubSpot, and more.", RefreshCw],
+  ["Marketing Platform Sync", "Send clean contacts to Kit, Zoho Campaigns, and Brevo.", RefreshCw],
   ["Export History", "See what was exported, where it went, and how your contact database is growing.", BarChart3],
 ] as const;
 
@@ -80,7 +80,7 @@ export default function MarketingHomePage() {
             </Reveal>
             <Reveal delay={0.16}>
               <p className="mx-auto mt-7 max-w-3xl text-lg leading-8 text-slate-600 dark:text-slate-300 sm:text-xl">
-                Extract contacts from Outlook and IMAP mailboxes, clean duplicates, export to Excel, and sync directly to Kit, Mailchimp, Brevo, HubSpot, and more.
+                Extract contacts from Outlook and IMAP mailboxes, clean duplicates, export to Excel, and sync directly to Kit, Zoho Campaigns, and Brevo.
               </p>
             </Reveal>
             <Reveal delay={0.22}>

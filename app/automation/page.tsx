@@ -19,6 +19,12 @@ function readAutomationActionString(actions: unknown, key: string) {
   return typeof value === "string" && value ? value : null;
 }
 
+function readAutomationStringArray(value: unknown, key: string) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return [];
+  const selected = (value as Record<string, unknown>)[key];
+  return Array.isArray(selected) ? selected.filter((item): item is string => typeof item === "string") : [];
+}
+
 export default async function AutomationPage() {
   const session = await getServerSession(authOptions);
   const userId = session?.user?.id;
@@ -43,7 +49,7 @@ export default async function AutomationPage() {
           },
         }),
         db.integrationAccount.findMany({
-          where: { ownerId: userId },
+          where: { ownerId: userId, platform: { in: ["BREVO", "ZOHO_CAMPAIGNS"] } },
           orderBy: [{ isDefault: "desc" }, { updatedAt: "desc" }],
           select: {
             id: true,
@@ -106,9 +112,13 @@ export default async function AutomationPage() {
         lastRunAt: rule.lastRunAt?.toISOString() ?? null,
         nextRunAt: rule.nextRunAt?.toISOString() ?? null,
         emailAccountId: readAutomationActionString(rule.actions, "emailAccountId"),
+        folders: readAutomationStringArray(rule.conditions, "folders"),
         marketingAccountId: readAutomationActionString(rule.actions, "marketingAccountId"),
         marketingAccountType: readAutomationActionString(rule.actions, "marketingAccountType"),
         marketingPlatform: readAutomationActionString(rule.actions, "marketingPlatform"),
+        destinationId: readAutomationActionString(rule.actions, "destinationId"),
+        destinationName: readAutomationActionString(rule.actions, "destinationName"),
+        destinationType: readAutomationActionString(rule.actions, "destinationType"),
       }))}
       scheduledCount={scheduledCount}
     />

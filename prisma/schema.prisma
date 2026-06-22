@@ -138,6 +138,7 @@ model User {
   notifications Notification[]
   apiLogs       ApiLog[]
   backgroundJobs BackgroundJob[]
+  syncRuns      SyncRun[]
   createdAt     DateTime           @default(now())
   updatedAt     DateTime           @updatedAt
 }
@@ -432,6 +433,7 @@ model IntegrationDestination {
 
 model SyncRun {
   id                   String              @id @default(cuid())
+  ownerId              String?
   workspaceId           String?
   integrationAccountId  String?
   platform              MarketingPlatform?
@@ -449,10 +451,12 @@ model SyncRun {
   errorMessage          String?
   metadata              Json?
   createdAt             DateTime            @default(now())
+  owner                 User?               @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   workspace             Workspace?          @relation(fields: [workspaceId], references: [id], onDelete: SetNull)
   integrationAccount    IntegrationAccount? @relation(fields: [integrationAccountId], references: [id], onDelete: SetNull)
 
   @@index([workspaceId, createdAt])
+  @@index([ownerId, createdAt])
   @@index([integrationAccountId])
   @@index([status])
 }

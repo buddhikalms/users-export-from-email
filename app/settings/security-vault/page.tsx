@@ -39,8 +39,8 @@ export default function SecurityVaultPage() {
           </p>
           <h1 className="text-4xl">Security Vault</h1>
           <p className="max-w-3xl text-base leading-7 text-muted-foreground">
-            Save Outlook, IMAP, Kit, Mailchimp, Brevo, HubSpot, Beehiiv, and
-            ActiveCampaign credentials in a client-side encrypted vault.
+            Save Outlook, IMAP, Kit, Zoho Campaigns, and Brevo credentials in a
+            client-side encrypted vault.
           </p>
         </div>
         <div className="flex flex-wrap gap-3">

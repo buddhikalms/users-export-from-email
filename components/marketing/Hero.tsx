@@ -18,7 +18,7 @@ export function Hero() {
         <div className="mx-auto max-w-4xl text-center">
           <Reveal>
             <div className="mx-auto mb-5 inline-flex items-center rounded-full border border-blue-200 bg-white px-3 py-1 text-sm font-medium text-blue-700 shadow-sm dark:border-blue-400/20 dark:bg-white/10 dark:text-blue-200">
-              Outlook, IMAP, Excel, Kit, Mailchimp, Brevo, HubSpot
+              Outlook, IMAP, Excel, Kit, Zoho Campaigns, Brevo
             </div>
           </Reveal>
           <Reveal delay={0.08} y={24}>

@@ -303,9 +303,13 @@ export const automationRuleCreateSchema = z.object({
   enabled: z.boolean().optional().default(true),
   schedule: z.string().trim().max(120, "Schedule is too long.").optional(),
   emailAccountId: z.string().trim().optional(),
+  folders: z.array(z.string().trim().min(1)).optional().default([]),
   marketingAccountId: z.string().trim().optional(),
   marketingAccountType: z.enum(["kit", "integration"]).optional(),
   marketingPlatform: z.string().trim().max(80).optional(),
+  destinationId: z.string().trim().max(200).optional(),
+  destinationName: z.string().trim().max(200).optional(),
+  destinationType: z.enum(["tag", "list", "form", "audience", "segment"]).optional(),
   conditionText: z.string().trim().max(500, "Conditions are too long.").optional(),
   actionText: z.string().trim().max(500, "Actions are too long.").optional(),
   nextRunAt: z.string().optional(),
@@ -334,6 +338,14 @@ export const automationRuleCreateSchema = z.object({
     });
   }
 
+  if (value.trigger === "SCHEDULED" && !value.nextRunAt) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Choose the first scheduled run date and time.",
+      path: ["nextRunAt"],
+    });
+  }
+
   const hasExportSelection =
     Boolean(value.emailAccountId) ||
     Boolean(value.marketingAccountId) ||
@@ -353,11 +365,27 @@ export const automationRuleCreateSchema = z.object({
     });
   }
 
+  if (value.folders.length === 0) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Select at least one email folder.",
+      path: ["folders"],
+    });
+  }
+
   if (!value.marketingAccountId || !value.marketingAccountType || !value.marketingPlatform) {
     context.addIssue({
       code: z.ZodIssueCode.custom,
       message: "Select the platform account to export to.",
       path: ["marketingAccountId"],
+    });
+  }
+
+  if (!value.destinationId || !value.destinationName || !value.destinationType) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Select a destination, tag, list, or form.",
+      path: ["destinationId"],
     });
   }
 });

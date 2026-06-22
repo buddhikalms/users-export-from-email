@@ -133,9 +133,7 @@ export default function ExportPage() {
               </div>
             </div>
             <div className="rounded-3xl border border-dashed border-primary/25 bg-primary/5 p-4 text-sm leading-6 text-muted-foreground">
-              Kit exports are live in this build. The same destination contract now supports
-              Mailchimp, Brevo, Beehiiv, HubSpot, MailerLite, Constant Contact, SendGrid
-              Marketing, ActiveCampaign, and Campaign Monitor as adapters are completed.
+              Kit, Zoho Campaigns, and Brevo are the launch integrations for this workflow.
             </div>
           </CardContent>
         </Card>

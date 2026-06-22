@@ -30,7 +30,7 @@ const features = [
   ["Duplicate cleanup", "Merge repeated emails and reduce noisy contact lists.", Sparkles],
   ["mailto cleanup", "Strip mailto formatting and normalize contact addresses.", Tags],
   ["Excel/CSV export", "Download polished files for analysis, CRM imports, and client delivery.", FileSpreadsheet],
-  ["Marketing platform sync", "Send contacts to Kit, Mailchimp, Brevo, HubSpot, Beehiiv, and more.", Clock],
+  ["Marketing platform sync", "Send contacts to Kit, Zoho Campaigns, and Brevo.", Clock],
   ["Multi-account integrations", "Manage multiple platform accounts for teams and clients.", KeyRound],
   ["Sync history", "Track exports, sync runs, statuses, and failures.", History],
   ["Analytics dashboard", "Monitor contact growth, top domains, and folder activity.", BarChart3],

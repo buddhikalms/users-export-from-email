@@ -10,7 +10,7 @@ const orbitItems = [
   ["Outlook", "Folders scanned"],
   ["Excel", "Clean export ready"],
   ["Kit", "Tags synced"],
-  ["HubSpot", "Leads routed"],
+  ["Zoho Campaigns", "Leads routed"],
 ] as const;
 
 export function AnimatedBanner() {
@@ -54,7 +54,7 @@ export function AnimatedBanner() {
               className="mt-4 max-w-2xl text-base leading-7 text-slate-300"
             >
               Select a mailbox, scan folders, remove duplicate emails, export to Excel, or push contacts
-              straight into Kit, Mailchimp, Brevo, HubSpot, and more.
+              straight into Kit, Zoho Campaigns, and Brevo.
             </motion.p>
             <motion.div
               initial={{ opacity: 0, y: 18 }}
