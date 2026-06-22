@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fraunces, Space_Grotesk } from "next/font/google";
+import { Inter } from "next/font/google";
 import { getServerSession } from "next-auth";
 
 import { authOptions } from "@/auth";
@@ -8,14 +8,9 @@ import { AuthProvider } from "@/components/AuthProvider";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import "./globals.css";
 
-const displayFont = Fraunces({
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-display",
-});
-
-const bodyFont = Space_Grotesk({
-  subsets: ["latin"],
-  variable: "--font-body",
+  variable: "--font-inter",
 });
 
 export const metadata: Metadata = {
@@ -34,7 +29,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${displayFont.variable} ${bodyFont.variable} min-h-screen bg-background font-sans text-foreground antialiased`}
+        className={`${inter.variable} min-h-screen bg-background font-sans text-foreground antialiased`}
       >
         <AuthProvider>
           <ThemeProvider>
