@@ -72,7 +72,11 @@ export function Hero() {
                 show: { opacity: 1, y: 0 },
               }}
             >
+<<<<<<< HEAD
               OMAZYNC helps businesses automatically extract valuable contacts
+=======
+              Omazync helps businesses automatically extract valuable contacts
+>>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
               from Outlook, Microsoft 365, Exchange, and IMAP email accounts,
               remove duplicates, organize contacts, and sync directly to your
               favorite marketing platforms.

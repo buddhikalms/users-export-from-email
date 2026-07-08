@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
 import {
   flexRender,
   getCoreRowModel,
@@ -19,15 +20,26 @@ import { Input } from "@/components/ui/input";
 export function ProfessionalDataTable<TData>({
   columns,
   data,
+  manualPagination,
   searchPlaceholder = "Search table...",
 }: {
   columns: ColumnDef<TData>[];
   data: TData[];
+  manualPagination?: {
+    currentPage: number;
+    pageSize: number;
+    query: string;
+    totalRows: number;
+  };
   searchPlaceholder?: string;
 }) {
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [globalFilter, setGlobalFilter] = useState("");
+  const [searchValue, setSearchValue] = useState(manualPagination?.query ?? "");
+  const [globalFilter, setGlobalFilter] = useState(manualPagination?.query ?? "");
   const memoizedData = useMemo(() => data, [data]);
+  const pageCount = manualPagination
+    ? Math.max(1, Math.ceil(manualPagination.totalRows / manualPagination.pageSize))
+    : 1;
   const table = useReactTable({
     columns,
     data: memoizedData,
@@ -36,12 +48,54 @@ export function ProfessionalDataTable<TData>({
       globalFilter,
     },
     onSortingChange: setSorting,
-    onGlobalFilterChange: setGlobalFilter,
+    onGlobalFilterChange: manualPagination ? undefined : setGlobalFilter,
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
+    getFilteredRowModel: manualPagination ? undefined : getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
+
+  useEffect(() => {
+    if (manualPagination) {
+      return;
+    }
+
+    const timeout = setTimeout(() => setGlobalFilter(searchValue), 250);
+    return () => clearTimeout(timeout);
+  }, [manualPagination, searchValue]);
+
+  useEffect(() => {
+    if (!manualPagination) {
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      const params = new URLSearchParams(window.location.search);
+      if (searchValue.trim()) {
+        params.set("q", searchValue.trim());
+      } else {
+        params.delete("q");
+      }
+      params.delete("page");
+      const next = `${window.location.pathname}${params.toString() ? `?${params.toString()}` : ""}`;
+      if (next !== `${window.location.pathname}${window.location.search}`) {
+        window.location.assign(next);
+      }
+    }, 400);
+
+    return () => clearTimeout(timeout);
+  }, [manualPagination, searchValue]);
+
+  const makePageHref = (page: number) => {
+    const params = new URLSearchParams();
+    if (manualPagination?.query) {
+      params.set("q", manualPagination.query);
+    }
+    if (page > 1) {
+      params.set("page", String(page));
+    }
+    return `${params.toString() ? `?${params.toString()}` : ""}`;
+  };
 
   return (
     <div className="space-y-4">
@@ -51,8 +105,8 @@ export function ProfessionalDataTable<TData>({
           <Input
             className="pl-10"
             placeholder={searchPlaceholder}
-            value={globalFilter}
-            onChange={(event) => setGlobalFilter(event.target.value)}
+            value={searchValue}
+            onChange={(event) => setSearchValue(event.target.value)}
           />
         </div>
         <Button variant="outline">Column visibility</Button>
@@ -105,27 +159,47 @@ export function ProfessionalDataTable<TData>({
 
       <div className="flex items-center justify-between gap-3 text-sm text-muted-foreground">
         <span>
-          Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount() || 1}
+          Page {manualPagination?.currentPage ?? table.getState().pagination.pageIndex + 1} of{" "}
+          {manualPagination ? pageCount : table.getPageCount() || 1}
         </span>
         <div className="flex gap-2">
-          <Button
-            disabled={!table.getCanPreviousPage()}
-            size="sm"
-            variant="outline"
-            onClick={() => table.previousPage()}
-          >
-            <ChevronLeft className="h-4 w-4" />
-            Previous
-          </Button>
-          <Button
-            disabled={!table.getCanNextPage()}
-            size="sm"
-            variant="outline"
-            onClick={() => table.nextPage()}
-          >
-            Next
-            <ChevronRight className="h-4 w-4" />
-          </Button>
+          {manualPagination ? (
+            <>
+              <Button asChild disabled={manualPagination.currentPage <= 1} size="sm" variant="outline">
+                <Link href={makePageHref(Math.max(1, manualPagination.currentPage - 1))}>
+                  <ChevronLeft className="h-4 w-4" />
+                  Previous
+                </Link>
+              </Button>
+              <Button asChild disabled={manualPagination.currentPage >= pageCount} size="sm" variant="outline">
+                <Link href={makePageHref(Math.min(pageCount, manualPagination.currentPage + 1))}>
+                  Next
+                  <ChevronRight className="h-4 w-4" />
+                </Link>
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                disabled={!table.getCanPreviousPage()}
+                size="sm"
+                variant="outline"
+                onClick={() => table.previousPage()}
+              >
+                <ChevronLeft className="h-4 w-4" />
+                Previous
+              </Button>
+              <Button
+                disabled={!table.getCanNextPage()}
+                size="sm"
+                variant="outline"
+                onClick={() => table.nextPage()}
+              >
+                Next
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </div>

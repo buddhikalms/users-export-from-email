@@ -31,6 +31,14 @@ function formatDate(value: string) {
   }).format(new Date(value));
 }
 
+function safeSpreadsheetValue(value: string | number) {
+  if (typeof value === "number") {
+    return value;
+  }
+
+  return /^[=+\-@\t\r]/.test(value) ? `'${value}` : value;
+}
+
 function addRows(
   worksheet: ExcelJS.Worksheet,
   contacts: EmailContact[],
@@ -53,13 +61,13 @@ function addRows(
 
   worksheet.addRows(
     uniqueContacts.map((contact) => ({
-      name: contact.name,
-      email: contact.email,
-      sourceFolder: defaultSourceFolder ?? contact.sourceFolder,
-      sourceType: contact.sourceType,
-      forwardedBy: contact.forwardedBy,
-      originalSender: contact.originalSender,
-      subject: contact.subject,
+      name: safeSpreadsheetValue(contact.name),
+      email: safeSpreadsheetValue(contact.email),
+      sourceFolder: safeSpreadsheetValue(defaultSourceFolder ?? contact.sourceFolder),
+      sourceType: safeSpreadsheetValue(contact.sourceType),
+      forwardedBy: safeSpreadsheetValue(contact.forwardedBy),
+      originalSender: safeSpreadsheetValue(contact.originalSender),
+      subject: safeSpreadsheetValue(contact.subject),
       firstSeen: formatDate(contact.firstSeen),
       lastSeen: formatDate(contact.lastSeen),
       emailCount: contact.emailCount,

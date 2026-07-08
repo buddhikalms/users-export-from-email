@@ -94,6 +94,12 @@ export const authOptions: NextAuthOptions = {
             name: user.name?.trim() || user.email.split("@")[0],
             passwordHash: await hashPassword(randomUUID()),
             role: await getNextUserRole(),
+            subscription: {
+              create: {
+                plan: "FREE",
+                status: "FREE",
+              },
+            },
           },
         });
       }

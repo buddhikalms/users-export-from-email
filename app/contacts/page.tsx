@@ -6,6 +6,7 @@ import { EmptyState } from "@/components/dashboard/EmptyState";
 import { ContactsTable, type ContactRow } from "@/components/tables/ContactsTable";
 import { db } from "@/lib/db";
 import { formatCount, formatDateTime } from "@/lib/dashboard-data";
+import type { Prisma } from "@prisma/client";
 
 function titleCase(value: string) {
   return value
@@ -15,29 +16,68 @@ function titleCase(value: string) {
     .join(" ");
 }
 
-export default async function ContactsPage() {
+type ContactsPageProps = {
+  searchParams?: Promise<{
+    page?: string;
+    q?: string;
+  }>;
+};
+
+export default async function ContactsPage({ searchParams }: ContactsPageProps) {
   const session = await getServerSession(authOptions);
   const userId = session?.user?.id;
-  const [contacts, businessCount, personalCount, duplicateRiskCount, starredCount] = userId
+  const params = await searchParams;
+  const page = Math.max(1, Number(params?.page ?? "1") || 1);
+  const query = params?.q?.trim() ?? "";
+  const pageSize = 100;
+  const searchWhere: Prisma.ContactWhereInput = query
+    ? {
+        OR: [
+          { email: { contains: query } },
+          { name: { contains: query } },
+          { company: { contains: query } },
+          { domain: { contains: query } },
+          { sourceFolder: { contains: query } },
+        ],
+      }
+    : {};
+  const where: Prisma.ContactWhereInput = userId ? { ownerId: userId, ...searchWhere } : {};
+  const [contacts, totalContacts, businessCount, personalCount, duplicateRiskCount, starredCount] = userId
     ? await Promise.all([
         db.contact.findMany({
-          where: { ownerId: userId },
-          include: {
+          where,
+          select: {
+            email: true,
+            name: true,
+            company: true,
+            domain: true,
+            sourceFolder: true,
+            sourceType: true,
+            emailClassification: true,
+            status: true,
+            leadScore: true,
+            starred: true,
+            emailCount: true,
+            lastSeenAt: true,
+            updatedAt: true,
             tags: {
-              include: {
-                tag: true,
+              select: {
+                tag: { select: { name: true } },
               },
+              take: 8,
             },
           },
           orderBy: [{ starred: "desc" }, { updatedAt: "desc" }],
-          take: 500,
+          skip: (page - 1) * pageSize,
+          take: pageSize,
         }),
+        db.contact.count({ where }),
         db.contact.count({ where: { ownerId: userId, emailClassification: "BUSINESS" } }),
         db.contact.count({ where: { ownerId: userId, emailClassification: "PERSONAL" } }),
         db.contact.count({ where: { ownerId: userId, duplicateScore: { gt: 0 } } }),
         db.contact.count({ where: { ownerId: userId, starred: true } }),
       ])
-    : [[], 0, 0, 0, 0];
+    : [[], 0, 0, 0, 0, 0];
   const rows: ContactRow[] = contacts.map((contact) => ({
     name: contact.name || contact.email,
     email: contact.email,
@@ -78,7 +118,13 @@ export default async function ContactsPage() {
         ))}
       </div>
       {rows.length ? (
-        <ContactsTable data={rows} />
+        <ContactsTable
+          currentPage={page}
+          data={rows}
+          pageSize={pageSize}
+          query={query}
+          totalRows={totalContacts}
+        />
       ) : (
         <EmptyState
           actionHref="/settings"

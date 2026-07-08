@@ -4,8 +4,13 @@ import { CTASection } from "@/components/marketing/CTASection";
 import { Section, SectionIntro } from "@/components/marketing/Section";
 
 export const metadata: Metadata = {
+<<<<<<< HEAD
   title: "About - OMAZYNC",
   description: "Learn about OMAZYNC's mission to unlock valuable contacts hidden in business inboxes.",
+=======
+  title: "About - Omazync",
+  description: "Learn about Omazync's mission to unlock valuable contacts hidden in business inboxes.",
+>>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
 };
 
 export default function AboutPage() {
@@ -15,12 +20,20 @@ export default function AboutPage() {
         <SectionIntro
           align="left"
           eyebrow="About"
+<<<<<<< HEAD
           title="OMAZYNC helps businesses unlock valuable contacts hidden in their inboxes."
+=======
+          title="Omazync helps businesses unlock valuable contacts hidden in their inboxes."
+>>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
           description="Our mission is simple: make contact discovery, clean exports, marketing sync, and privacy-first workflows accessible to the teams that already work inside email every day."
         />
         <div className="grid gap-6 lg:grid-cols-3">
           {[
+<<<<<<< HEAD
             ["Contact discovery", "Outlook and IMAP folders often contain years of valuable conversations. OMAZYNC turns that history into usable contact data."],
+=======
+            ["Contact discovery", "Outlook and IMAP folders often contain years of valuable conversations. Omazync turns that history into usable contact data."],
+>>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
             ["Clean exports", "Duplicates, mailto formatting, and forwarded-chain noise are cleaned before contacts reach Excel, CSV, or your marketing tools."],
             ["Product story", "Founder/product story placeholder: built for operators who needed a safer, faster way to transform inbox activity into organized growth workflows."],
           ].map(([title, body]) => (

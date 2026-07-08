@@ -48,12 +48,20 @@ export async function completeSyncRun(
 export async function failSyncRun(id: string | null, error: unknown) {
   if (!id) return;
 
-  await db.syncRun.update({
-    where: { id },
-    data: {
-      status: "FAILED",
-      completedAt: new Date(),
-      errorMessage: error instanceof Error ? error.message : "Sync failed.",
-    },
-  });
+  const errorMessage =
+    error instanceof Error ? error.message.slice(0, 8_000) : "Sync failed.";
+
+  try {
+    await db.syncRun.update({
+      where: { id },
+      data: {
+        status: "FAILED",
+        completedAt: new Date(),
+        errorMessage,
+      },
+    });
+  } catch (historyError) {
+    // Sync-history logging must never hide the original API/IMAP failure.
+    console.error("Unable to mark sync run as failed.", historyError);
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "name": "emailexporter",
+  "name": "omazync",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -7,6 +7,10 @@
     "build": "next build",
     "start": "next start",
     "test:security": "node --test tests/vault-security.test.ts",
+    "load:smoke": "k6 run load-tests/smoke-test.js",
+    "load:dashboard": "k6 run load-tests/dashboard-load-test.js",
+    "load:sync": "k6 run load-tests/api-sync-test.js",
+    "load:export": "k6 run load-tests/export-load-test.js",
     "typecheck": "tsc --noEmit",
     "db:start": "docker compose up -d mysql",
     "db:stop": "docker compose stop mysql",

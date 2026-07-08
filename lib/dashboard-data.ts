@@ -19,10 +19,16 @@ export function formatDateTime(value: Date | null | undefined) {
 }
 
 export async function getContactGrowthData(ownerId: string): Promise<GrowthPoint[]> {
+  const since = new Date();
+  since.setMonth(since.getMonth() - 11);
+  since.setDate(1);
+  since.setHours(0, 0, 0, 0);
+
   const contacts = await db.contact.findMany({
-    where: { ownerId },
+    where: { ownerId, createdAt: { gte: since } },
     select: { createdAt: true },
     orderBy: { createdAt: "asc" },
+    take: 10_000,
   });
 
   if (contacts.length === 0) {

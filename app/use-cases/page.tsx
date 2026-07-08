@@ -20,9 +20,15 @@ import { CTASection } from "@/components/marketing/CTASection";
 import { Section, SectionIntro } from "@/components/marketing/Section";
 
 export const metadata: Metadata = {
+<<<<<<< HEAD
   title: "Use Cases - OMAZYNC",
   description:
     "Choose the best OMAZYNC plan for agencies, PR teams, publishers, recruiters, sales teams, founders, freelancers, and directories.",
+=======
+  title: "Use Cases - Omazync",
+  description:
+    "Choose the best Omazync plan for agencies, PR teams, publishers, recruiters, sales teams, founders, freelancers, and directories.",
+>>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
 };
 
 const planMatches = [
@@ -152,7 +158,11 @@ export default function UseCasesPage() {
               Find the right plan for the inbox workflow you already have.
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600 dark:text-slate-300">
+<<<<<<< HEAD
               OMAZYNC helps agencies, PR teams, publishers, recruiters, sales teams, and founders
+=======
+              Omazync helps agencies, PR teams, publishers, recruiters, sales teams, and founders
+>>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
               turn mailbox history into clean exports and marketing syncs.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -277,7 +287,11 @@ export default function UseCasesPage() {
 
                 <div className="mt-5 grid gap-3 text-sm leading-6 text-slate-600 dark:text-slate-300">
                   <p><strong className="text-slate-950 dark:text-white">Problem:</strong> {item.pain}</p>
+<<<<<<< HEAD
                   <p><strong className="text-slate-950 dark:text-white">How OMAZYNC helps:</strong> {item.outcome}</p>
+=======
+                  <p><strong className="text-slate-950 dark:text-white">How Omazync helps:</strong> {item.outcome}</p>
+>>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
                 </div>
 
                 <div className="mt-5 rounded-2xl bg-slate-50 p-4 dark:bg-slate-950/70">

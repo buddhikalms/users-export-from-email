@@ -6,6 +6,9 @@ const contactEmailSchema = z.string().trim().refine((value) => {
   return normalizeContactEmail(value) !== null;
 }, "Invalid email").transform((value) => normalizeContactEmail(value) ?? "");
 
+const MAX_SYNC_CONTACTS = 25_000;
+const MAX_SYNC_FOLDERS = 50;
+
 export const securityTypeSchema = z.enum(["ssl_tls", "starttls"]);
 
 export const connectionSettingsSchema = z.object({
@@ -61,42 +64,42 @@ export const registerSchema = z.object({
 });
 
 export const folderSchema = z.object({
-  path: z.string().min(1),
-  name: z.string().min(1),
-  specialUse: z.string().nullable().optional(),
+  path: z.string().min(1).max(500),
+  name: z.string().min(1).max(500),
+  specialUse: z.string().max(100).nullable().optional(),
 });
 
 export const emailContactSchema = z.object({
-  name: z.string(),
+  name: z.string().max(300),
   email: contactEmailSchema,
-  sourceFolder: z.string(),
-  sourceType: z.string(),
-  forwardedBy: z.string(),
-  originalSender: z.string(),
-  subject: z.string(),
-  firstSeen: z.string(),
-  lastSeen: z.string(),
+  sourceFolder: z.string().max(1_000),
+  sourceType: z.string().max(200),
+  forwardedBy: z.string().max(300),
+  originalSender: z.string().max(300),
+  subject: z.string().max(1_000),
+  firstSeen: z.string().max(100),
+  lastSeen: z.string().max(100),
   emailCount: z.number().int().nonnegative(),
 });
 
 export const folderSyncResultSchema = z.object({
-  folderPath: z.string().min(1),
-  displayName: z.string().min(1),
-  contacts: z.array(emailContactSchema),
+  folderPath: z.string().min(1).max(500),
+  displayName: z.string().min(1).max(500),
+  contacts: z.array(emailContactSchema).max(MAX_SYNC_CONTACTS),
   totalMessagesScanned: z.number().int().nonnegative(),
 });
 
 export const crossFolderDuplicateSchema = z.object({
   email: contactEmailSchema,
-  name: z.string(),
-  folders: z.array(z.string()).min(2),
+  name: z.string().max(300),
+  folders: z.array(z.string().max(500)).min(2).max(MAX_SYNC_FOLDERS),
   totalEmailCount: z.number().int().nonnegative(),
 });
 
 export const syncResultSchema = z.object({
-  folders: z.array(folderSyncResultSchema),
-  allContacts: z.array(emailContactSchema),
-  duplicatesAcrossFolders: z.array(crossFolderDuplicateSchema),
+  folders: z.array(folderSyncResultSchema).max(MAX_SYNC_FOLDERS),
+  allContacts: z.array(emailContactSchema).max(MAX_SYNC_CONTACTS),
+  duplicatesAcrossFolders: z.array(crossFolderDuplicateSchema).max(MAX_SYNC_CONTACTS),
 });
 
 export const testConnectionRequestSchema = imapConnectionInputSchema;
@@ -105,7 +108,10 @@ export const foldersRequestSchema = imapConnectionInputSchema;
 
 export const syncRequestSchema = imapConnectionInputSchema.and(
   z.object({
-    folders: z.array(z.string().min(1)).min(1, "Select at least one folder."),
+    folders: z
+      .array(z.string().min(1).max(500))
+      .min(1, "Select at least one folder.")
+      .max(MAX_SYNC_FOLDERS, `Select ${MAX_SYNC_FOLDERS} folders or fewer per sync.`),
   }),
 );
 

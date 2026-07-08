@@ -95,11 +95,29 @@ const columns: ColumnDef<ContactRow>[] = [
   { accessorKey: "lastSeen", header: "Last Seen" },
 ];
 
-export function ContactsTable({ data }: { data: ContactRow[] }) {
+export function ContactsTable({
+  currentPage,
+  data,
+  pageSize,
+  query,
+  totalRows,
+}: {
+  currentPage: number;
+  data: ContactRow[];
+  pageSize: number;
+  query: string;
+  totalRows: number;
+}) {
   return (
     <ProfessionalDataTable
       columns={columns}
       data={data}
+      manualPagination={{
+        currentPage,
+        pageSize,
+        query,
+        totalRows,
+      }}
       searchPlaceholder="Search contacts..."
     />
   );

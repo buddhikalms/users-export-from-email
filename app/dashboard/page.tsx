@@ -12,7 +12,11 @@ import {
 } from "@/lib/dashboard-data";
 
 export const metadata = {
+<<<<<<< HEAD
   title: "Dashboard - OMAZYNC",
+=======
+  title: "Dashboard - Omazync",
+>>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
   description: "Monitor mailbox syncs, extracted contacts, exports, and marketing integrations.",
 };
 
@@ -36,7 +40,7 @@ export default async function DashboardPage() {
   ] = await Promise.all([
     db.savedEmailAccount.count({ where: { ownerId: session.user.id } }),
     db.contact.count({ where: { ownerId: session.user.id } }),
-    db.exportRun.count(),
+    db.exportRun.count({ where: { ownerId: session.user.id } }),
     getFolderActivityData(session.user.id),
     getContactGrowthData(session.user.id),
     db.ignoredEmail.count({ where: { ownerId: session.user.id } }),

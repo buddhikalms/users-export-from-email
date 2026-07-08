@@ -6,8 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Section, SectionIntro } from "@/components/marketing/Section";
 
 export const metadata: Metadata = {
+<<<<<<< HEAD
   title: "Contact - OMAZYNC",
   description: "Contact OMAZYNC support or book a demo for inbox contact extraction and marketing sync.",
+=======
+  title: "Contact - Omazync",
+  description: "Contact Omazync support or book a demo for inbox contact extraction and marketing sync.",
+>>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
 };
 
 export default function ContactPage() {
@@ -29,7 +34,7 @@ export default function ContactPage() {
           </form>
           <div className="grid gap-4">
             {[
-              [Mail, "Email", "support@chatup.example"],
+              [Mail, "Email", "support@omazync.example"],
               [MessageSquare, "Support", "Get help with mailbox connection, exports, and integrations."],
               [CalendarClock, "Demo booking", "Book a walkthrough for agency, publisher, or team workflows."],
             ].map(([Icon, title, body]) => (

@@ -2,6 +2,15 @@ import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 import { authOptions } from "@/auth";
+import {
+  getErrorStatus,
+  getSafeErrorMessage,
+  logApiEvent,
+  rateLimit,
+  readJsonWithLimit,
+  timeOperation,
+  withTimeout,
+} from "@/lib/api-guard";
 import { persistSyncedContacts } from "@/lib/contact-store";
 import { getIgnoredEmailValues } from "@/lib/ignored-emails";
 import { getImapErrorStatus, syncSelectedFolders } from "@/lib/imap";
@@ -12,6 +21,9 @@ import { syncRequestSchema } from "@/lib/validation";
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
+  const limited = rateLimit(request, { scope: "imap-sync", limit: 8, windowMs: 60_000 });
+  if (limited) return limited;
+
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
@@ -21,7 +33,7 @@ export async function POST(request: Request) {
   let syncRunId: string | null = null;
 
   try {
-    const json = await request.json();
+    const json = await readJsonWithLimit(request, 64_000);
     const parsed = syncRequestSchema.safeParse(json);
 
     if (!parsed.success) {
@@ -44,12 +56,20 @@ export async function POST(request: Request) {
     });
     syncRunId = syncRun.id;
     const ignoredEmails = await getIgnoredEmailValues(session.user.id);
-    const syncResult = await syncSelectedFolders(
-      settings,
-      parsed.data.folders,
-      ignoredEmails,
+    const syncResult = await timeOperation(
+      "imap.sync",
+      { userId: session.user.id, folderCount: parsed.data.folders.length, syncRunId },
+      () =>
+        withTimeout(
+          syncSelectedFolders(settings!, parsed.data.folders, ignoredEmails),
+          Number(process.env.IMAP_SYNC_TIMEOUT_MS ?? "120000"),
+        ),
     );
-    await persistSyncedContacts(session.user.id, syncResult);
+    await timeOperation(
+      "contacts.persist",
+      { userId: session.user.id, contactCount: syncResult.allContacts.length, syncRunId },
+      () => persistSyncedContacts(session.user.id, syncResult),
+    );
 
     await completeSyncRun(syncRunId, {
       totalContacts: syncResult.allContacts.length,
@@ -58,13 +78,21 @@ export async function POST(request: Request) {
     });
 
     settings = null;
-    return NextResponse.json(syncResult);
+    return NextResponse.json(syncResult, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     settings = null;
     await failSyncRun(syncRunId, error);
-    const message =
-      error instanceof Error ? error.message : "Failed to sync selected folders.";
+    const statusCode = getErrorStatus(error, getImapErrorStatus(error));
+    logApiEvent("error", "imap.sync.failed", {
+      userId: session.user.id,
+      syncRunId,
+      statusCode,
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
 
-    return NextResponse.json({ error: message }, { status: getImapErrorStatus(error) });
+    return NextResponse.json(
+      { error: getSafeErrorMessage(error, "Failed to sync selected folders.") },
+      { status: statusCode },
+    );
   }
 }

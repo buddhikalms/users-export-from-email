@@ -5,7 +5,11 @@ import { ArrowRight } from "lucide-react";
 import { Section, SectionIntro } from "@/components/marketing/Section";
 
 export const metadata: Metadata = {
+<<<<<<< HEAD
   title: "Blog - OMAZYNC",
+=======
+  title: "Blog - Omazync",
+>>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
   description: "Guides for exporting Outlook contacts, cleaning duplicates, and syncing email leads to marketing tools.",
 };
 

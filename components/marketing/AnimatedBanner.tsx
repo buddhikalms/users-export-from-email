@@ -82,8 +82,13 @@ export function AnimatedBanner() {
               transition={{ duration: 28, repeat: Infinity, ease: "linear" }}
             />
             <div className="absolute left-1/2 top-1/2 grid h-28 w-28 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-3xl border border-white/15 bg-white/10 text-center shadow-2xl backdrop-blur">
+<<<<<<< HEAD
               <MailCheck className="h-7 w-7 text-primary" />
               <span className="mt-2 text-xs font-semibold">OMAZYNC</span>
+=======
+              <MailCheck className="h-7 w-7 text-cyan-300" />
+              <span className="mt-2 text-xs font-semibold">Omazync</span>
+>>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
             </div>
             {orbitItems.map(([label, detail], index) => {
               const positions = [

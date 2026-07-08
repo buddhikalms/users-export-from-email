@@ -1,8 +1,14 @@
 const faqs = [
   {
+<<<<<<< HEAD
     question: "Does OMAZYNC work with Outlook?",
     answer:
       "Yes. OMAZYNC connects to Outlook through IMAP and can scan selected folders to extract sender, reply-to, and forwarded-chain contacts.",
+=======
+    question: "Does Omazync work with Outlook?",
+    answer:
+      "Yes. Omazync connects to Outlook through IMAP and can scan selected folders to extract sender, reply-to, and forwarded-chain contacts.",
+>>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
   },
   {
     question: "Can I export contacts to Excel or CSV?",
@@ -12,7 +18,11 @@ const faqs = [
   {
     question: "Which marketing platforms are supported?",
     answer:
+<<<<<<< HEAD
       "OMAZYNC supports Kit, Zoho Campaigns, and Brevo. Additional marketing platforms are coming soon.",
+=======
+      "Omazync supports Kit, Zoho Campaigns, and Brevo. Additional marketing platforms are coming soon.",
+>>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
   },
   {
     question: "Are API keys and IMAP passwords stored safely?",

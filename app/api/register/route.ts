@@ -1,5 +1,12 @@
 import { NextResponse } from "next/server";
 
+import {
+  getErrorStatus,
+  getSafeErrorMessage,
+  logApiEvent,
+  rateLimit,
+  readJsonWithLimit,
+} from "@/lib/api-guard";
 import { getNextUserRole, hashPassword } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { registerSchema } from "@/lib/validation";
@@ -7,8 +14,11 @@ import { registerSchema } from "@/lib/validation";
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
+  const limited = rateLimit(request, { scope: "register", limit: 5, windowMs: 60_000 });
+  if (limited) return limited;
+
   try {
-    const json = await request.json();
+    const json = await readJsonWithLimit(request, 16_000);
     const parsed = registerSchema.safeParse(json);
 
     if (!parsed.success) {
@@ -43,6 +53,12 @@ export async function POST(request: Request) {
         email: parsed.data.email,
         passwordHash,
         role: await getNextUserRole(),
+        subscription: {
+          create: {
+            plan: "FREE",
+            status: "FREE",
+          },
+        },
       },
       select: {
         id: true,
@@ -57,14 +73,15 @@ export async function POST(request: Request) {
       message: "Your account has been created. You can sign in now.",
     });
   } catch (error) {
+    logApiEvent("error", "register.failed", {
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+
     return NextResponse.json(
       {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Unable to create your account right now.",
+        error: getSafeErrorMessage(error, "Unable to create your account right now."),
       },
-      { status: 500 },
+      { status: getErrorStatus(error) },
     );
   }
 }

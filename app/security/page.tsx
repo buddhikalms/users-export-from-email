@@ -6,9 +6,15 @@ import { FeatureCard } from "@/components/marketing/FeatureCard";
 import { Section, SectionIntro } from "@/components/marketing/Section";
 
 export const metadata: Metadata = {
+<<<<<<< HEAD
   title: "Security - OMAZYNC",
   description:
     "Learn how OMAZYNC protects API keys, IMAP passwords, and sync workflows with encrypted credential vault architecture.",
+=======
+  title: "Security - Omazync",
+  description:
+    "Learn how Omazync protects API keys, IMAP passwords, and sync workflows with encrypted credential vault architecture.",
+>>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
 };
 
 const items = [
@@ -25,7 +31,11 @@ export default function SecurityPage() {
         <SectionIntro
           eyebrow="Security"
           title="Privacy-first architecture for mailbox and platform credentials."
+<<<<<<< HEAD
           description="OMAZYNC is designed for teams that need useful contact extraction without casual handling of IMAP passwords or marketing API keys."
+=======
+          description="Omazync is designed for teams that need useful contact extraction without casual handling of IMAP passwords or marketing API keys."
+>>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
         />
         <div className="grid gap-4 md:grid-cols-2">
           {items.map(([title, description, Icon]) => (

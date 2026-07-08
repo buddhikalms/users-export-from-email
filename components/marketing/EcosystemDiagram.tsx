@@ -63,7 +63,11 @@ export function EcosystemDiagram() {
               <span className="mx-auto mb-3 grid h-10 w-10 place-items-center rounded-full bg-secondary text-white">
                 <MailCheck className="h-5 w-5" />
               </span>
+<<<<<<< HEAD
               <p className="text-xl font-semibold text-slate-950 dark:text-white">OMAZYNC</p>
+=======
+              <p className="text-xl font-semibold text-slate-950 dark:text-white">Omazync</p>
+>>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
               <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">one connected system</p>
             </div>
           </motion.div>
@@ -99,9 +103,15 @@ export function EcosystemDiagram() {
           animate={reduceMotion ? undefined : { scale: [1, 1.02, 1] }}
           transition={{ duration: 3.6, repeat: Infinity, ease: "easeInOut" }}
         >
+<<<<<<< HEAD
           <MailCheck className="mx-auto h-6 w-6 text-secondary dark:text-white" />
           <p className="mt-3 text-xl font-semibold">OMAZYNC</p>
           <p className="mt-1 text-sm text-slate-300 dark:text-secondary">one connected system</p>
+=======
+          <MailCheck className="mx-auto h-6 w-6 text-blue-300 dark:text-white" />
+          <p className="mt-3 text-xl font-semibold">Omazync</p>
+          <p className="mt-1 text-sm text-slate-300 dark:text-blue-100">one connected system</p>
+>>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
         </motion.div>
         {nodes.map((node, index) => {
           const Icon = node.icon;

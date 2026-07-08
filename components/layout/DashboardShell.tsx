@@ -225,6 +225,10 @@ function Sidebar({
           />
           {!collapsed ? (
             <div className="min-w-0">
+<<<<<<< HEAD
+=======
+              <div className="truncate text-sm font-semibold">Omazync</div>
+>>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
               <div className="truncate text-xs text-muted-foreground">Lead extraction CRM</div>
             </div>
           ) : null}
