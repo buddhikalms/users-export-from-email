@@ -499,11 +499,18 @@ model SyncRun {
   ownerId              String?
   workspaceId          String?
   integrationAccountId String?
+  jobId                String?             @unique
   platform             MarketingPlatform?
   status               SyncStatus          @default(QUEUED)
   targetType           String?
   targetId             String?
   targetName           String?             @db.Text
+  currentFolder        String?             @db.Text
+  totalMessages        Int                 @default(0)
+  processedMessages    Int                 @default(0)
+  contactsFound        Int                 @default(0)
+  duplicatesRemoved    Int                 @default(0)
+  cancelRequested      Boolean             @default(false)
   totalContacts        Int                 @default(0)
   uploaded             Int                 @default(0)
   updated              Int                 @default(0)
@@ -511,6 +518,7 @@ model SyncRun {
   failed               Int                 @default(0)
   startedAt            DateTime?
   completedAt          DateTime?
+  finishedAt           DateTime?
   errorMessage         String?             @db.Text
   metadata             Json?
   createdAt            DateTime            @default(now())
@@ -523,6 +531,7 @@ model SyncRun {
   @@index([integrationAccountId])
   @@index([platform, createdAt])
   @@index([status])
+  @@index([jobId])
 }
 
 model ExportRun {

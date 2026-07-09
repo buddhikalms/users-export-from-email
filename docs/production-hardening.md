@@ -25,6 +25,53 @@ pm2 save
 curl -f https://example.com/api/health
 ```
 
+## Redis and background sync worker
+
+Install Redis on Debian:
+
+```bash
+sudo apt update
+sudo apt install -y redis-server
+sudo systemctl enable --now redis-server
+redis-cli ping
+```
+
+Set `REDIS_URL=redis://127.0.0.1:6379` in the production environment. Background syncs use BullMQ; PM2 starts both `next-app` and `email-sync-worker` from `ecosystem.config.js`.
+
+For local Windows development without Docker, use one of these:
+
+```powershell
+# Option 1: WSL Ubuntu
+wsl --install -d Ubuntu
+# Then inside Ubuntu:
+sudo apt update
+sudo apt install -y redis-server
+sudo service redis-server start
+redis-cli ping
+```
+
+```powershell
+# Option 2: remote Redis provider
+# Put the provider URL in .env:
+REDIS_URL="redis://default:password@host:6379"
+```
+
+Check whether the app can reach local Redis:
+
+```bash
+npm run redis:check
+```
+
+Useful worker settings:
+
+```bash
+EMAIL_SYNC_WORKER_CONCURRENCY=2
+EMAIL_SYNC_IMAP_BATCH_SIZE=100
+EMAIL_SYNC_JOB_ATTEMPTS=2
+EMAIL_SYNC_JOB_TIMEOUT_MS=900000
+EMAIL_SYNC_MAX_STALLED_COUNT=1
+```
+
 ## Debian, PM2, and Nginx
 
 Copy `docs/nginx-omazync.conf` to `/etc/nginx/sites-available/omazync`, replace `example.com`, enable it, and validate:

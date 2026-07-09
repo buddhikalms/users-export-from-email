@@ -1,11 +1,13 @@
 import type {
   ActiveConnection,
   ConnectionSettings,
+  SyncDateRange,
   SyncResult,
 } from "@/types/email";
 import { setActiveVaultConnection } from "@/lib/vault-session";
 
 const SELECTED_FOLDERS_KEY = "outlook-sync:selected-folders";
+const SYNC_DATE_RANGE_KEY = "outlook-sync:date-range";
 const SYNC_RESULT_KEY = "outlook-sync:sync-result";
 const ACTIVE_CONNECTION_KEY = "outlook-sync:active-connection";
 
@@ -58,6 +60,23 @@ export function getSelectedFolders(): string[] {
   return value ? (JSON.parse(value) as string[]) : [];
 }
 
+export function saveSyncDateRange(range: SyncDateRange) {
+  if (!canUseStorage()) {
+    return;
+  }
+
+  window.sessionStorage.setItem(SYNC_DATE_RANGE_KEY, JSON.stringify(range));
+}
+
+export function getSyncDateRange(): SyncDateRange {
+  if (!canUseStorage()) {
+    return {};
+  }
+
+  const value = window.sessionStorage.getItem(SYNC_DATE_RANGE_KEY);
+  return value ? (JSON.parse(value) as SyncDateRange) : {};
+}
+
 export function saveSyncResult(result: SyncResult) {
   if (!canUseStorage()) {
     return;
@@ -98,6 +117,7 @@ export function clearSyncArtifacts() {
   }
 
   window.sessionStorage.removeItem(SELECTED_FOLDERS_KEY);
+  window.sessionStorage.removeItem(SYNC_DATE_RANGE_KEY);
   window.sessionStorage.removeItem(SYNC_RESULT_KEY);
   window.sessionStorage.removeItem(ACTIVE_CONNECTION_KEY);
 }

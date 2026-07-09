@@ -201,7 +201,7 @@ export function PayPalCheckout({
   if (state === "signed-out") {
     return (
       <div className="mt-8">
-        <Button asChild size="lg" className="w-full bg-white text-slate-950 hover:bg-blue-50">
+        <Button asChild size="lg" className="w-full bg-white text-slate-950 hover:bg-brand-blue/10">
           <Link href="/login?callbackUrl=/pricing">
             Sign in to subscribe
             <LockKeyhole className="h-4 w-4" />

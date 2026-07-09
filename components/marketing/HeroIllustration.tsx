@@ -31,12 +31,21 @@ export function HeroIllustration() {
 
   return (
     <div className="relative mx-auto h-[570px] w-full max-w-[600px] select-none sm:h-[620px]">
+<<<<<<< HEAD
       <div className="absolute inset-x-14 bottom-8 h-28 rounded-[50%] bg-primary/15 blur-3xl" />
       <svg aria-hidden="true" className="absolute left-1/2 top-8 h-[530px] w-[520px] max-w-none -translate-x-1/2" viewBox="0 0 520 540">
         <defs>
           <linearGradient id="lineGradient" x1="0" x2="1">
             <stop stopColor="#007FD4" stopOpacity=".28" />
             <stop offset="1" stopColor="#03B7B2" stopOpacity=".72" />
+=======
+      <div className="absolute inset-x-14 bottom-8 h-28 rounded-[50%] bg-brand-light-purple/20 blur-3xl" />
+      <svg aria-hidden="true" className="absolute left-1/2 top-8 h-[530px] w-[520px] max-w-none -translate-x-1/2" viewBox="0 0 520 540">
+        <defs>
+          <linearGradient id="lineGradient" x1="0" x2="1">
+            <stop stopColor="#5F1FF0" stopOpacity=".28" />
+            <stop offset="1" stopColor="#01BCB6" stopOpacity=".72" />
+>>>>>>> 218bcf8 (feature : load balance)
           </linearGradient>
         </defs>
         {connectorPaths.map((path, index) => (
@@ -58,7 +67,11 @@ export function HeroIllustration() {
             cx={index === 1 ? 205 : index === 2 ? 315 : index === 4 ? 190 : index === 5 ? 330 : 260}
             cy={cy}
             r="3.5"
+<<<<<<< HEAD
             fill="#03B7B2"
+=======
+            fill="#01BCB6"
+>>>>>>> 218bcf8 (feature : load balance)
             animate={reduceMotion ? undefined : { opacity: [0.25, 1, 0.25], r: [3, 4.5, 3] }}
             transition={{ duration: 2, delay: index * 0.25, repeat: Infinity }}
           />
@@ -71,9 +84,15 @@ export function HeroIllustration() {
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
         style={{ perspective: 800 }}
       >
+<<<<<<< HEAD
         <div className="absolute inset-0 translate-y-5 rounded-[1.75rem] bg-secondary shadow-[0_28px_55px_-18px_rgba(0,127,212,0.6)] [transform:rotateX(8deg)_rotateY(-8deg)]" />
         <div className="absolute inset-x-0 top-5 h-20 overflow-hidden rounded-[1.75rem] border border-white/30 bg-gradient-to-br from-secondary to-primary">
           <div className="absolute inset-x-0 top-0 h-full origin-top bg-secondary/45 [clip-path:polygon(0_0,50%_63%,100%_0)]" />
+=======
+        <div className="absolute inset-0 translate-y-5 rounded-[1.75rem] bg-brand-blue shadow-[0_28px_55px_-18px_rgba(4,130,230,0.6)] [transform:rotateX(8deg)_rotateY(-8deg)]" />
+        <div className="absolute inset-x-0 top-5 h-20 overflow-hidden rounded-[1.75rem] border border-white/30 bg-gradient-to-br from-brand-purple via-brand-blue to-brand-turquoise">
+          <div className="absolute inset-x-0 top-0 h-full origin-top bg-brand-navy/35 [clip-path:polygon(0_0,50%_63%,100%_0)]" />
+>>>>>>> 218bcf8 (feature : load balance)
           <Mail className="absolute left-1/2 top-1/2 h-9 w-9 -translate-x-1/2 -translate-y-1/2 text-white" />
         </div>
       </motion.div>
@@ -86,7 +105,11 @@ export function HeroIllustration() {
             animate={reduceMotion ? undefined : { y: [0, index % 2 ? 6 : -6, 0] }}
             transition={{ duration: 4 + index * 0.5, repeat: Infinity, ease: "easeInOut" }}
           >
+<<<<<<< HEAD
             <span className="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-primary/15 to-secondary/15 text-[10px] font-bold text-secondary">{initials}</span>
+=======
+            <span className="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-brand-light-purple/20 to-brand-turquoise/20 text-[10px] font-bold text-brand-blue">{initials}</span>
+>>>>>>> 218bcf8 (feature : load balance)
             <span className="mt-2 block h-1.5 w-14 rounded-full bg-slate-200" />
             <span className="mt-1.5 block h-1.5 w-10 rounded-full bg-slate-100" />
           </motion.div>
@@ -100,10 +123,17 @@ export function HeroIllustration() {
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
+<<<<<<< HEAD
             <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary/10 text-primary"><Folder className="h-4 w-4" /></span>
             <div><p className="text-xs font-bold text-slate-800">Contacts organized</p><p className="text-[10px] text-slate-500">Inbox to clean folders</p></div>
           </div>
           <Sparkles className="h-4 w-4 text-primary" />
+=======
+            <span className="grid h-9 w-9 place-items-center rounded-xl bg-brand-turquoise/10 text-brand-turquoise"><Folder className="h-4 w-4" /></span>
+            <div><p className="text-xs font-bold text-slate-800">Contacts organized</p><p className="text-[10px] text-slate-500">Inbox to clean folders</p></div>
+          </div>
+          <Sparkles className="h-4 w-4 text-brand-purple" />
+>>>>>>> 218bcf8 (feature : load balance)
         </div>
         <div className="mt-3 grid grid-cols-3 gap-2">
           {["Clients", "Leads", "Suppliers"].map((folder) => <div key={folder} className="rounded-lg bg-slate-50 px-2 py-2 text-center text-[9px] font-semibold text-slate-600">{folder}</div>)}
@@ -120,7 +150,11 @@ export function HeroIllustration() {
               animate={reduceMotion ? undefined : { y: [0, -8, 0] }}
               transition={{ duration: 4.2 + index * 0.5, delay: index * 0.35, repeat: Infinity, ease: "easeInOut" }}
             >
+<<<<<<< HEAD
               <span className={`grid h-10 w-10 place-items-center rounded-xl ${tone === "emerald" ? "bg-primary/10 text-primary" : tone === "cyan" ? "bg-primary/10 text-primary" : "bg-secondary/10 text-secondary"}`}><ItemIcon className="h-5 w-5" /></span>
+=======
+              <span className={`grid h-10 w-10 place-items-center rounded-xl ${tone === "emerald" ? "bg-brand-turquoise/10 text-brand-turquoise" : tone === "cyan" ? "bg-brand-blue/10 text-brand-blue" : "bg-brand-purple/10 text-brand-purple"}`}><ItemIcon className="h-5 w-5" /></span>
+>>>>>>> 218bcf8 (feature : load balance)
               <span className="-mt-3 text-[10px] font-bold text-slate-700">{label as string}</span>
             </motion.div>
           );

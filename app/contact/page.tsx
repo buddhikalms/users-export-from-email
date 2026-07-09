@@ -39,7 +39,11 @@ export default function ContactPage() {
               [CalendarClock, "Demo booking", "Book a walkthrough for agency, publisher, or team workflows."],
             ].map(([Icon, title, body]) => (
               <article key={title as string} className="rounded-2xl border border-slate-200 bg-white p-6 dark:border-white/10 dark:bg-white/[0.04]">
+<<<<<<< HEAD
                 <Icon className="h-5 w-5 text-secondary dark:text-secondary" />
+=======
+                <Icon className="h-5 w-5 text-brand-blue dark:text-brand-light-purple" />
+>>>>>>> 218bcf8 (feature : load balance)
                 <h2 className="mt-4 font-semibold text-slate-950 dark:text-white">{title as string}</h2>
                 <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-300">{body as string}</p>
               </article>

@@ -106,14 +106,59 @@ export const testConnectionRequestSchema = imapConnectionInputSchema;
 
 export const foldersRequestSchema = imapConnectionInputSchema;
 
+export const syncDateRangeSchema = z
+  .object({
+    since: z.string().optional(),
+    before: z.string().optional(),
+  })
+  .superRefine((value, context) => {
+    const since = value.since ? new Date(value.since) : null;
+    const before = value.before ? new Date(value.before) : null;
+
+    if (value.since && (!since || Number.isNaN(since.getTime()))) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Enter a valid start date.",
+        path: ["since"],
+      });
+    }
+
+    if (value.before && (!before || Number.isNaN(before.getTime()))) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Enter a valid end date.",
+        path: ["before"],
+      });
+    }
+
+    if (since && before && since > before) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Start date must be before the end date.",
+        path: ["since"],
+      });
+    }
+  });
+
 export const syncRequestSchema = imapConnectionInputSchema.and(
   z.object({
     folders: z
       .array(z.string().min(1).max(500))
       .min(1, "Select at least one folder.")
       .max(MAX_SYNC_FOLDERS, `Select ${MAX_SYNC_FOLDERS} folders or fewer per sync.`),
+    dateRange: syncDateRangeSchema.optional().default({}),
   }),
 );
+
+export const backgroundSyncStartSchema = z.object({
+  savedAccountId: z.string().min(1, "Select a saved email account."),
+  folders: z
+    .array(z.string().min(1).max(500))
+    .min(1, "Select at least one folder.")
+    .max(MAX_SYNC_FOLDERS, `Select ${MAX_SYNC_FOLDERS} folders or fewer per sync.`),
+  extractForwardedChains: z.boolean().optional().default(true),
+  dateRange: syncDateRangeSchema.optional().default({}),
+});
 
 export const lastSeenFilterSchema = z
   .object({

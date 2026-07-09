@@ -28,7 +28,7 @@ export function Hero() {
 
   return (
     <section
-      className="relative isolate overflow-hidden border-b border-slate-200/70"
+      className="relative isolate overflow-hidden border-b border-brand-blue/15"
       onMouseMove={(event) => {
         if (reduceMotion) return;
         const rect = event.currentTarget.getBoundingClientRect();
@@ -53,20 +53,26 @@ export function Hero() {
             }}
           >
             <motion.h1
-              className="mt-7 text-[2.75rem] font-bold leading-[1.02] tracking-[-0.045em] text-slate-950 sm:text-6xl lg:text-[4.2rem] xl:text-[4.7rem]"
+              className="mt-7 text-[2.75rem] font-bold leading-[1.02] tracking-[-0.045em] text-brand-navy sm:text-6xl lg:text-[4.2rem] xl:text-[4.7rem]"
               variants={{
                 hidden: { opacity: 0, y: 24 },
                 show: { opacity: 1, y: 0 },
               }}
               transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
             >
+<<<<<<< HEAD
               The Om Place For{" "}
               <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                 Zen Contact Management
+=======
+              Discover Valuable Contacts{" "}
+              <span className="bg-gradient-to-r from-brand-purple via-brand-blue to-brand-turquoise bg-clip-text text-transparent">
+                Hidden Inside Your Inbox
+>>>>>>> 218bcf8 (feature : load balance)
               </span>
             </motion.h1>
             <motion.p
-              className="mx-auto mt-6 max-w-xl text-base leading-7 text-slate-600 sm:text-lg sm:leading-8 lg:mx-0"
+              className="mx-auto mt-6 max-w-xl text-base leading-7 text-brand-navy/70 sm:text-lg sm:leading-8 lg:mx-0"
               variants={{
                 hidden: { opacity: 0, y: 18 },
                 show: { opacity: 1, y: 0 },

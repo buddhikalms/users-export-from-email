@@ -16,12 +16,21 @@ const orbitItems = [
 export function AnimatedBanner() {
   return (
     <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+<<<<<<< HEAD
       <div className="relative overflow-hidden rounded-[2rem] border border-secondary/25 bg-slate-950 p-6 text-white shadow-2xl shadow-secondary/20 dark:border-secondary/25 sm:p-8 lg:p-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(3,183,178,0.28),transparent_28%),radial-gradient(circle_at_80%_0%,rgba(0,127,212,0.35),transparent_32%)]" />
         <motion.div
           aria-hidden="true"
           animate={{ x: ["-10%", "10%", "-10%"] }}
           className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent"
+=======
+      <div className="relative overflow-hidden rounded-[2rem] border border-brand-blue/25 bg-slate-950 p-6 text-white shadow-2xl shadow-brand-blue/20 dark:border-brand-light-purple/20 sm:p-8 lg:p-10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(1,188,182,0.28),transparent_28%),radial-gradient(circle_at_80%_0%,rgba(95,31,240,0.35),transparent_32%)]" />
+        <motion.div
+          aria-hidden="true"
+          animate={{ x: ["-10%", "10%", "-10%"] }}
+          className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-turquoise to-transparent"
+>>>>>>> 218bcf8 (feature : load balance)
           transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
         />
 
@@ -32,9 +41,15 @@ export function AnimatedBanner() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
+<<<<<<< HEAD
               className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-sm text-secondary"
             >
               <Sparkles className="h-4 w-4 text-primary" />
+=======
+              className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-sm text-brand-light-purple"
+            >
+              <Sparkles className="h-4 w-4 text-brand-turquoise" />
+>>>>>>> 218bcf8 (feature : load balance)
               New workflow: inbox to marketing platform
             </motion.div>
             <motion.h2
@@ -78,6 +93,7 @@ export function AnimatedBanner() {
           <div className="relative min-h-[280px]">
             <motion.div
               animate={{ rotate: 360 }}
+<<<<<<< HEAD
               className="absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-primary/25"
               transition={{ duration: 28, repeat: Infinity, ease: "linear" }}
             />
@@ -87,6 +103,13 @@ export function AnimatedBanner() {
               <span className="mt-2 text-xs font-semibold">OMAZYNC</span>
 =======
               <MailCheck className="h-7 w-7 text-cyan-300" />
+=======
+              className="absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-brand-turquoise/30"
+              transition={{ duration: 28, repeat: Infinity, ease: "linear" }}
+            />
+            <div className="absolute left-1/2 top-1/2 grid h-28 w-28 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-3xl border border-white/15 bg-white/10 text-center shadow-2xl backdrop-blur">
+              <MailCheck className="h-7 w-7 text-brand-turquoise" />
+>>>>>>> 218bcf8 (feature : load balance)
               <span className="mt-2 text-xs font-semibold">Omazync</span>
 >>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
             </div>
@@ -106,7 +129,11 @@ export function AnimatedBanner() {
                   transition={{ duration: 3.6, delay: index * 0.35, repeat: Infinity, ease: "easeInOut" }}
                 >
                   <div className="flex items-center gap-2 text-sm font-semibold">
+<<<<<<< HEAD
                     {label === "Excel" ? <FileSpreadsheet className="h-4 w-4 text-primary" /> : <CheckCircle2 className="h-4 w-4 text-primary" />}
+=======
+                    {label === "Excel" ? <FileSpreadsheet className="h-4 w-4 text-brand-turquoise" /> : <CheckCircle2 className="h-4 w-4 text-brand-turquoise" />}
+>>>>>>> 218bcf8 (feature : load balance)
                     {label}
                   </div>
                   <p className="mt-1 text-xs text-slate-300">{detail}</p>

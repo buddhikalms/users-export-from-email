@@ -27,9 +27,10 @@ export function MarketingHeader({ signedIn = false }: { signedIn?: boolean }) {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200/70 bg-white/82 backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/82">
+    <header className="sticky top-0 z-50 border-b border-brand-blue/15 bg-brand-white/85 backdrop-blur-xl dark:border-white/10 dark:bg-brand-navy/85">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link className="flex items-center gap-3 font-semibold" href="/">
+<<<<<<< HEAD
 <<<<<<< HEAD
           <Image
             alt="Omazync"
@@ -45,13 +46,19 @@ export function MarketingHeader({ signedIn = false }: { signedIn?: boolean }) {
           </span>
           <span>Omazync</span>
 >>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
+=======
+          <span className="grid h-9 w-9 place-items-center rounded-xl bg-brand-navy text-white shadow-sm dark:bg-white dark:text-brand-navy">
+            <Send className="h-4 w-4" />
+          </span>
+          <span className="text-brand-navy dark:text-white">Omazync</span>
+>>>>>>> 218bcf8 (feature : load balance)
         </Link>
 
-        <nav className="hidden items-center gap-7 text-sm font-medium text-slate-600 dark:text-slate-300 lg:flex">
+        <nav className="hidden items-center gap-7 text-sm font-medium text-brand-navy/65 dark:text-slate-300 lg:flex">
           {navItems.map(([label, href]) => (
             <Link
               key={href}
-              className="hover:text-slate-950 dark:hover:text-white"
+              className="hover:text-brand-blue dark:hover:text-white"
               href={href as any}
             >
               {label}
@@ -79,7 +86,11 @@ export function MarketingHeader({ signedIn = false }: { signedIn?: boolean }) {
           </Button>
           <Button
             asChild
+<<<<<<< HEAD
             className="bg-gradient-to-r from-slate-950 to-secondary text-white hover:opacity-90"
+=======
+            className="bg-gradient-to-r from-brand-turquoise to-brand-blue text-white hover:opacity-90"
+>>>>>>> 218bcf8 (feature : load balance)
           >
             <Link href={(signedIn ? "/dashboard" : "/register") as any}>
               Start Free

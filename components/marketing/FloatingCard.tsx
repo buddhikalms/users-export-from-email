@@ -22,9 +22,15 @@ export function FloatingCard({
 }) {
   const reduceMotion = useReducedMotion();
   const tones = {
+<<<<<<< HEAD
     blue: "bg-secondary/10 text-secondary",
     cyan: "bg-primary/10 text-primary",
     emerald: "bg-primary/10 text-primary",
+=======
+    blue: "bg-brand-blue/10 text-brand-blue",
+    cyan: "bg-brand-turquoise/10 text-brand-turquoise",
+    emerald: "bg-brand-purple/10 text-brand-purple",
+>>>>>>> 218bcf8 (feature : load balance)
   };
 
   return (
@@ -51,8 +57,8 @@ export function FloatingCard({
         <Icon className="h-4 w-4" />
       </span>
       <span className="min-w-0">
-        <span className="block whitespace-nowrap text-xs font-semibold text-slate-800">{label}</span>
-        {detail ? <span className="block whitespace-nowrap text-[10px] text-slate-500">{detail}</span> : null}
+        <span className="block whitespace-nowrap text-xs font-semibold text-brand-navy">{label}</span>
+        {detail ? <span className="block whitespace-nowrap text-[10px] text-brand-navy/55">{detail}</span> : null}
       </span>
     </motion.div>
   );

@@ -84,12 +84,20 @@ export function LoginForm({ googleAuthEnabled }: { googleAuthEnabled: boolean })
             </Alert>
           ) : null}
 
+<<<<<<< HEAD
           <Button className="h-12 w-full rounded-xl bg-primary text-white shadow-lg shadow-primary/20 hover:bg-primary/90" disabled={loading} type="submit">
+=======
+          <Button className="h-12 w-full rounded-xl bg-brand-turquoise shadow-lg shadow-brand-turquoise/15 hover:bg-brand-blue" disabled={loading} type="submit">
+>>>>>>> 218bcf8 (feature : load balance)
             {loading ? "Signing in..." : "Sign In"}
           </Button>
           <p className="pt-1 text-center text-sm text-muted-foreground">
             Need an account?{" "}
+<<<<<<< HEAD
             <Link className="font-semibold text-secondary hover:text-secondary dark:text-secondary" href="/register">Register</Link>
+=======
+            <Link className="font-semibold text-brand-blue hover:text-brand-purple dark:text-brand-light-purple" href="/register">Register</Link>
+>>>>>>> 218bcf8 (feature : load balance)
           </p>
         </form>
       </CardContent>

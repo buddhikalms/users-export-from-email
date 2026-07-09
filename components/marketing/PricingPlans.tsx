@@ -50,6 +50,58 @@ type Plan = {
   features: Feature[];
 };
 
+type AddOn = {
+  id: string;
+  name: string;
+  price: number;
+  description: string;
+};
+
+const addOns: AddOn[] = [
+  {
+    id: "none",
+    name: "No add-on",
+    price: 0,
+    description: "Use the package exactly as included.",
+  },
+  {
+    id: "extra-email",
+    name: "Additional email account",
+    price: 2,
+    description: "Add one more mailbox to the selected package.",
+  },
+  {
+    id: "extra-volume",
+    name: "Extra 100,000 emails scanned",
+    price: 5,
+    description: "Increase monthly scan capacity for heavier inboxes.",
+  },
+  {
+    id: "scheduled-sync",
+    name: "Scheduled automatic sync",
+    price: 4,
+    description: "Run selected folder syncs automatically.",
+  },
+  {
+    id: "google-sheets",
+    name: "Google Sheets sync",
+    price: 3,
+    description: "Send exports directly into a Google Sheet.",
+  },
+  {
+    id: "hubspot",
+    name: "HubSpot integration",
+    price: 5,
+    description: "Sync cleaned contacts into HubSpot.",
+  },
+  {
+    id: "api-webhooks",
+    name: "API access + webhooks",
+    price: 8,
+    description: "Connect Omazync to custom workflows.",
+  },
+];
+
 const plans: Plan[] = [
   {
     slug: "free",
@@ -75,7 +127,7 @@ const plans: Plan[] = [
     slug: "starter",
     name: "Starter",
     audience: "For individuals and small businesses",
-    monthly: 9,
+    monthly: 3.99,
     summary: "A focused toolkit for regular contact discovery and export.",
     idealFor: "Freelancers, consultants, and small businesses.",
     icon: Rocket,
@@ -95,7 +147,7 @@ const plans: Plan[] = [
     slug: "professional",
     name: "Professional",
     audience: "For marketers, agencies, and publishers",
-    monthly: 19,
+    monthly: 5.99,
     summary: "Connect multiple inboxes directly to your marketing stack.",
     idealFor: "Marketing agencies, PR teams, recruiters, and publishers.",
     featured: true,
@@ -117,7 +169,7 @@ const plans: Plan[] = [
     slug: "business",
     name: "Business",
     audience: "For growing and collaborative teams",
-    monthly: 39,
+    monthly: 9.99,
     summary: "Run automated contact operations across teams and clients.",
     idealFor: "Agencies, sales teams, and organizations managing multiple clients.",
     icon: Building2,
@@ -164,8 +216,13 @@ const groups: FeatureGroup[] = ["Capacity", "Workflow", "Support"];
 
 export function PricingPlans() {
   const [selectedPlan, setSelectedPlan] = useState(2);
+  const [selectedAddOnId, setSelectedAddOnId] = useState("none");
   const reduceMotion = useReducedMotion();
   const selected = plans[selectedPlan];
+  const selectedAddOn = addOns.find((addOn) => addOn.id === selectedAddOnId) ?? addOns[0];
+  const canConfigureAddOns = selected.slug !== "free" && selected.slug !== "enterprise";
+  const configuredMonthly =
+    selected.monthly === null ? null : selected.monthly + selectedAddOn.price;
 
   return (
     <div>
@@ -193,10 +250,10 @@ export function PricingPlans() {
               whileHover={reduceMotion ? undefined : { y: -4 }}
               whileTap={reduceMotion ? undefined : { scale: 0.99 }}
               className={cn(
-                "group relative flex min-h-[350px] flex-col overflow-hidden rounded-3xl border p-5 text-left transition-[border-color,box-shadow,background-color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-950",
+                "group relative flex min-h-[350px] flex-col overflow-hidden rounded-3xl border p-5 text-left transition-[border-color,box-shadow,background-color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-950",
                 active
-                  ? "border-blue-500 bg-white shadow-[0_20px_60px_-28px_rgba(37,99,235,0.55)] dark:bg-blue-500/[0.08]"
-                  : "border-slate-200 bg-white/70 hover:border-blue-300 hover:bg-white dark:border-white/10 dark:bg-white/[0.025] dark:hover:border-blue-400/40",
+                  ? "border-brand-blue bg-white shadow-[0_20px_60px_-28px_rgba(4,130,230,0.55)] dark:bg-brand-blue/[0.08]"
+                  : "border-slate-200 bg-white/70 hover:border-brand-light-purple hover:bg-white dark:border-white/10 dark:bg-white/[0.025] dark:hover:border-brand-blue/40",
               )}
             >
               {plan.featured ? (
@@ -204,24 +261,28 @@ export function PricingPlans() {
                   Most popular
                 </span>
               ) : null}
-              <span className={cn("flex h-11 w-11 items-center justify-center rounded-2xl transition-colors", active ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-600 group-hover:bg-blue-50 group-hover:text-blue-600 dark:bg-white/10 dark:text-slate-300")}>
+              <span className={cn("flex h-11 w-11 items-center justify-center rounded-2xl transition-colors", active ? "bg-brand-blue text-white" : "bg-slate-100 text-slate-600 group-hover:bg-brand-blue/10 group-hover:text-brand-blue dark:bg-white/10 dark:text-slate-300")}>
                 <Icon className="h-5 w-5" />
               </span>
               <span className="mt-5 text-lg font-bold text-slate-950 dark:text-white">{plan.name}</span>
               <span className="mt-1 min-h-8 text-xs font-medium leading-4 text-slate-500 dark:text-slate-400">{plan.audience}</span>
               <span className="mt-5 flex items-end gap-1 text-slate-950 dark:text-white">
-                <span className="text-4xl font-bold tracking-tight">{plan.monthly === null ? "Custom" : `$${plan.monthly}`}</span>
+                <span className="text-4xl font-bold tracking-tight">
+                  {plan.monthly === null
+                    ? "Custom"
+                    : `$${plan.monthly.toFixed(plan.monthly % 1 === 0 ? 0 : 2)}`}
+                </span>
                 {plan.monthly !== null && plan.monthly > 0 ? <span className="mb-1 text-sm text-slate-500">/mo</span> : null}
               </span>
               <span className="mt-1 min-h-5 text-xs text-slate-400">
                 {plan.slug === "free" ? "Free forever" : plan.monthly === null ? "Contact us for a quote" : "Billed monthly"}
               </span>
               <span className="mt-5 text-sm leading-6 text-slate-600 dark:text-slate-300">{plan.summary}</span>
-              <span className="mt-auto flex items-center gap-1 pt-5 text-sm font-semibold text-blue-600 dark:text-blue-300">
+              <span className="mt-auto flex items-center gap-1 pt-5 text-sm font-semibold text-brand-blue dark:text-brand-light-purple">
                 {active ? "Selected — see details below" : "Explore this plan"}
                 <ChevronRight className={cn("h-4 w-4 transition-transform", active && "rotate-90")} />
               </span>
-              {active ? <motion.span layoutId="selected-plan-line" className="absolute inset-x-6 bottom-0 h-1 rounded-t-full bg-blue-600" /> : null}
+              {active ? <motion.span layoutId="selected-plan-line" className="absolute inset-x-6 bottom-0 h-1 rounded-t-full bg-brand-blue" /> : null}
             </motion.button>
           );
         })}
@@ -240,9 +301,43 @@ export function PricingPlans() {
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_10%,rgba(59,130,246,0.3),transparent_34%),radial-gradient(circle_at_90%_90%,rgba(16,185,129,0.14),transparent_32%)]" />
             <div className="relative grid lg:grid-cols-[0.7fr_1.3fr]">
               <div className="border-b border-white/10 p-6 sm:p-8 lg:border-b-0 lg:border-r">
-                <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-300">Inside {selected.name}</p>
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand-light-purple">Inside {selected.name}</p>
                 <h3 className="mt-4 text-2xl font-bold sm:text-3xl">{selected.summary}</h3>
                 <p className="mt-4 text-sm leading-6 text-slate-300"><span className="font-semibold text-white">Best for:</span> {selected.idealFor}</p>
+
+                {canConfigureAddOns ? (
+                  <div className="mt-7 rounded-2xl border border-white/10 bg-white/[0.055] p-4">
+                    <label
+                      className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400"
+                      htmlFor="pricing-addon"
+                    >
+                      Add to this package
+                    </label>
+                    <select
+                      id="pricing-addon"
+                      className="mt-3 h-11 w-full rounded-xl border border-white/10 bg-slate-950 px-3 text-sm text-white outline-none transition focus:border-brand-light-purple"
+                      value={selectedAddOnId}
+                      onChange={(event) => setSelectedAddOnId(event.target.value)}
+                    >
+                      {addOns.map((addOn) => (
+                        <option key={addOn.id} value={addOn.id}>
+                          {addOn.name}
+                          {addOn.price ? ` (+$${addOn.price}/mo)` : ""}
+                        </option>
+                      ))}
+                    </select>
+                    <p className="mt-3 text-xs leading-5 text-slate-400">
+                      {selectedAddOn.description}
+                    </p>
+                    <div className="mt-4 flex items-end justify-between gap-3 border-t border-white/10 pt-4">
+                      <span className="text-xs text-slate-400">Package total</span>
+                      <span className="text-2xl font-bold text-white">
+                        ${configuredMonthly?.toFixed(2)}
+                        <span className="ml-1 text-sm font-medium text-slate-400">/mo</span>
+                      </span>
+                    </div>
+                  </div>
+                ) : null}
 
                 <div className="mt-7 space-y-3">
                   <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">Key inclusions</p>
@@ -267,7 +362,7 @@ export function PricingPlans() {
 
                 {selected.slug === "free" || selected.slug === "enterprise" ? (
                   <>
-                    <Button asChild size="lg" className="mt-8 w-full bg-white text-slate-950 hover:bg-blue-50">
+                    <Button asChild size="lg" className="mt-8 w-full bg-white text-slate-950 hover:bg-brand-blue/10">
                       <Link href={selected.slug === "enterprise" ? "/contact" : "/register"}>
                         {selected.slug === "enterprise" ? "Request a custom quote" : "Start free"}<ArrowRight className="h-4 w-4" />
                       </Link>
@@ -299,7 +394,7 @@ export function PricingPlans() {
                             return (
                               <motion.div key={feature.title} initial={reduceMotion ? false : { opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: index * 0.04 }} className="rounded-2xl border border-white/10 bg-white/[0.055] p-4">
                                 <div className="flex gap-3">
-                                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-400/15 text-blue-300"><Icon className="h-4 w-4" /></span>
+                                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-blue/15 text-brand-light-purple"><Icon className="h-4 w-4" /></span>
                                   <div><p className="text-sm font-semibold text-white">{feature.title}</p><p className="mt-1.5 text-xs leading-5 text-slate-400">{feature.description}</p></div>
                                 </div>
                               </motion.div>

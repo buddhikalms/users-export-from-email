@@ -22,7 +22,11 @@ export function PricingCard({
       className={cn(
         "flex flex-col rounded-2xl border p-6 shadow-sm",
         featured
+<<<<<<< HEAD
           ? "border-secondary/25 bg-slate-950 text-white shadow-xl shadow-secondary/20"
+=======
+          ? "border-brand-blue bg-slate-950 text-white shadow-xl shadow-brand-blue/15"
+>>>>>>> 218bcf8 (feature : load balance)
           : "border-slate-200 bg-white dark:border-white/10 dark:bg-white/[0.04]",
       )}
     >
@@ -37,7 +41,11 @@ export function PricingCard({
       <ul className="mt-6 grid gap-3 text-sm">
         {features.map((feature) => (
           <li key={feature} className="flex gap-3">
+<<<<<<< HEAD
             <Check className={cn("mt-0.5 h-4 w-4 shrink-0", featured ? "text-secondary" : "text-secondary")} />
+=======
+            <Check className={cn("mt-0.5 h-4 w-4 shrink-0", featured ? "text-brand-light-purple" : "text-brand-blue")} />
+>>>>>>> 218bcf8 (feature : load balance)
             <span className={featured ? "text-slate-200" : "text-slate-700 dark:text-slate-200"}>{feature}</span>
           </li>
         ))}

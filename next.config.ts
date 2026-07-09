@@ -1,5 +1,7 @@
 import type { NextConfig } from "next";
 
+const isDevelopment = process.env.NODE_ENV !== "production";
+
 const securityHeaders = [
   {
     key: "Content-Security-Policy",
@@ -9,13 +11,13 @@ const securityHeaders = [
       "form-action 'self'",
       "frame-ancestors 'none'",
       "object-src 'none'",
-      "script-src 'self' 'unsafe-inline' https://www.paypal.com https://www.paypalobjects.com",
+      `script-src 'self' 'unsafe-inline'${isDevelopment ? " 'unsafe-eval'" : ""} https://www.paypal.com https://www.paypalobjects.com`,
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https:",
       "font-src 'self' data:",
       "connect-src 'self' https://api-m.paypal.com https://api-m.sandbox.paypal.com https://www.paypal.com",
       "frame-src https://www.paypal.com",
-      "upgrade-insecure-requests",
+      ...(isDevelopment ? [] : ["upgrade-insecure-requests"]),
     ].join("; "),
   },
   { key: "X-Frame-Options", value: "DENY" },
@@ -25,7 +27,9 @@ const securityHeaders = [
     key: "Permissions-Policy",
     value: "camera=(), microphone=(), geolocation=(), payment=(self \"https://www.paypal.com\")",
   },
-  { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" },
+  ...(isDevelopment
+    ? []
+    : [{ key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" }]),
 ];
 
 const nextConfig: NextConfig = {

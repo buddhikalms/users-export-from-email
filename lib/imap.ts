@@ -12,6 +12,7 @@ import type {
   ConnectionSettings,
   FolderSyncResult,
   MailFolder,
+  SyncDateRange,
   SyncResult,
 } from "@/types/email";
 
@@ -112,6 +113,22 @@ function normalizeFolderName(path: string, name?: string) {
   return name?.trim() || path;
 }
 
+function buildSearchQuery(dateRange: SyncDateRange = {}) {
+  return {
+    all: true,
+    ...(dateRange.since ? { since: dateRange.since } : {}),
+    ...(dateRange.before ? { before: dateRange.before } : {}),
+  };
+}
+
+function chunkNumbers(values: number[], size: number) {
+  const chunks: number[][] = [];
+  for (let index = 0; index < values.length; index += size) {
+    chunks.push(values.slice(index, index + size));
+  }
+  return chunks;
+}
+
 export async function testImapConnection(settings: ConnectionSettings) {
   return withImapClient(settings, async (client) => {
     await client.list();
@@ -133,6 +150,7 @@ export async function fetchMailFolders(
       .map((folder) => ({
         path: folder.path,
         name: normalizeFolderName(folder.path, folder.name),
+        delimiter: folder.delimiter,
         specialUse: folder.specialUse ?? null,
       }))
       .sort((left, right) => {
@@ -153,6 +171,7 @@ export async function syncSelectedFolders(
   settings: ConnectionSettings,
   folderPaths: string[],
   ignoredEmails: string[] = [],
+  dateRange: SyncDateRange = {},
 ): Promise<SyncResult> {
   return withImapClient(settings, async (client) => {
     const folderResults: FolderSyncResult[] = [];
@@ -160,31 +179,36 @@ export async function syncSelectedFolders(
     for (const folderPath of folderPaths) {
       const mailbox = await client.mailboxOpen(folderPath, { readOnly: true });
       const contactMap = createMutableContactMap();
+      const matchingUids =
+        mailbox.exists > 0
+          ? await client.search(buildSearchQuery(dateRange), { uid: true })
+          : [];
+      const uids = Array.isArray(matchingUids) ? matchingUids : [];
 
-      if (mailbox.exists > 0) {
-        // Production note:
-        // For very large mailboxes, add date filters or chunked UID ranges here.
-        for await (const message of client.fetch("1:*", {
-          envelope: true,
-          internalDate: true,
-          source: true,
-        })) {
-          const sourceFolder = normalizeFolderName(folderPath);
-          collectContactsFromEnvelope(
-            contactMap,
-            message.envelope,
-            sourceFolder,
-            message.internalDate ?? undefined,
-            ignoredEmails,
-          );
-          collectContactsFromForwardedBody(
-            contactMap,
-            extractTextFromRawMessage(message.source),
-            message.envelope,
-            sourceFolder,
-            message.internalDate ?? undefined,
-            ignoredEmails,
-          );
+      if (uids.length > 0) {
+        for (const chunk of chunkNumbers(uids, 100)) {
+          for await (const message of client.fetch(chunk.join(","), {
+            envelope: true,
+            internalDate: true,
+            source: true,
+          }, { uid: true })) {
+            const sourceFolder = normalizeFolderName(folderPath);
+            collectContactsFromEnvelope(
+              contactMap,
+              message.envelope,
+              sourceFolder,
+              message.internalDate ?? undefined,
+              ignoredEmails,
+            );
+            collectContactsFromForwardedBody(
+              contactMap,
+              extractTextFromRawMessage(message.source),
+              message.envelope,
+              sourceFolder,
+              message.internalDate ?? undefined,
+              ignoredEmails,
+            );
+          }
         }
       }
 
@@ -192,7 +216,7 @@ export async function syncSelectedFolders(
         folderPath,
         displayName: normalizeFolderName(folderPath),
         contacts: finalizeFolderContacts(contactMap),
-        totalMessagesScanned: mailbox.exists,
+        totalMessagesScanned: uids.length,
       });
     }
 

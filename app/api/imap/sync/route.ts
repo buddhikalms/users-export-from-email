@@ -61,7 +61,7 @@ export async function POST(request: Request) {
       { userId: session.user.id, folderCount: parsed.data.folders.length, syncRunId },
       () =>
         withTimeout(
-          syncSelectedFolders(settings!, parsed.data.folders, ignoredEmails),
+          syncSelectedFolders(settings!, parsed.data.folders, ignoredEmails, parsed.data.dateRange),
           Number(process.env.IMAP_SYNC_TIMEOUT_MS ?? "120000"),
         ),
     );

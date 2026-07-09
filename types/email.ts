@@ -13,6 +13,7 @@ export interface ConnectionSettings {
 export interface MailFolder {
   path: string;
   name: string;
+  delimiter?: string;
   specialUse?: string | null;
 }
 
@@ -47,6 +48,11 @@ export interface SyncResult {
   folders: FolderSyncResult[];
   allContacts: EmailContact[];
   duplicatesAcrossFolders: CrossFolderDuplicate[];
+}
+
+export interface SyncDateRange {
+  since?: string;
+  before?: string;
 }
 
 export interface SavedEmailAccountSummary {
