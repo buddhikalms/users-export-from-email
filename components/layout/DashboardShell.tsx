@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  Activity,
   BarChart3,
   Bell,
   Bot,
@@ -212,12 +212,19 @@ function Sidebar({
     >
       <div className="flex h-16 items-center justify-between border-b border-border/70 px-4">
         <Link className="flex min-w-0 items-center gap-3" href={"/dashboard" as any}>
-          <div className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-primary text-primary-foreground shadow-sm">
-            <Activity className="h-5 w-5" />
-          </div>
+          <Image
+            alt="Omazync"
+            className={cn(
+              "h-10 shrink-0 rounded-md object-cover",
+              collapsed ? "w-12 object-[25%_50%]" : "w-32",
+            )}
+            height={1024}
+            priority
+            src="/Omazync-logo.png"
+            width={1536}
+          />
           {!collapsed ? (
             <div className="min-w-0">
-              <div className="truncate text-sm font-semibold">OMAZYNC</div>
               <div className="truncate text-xs text-muted-foreground">Lead extraction CRM</div>
             </div>
           ) : null}

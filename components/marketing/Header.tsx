@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { Menu, Moon, Send, Sun, X } from "lucide-react";
+import { Menu, Moon, Sun, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
@@ -29,10 +30,14 @@ export function MarketingHeader({ signedIn = false }: { signedIn?: boolean }) {
     <header className="sticky top-0 z-50 border-b border-slate-200/70 bg-white/82 backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/82">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link className="flex items-center gap-3 font-semibold" href="/">
-          <span className="grid h-9 w-9 place-items-center rounded-xl bg-slate-950 text-white shadow-sm dark:bg-white dark:text-slate-950">
-            <Send className="h-4 w-4" />
-          </span>
-          <span>OMAZYNC</span>
+          <Image
+            alt="Omazync"
+            className="h-10 w-36 rounded-md object-cover"
+            height={1024}
+            priority
+            src="/Omazync-logo.png"
+            width={1536}
+          />
         </Link>
 
         <nav className="hidden items-center gap-7 text-sm font-medium text-slate-600 dark:text-slate-300 lg:flex">
@@ -112,7 +117,13 @@ export function MarketingHeader({ signedIn = false }: { signedIn?: boolean }) {
               transition={{ type: "spring", damping: 28, stiffness: 260 }}
             >
               <div className="flex items-center justify-between">
-                <span className="font-semibold">OMAZYNC</span>
+                <Image
+                  alt="Omazync"
+                  className="h-10 w-36 rounded-md object-cover"
+                  height={1024}
+                  src="/Omazync-logo.png"
+                  width={1536}
+                />
                 <Button
                   size="sm"
                   variant="ghost"

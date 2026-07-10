@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, Moon, Send, Sun } from "lucide-react";
+import Image from "next/image";
+import { ArrowLeft, Moon, Sun } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/layout/ThemeProvider";
@@ -13,10 +14,14 @@ export function AuthPageHeader() {
   return (
     <header className="mb-10 flex items-center justify-between gap-4">
       <Link className="flex items-center gap-3 font-semibold text-foreground" href="/">
-        <span className="grid h-10 w-10 place-items-center rounded-2xl bg-slate-950 text-white shadow-sm dark:bg-white dark:text-slate-950">
-          <Send className="h-4 w-4" />
-        </span>
-        <span>OMAZYNC</span>
+        <Image
+          alt="Omazync"
+          className="h-11 w-40 rounded-md object-cover"
+          height={1024}
+          priority
+          src="/Omazync-logo.png"
+          width={1536}
+        />
       </Link>
       <div className="flex items-center gap-2">
         <Button asChild size="sm" variant="outline">
