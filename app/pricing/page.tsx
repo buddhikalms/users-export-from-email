@@ -5,9 +5,9 @@ import { PricingPlans } from "@/components/marketing/PricingPlans";
 import { Section, SectionIntro } from "@/components/marketing/Section";
 
 export const metadata: Metadata = {
-  title: "Pricing - ChatUp",
+  title: "Pricing - OMAZYNC",
   description:
-    "Compare Starter, Professional, Agency, and Enterprise plans for ChatUp.",
+    "Compare Starter, Professional, Agency, and Enterprise plans for OMAZYNC.",
 };
 
 export default function PricingPage() {

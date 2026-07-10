@@ -7,7 +7,7 @@ import { launchIntegrationRegistry } from "@/lib/integrations/registry";
 import { prismaPlatformByIntegrationId } from "@/lib/integrations/platforms";
 
 export const metadata = {
-  title: "Integrations - ChatUp",
+  title: "Integrations - OMAZYNC",
   description: "Manage connected marketing accounts and platform sync jobs.",
 };
 

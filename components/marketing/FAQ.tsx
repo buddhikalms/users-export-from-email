@@ -1,8 +1,8 @@
 const faqs = [
   {
-    question: "Does ChatUp work with Outlook?",
+    question: "Does OMAZYNC work with Outlook?",
     answer:
-      "Yes. ChatUp connects to Outlook through IMAP and can scan selected folders to extract sender, reply-to, and forwarded-chain contacts.",
+      "Yes. OMAZYNC connects to Outlook through IMAP and can scan selected folders to extract sender, reply-to, and forwarded-chain contacts.",
   },
   {
     question: "Can I export contacts to Excel or CSV?",
@@ -12,7 +12,7 @@ const faqs = [
   {
     question: "Which marketing platforms are supported?",
     answer:
-      "ChatUp supports Kit, Zoho Campaigns, and Brevo. Additional marketing platforms are coming soon.",
+      "OMAZYNC supports Kit, Zoho Campaigns, and Brevo. Additional marketing platforms are coming soon.",
   },
   {
     question: "Are API keys and IMAP passwords stored safely?",

@@ -45,7 +45,7 @@ export function LoginForm({ googleAuthEnabled }: { googleAuthEnabled: boolean })
     <Card className="w-full border-slate-200/80 bg-white/95 shadow-[0_30px_80px_-32px_rgba(15,23,42,0.35)] dark:border-white/10 dark:bg-slate-900/90">
       <CardHeader className="px-7 pb-5 pt-8 text-center sm:px-8">
         <CardTitle className="text-3xl text-slate-950 dark:text-white">Sign In</CardTitle>
-        <CardDescription>Use your ChatUp workspace credentials.</CardDescription>
+        <CardDescription>Use your OMAZYNC workspace credentials.</CardDescription>
       </CardHeader>
       <CardContent className="px-7 pb-8 sm:px-8">
         <GoogleAuthButton enabled={googleAuthEnabled} />

@@ -31,7 +31,7 @@ import { UseCaseCard } from "@/components/marketing/UseCaseCard";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
-  title: "ChatUp - Turn Your Inbox Into a Contact Database",
+  title: "OMAZYNC - Turn Your Inbox Into a Contact Database",
   description:
     "Extract, clean, organize, export, and sync contacts from Outlook and IMAP mailboxes.",
 };
@@ -156,7 +156,7 @@ export default function MarketingHomePage() {
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Reveal>
             <SectionIntro
-              eyebrow="ChatUp Ecosystem"
+              eyebrow="OMAZYNC Ecosystem"
               title="Your inbox, connected to everything that comes next"
               description="Bring every contact workflow into one coordinated system."
             />
@@ -206,7 +206,7 @@ export default function MarketingHomePage() {
           <SectionIntro
             eyebrow="Made for real workflows"
             title="Built for teams that live in email"
-            description="Wherever valuable relationships arrive by email, ChatUp turns them into usable data."
+            description="Wherever valuable relationships arrive by email, OMAZYNC turns them into usable data."
           />
         </Reveal>
         <Stagger className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

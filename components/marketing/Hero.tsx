@@ -72,7 +72,7 @@ export function Hero() {
                 show: { opacity: 1, y: 0 },
               }}
             >
-              ChatUp helps businesses automatically extract valuable contacts
+              OMAZYNC helps businesses automatically extract valuable contacts
               from Outlook, Microsoft 365, Exchange, and IMAP email accounts,
               remove duplicates, organize contacts, and sync directly to your
               favorite marketing platforms.

@@ -4,8 +4,8 @@ import { CTASection } from "@/components/marketing/CTASection";
 import { Section, SectionIntro } from "@/components/marketing/Section";
 
 export const metadata: Metadata = {
-  title: "About - ChatUp",
-  description: "Learn about ChatUp's mission to unlock valuable contacts hidden in business inboxes.",
+  title: "About - OMAZYNC",
+  description: "Learn about OMAZYNC's mission to unlock valuable contacts hidden in business inboxes.",
 };
 
 export default function AboutPage() {
@@ -15,12 +15,12 @@ export default function AboutPage() {
         <SectionIntro
           align="left"
           eyebrow="About"
-          title="ChatUp helps businesses unlock valuable contacts hidden in their inboxes."
+          title="OMAZYNC helps businesses unlock valuable contacts hidden in their inboxes."
           description="Our mission is simple: make contact discovery, clean exports, marketing sync, and privacy-first workflows accessible to the teams that already work inside email every day."
         />
         <div className="grid gap-6 lg:grid-cols-3">
           {[
-            ["Contact discovery", "Outlook and IMAP folders often contain years of valuable conversations. ChatUp turns that history into usable contact data."],
+            ["Contact discovery", "Outlook and IMAP folders often contain years of valuable conversations. OMAZYNC turns that history into usable contact data."],
             ["Clean exports", "Duplicates, mailto formatting, and forwarded-chain noise are cleaned before contacts reach Excel, CSV, or your marketing tools."],
             ["Product story", "Founder/product story placeholder: built for operators who needed a safer, faster way to transform inbox activity into organized growth workflows."],
           ].map(([title, body]) => (

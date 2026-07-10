@@ -6,8 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Section, SectionIntro } from "@/components/marketing/Section";
 
 export const metadata: Metadata = {
-  title: "Contact - ChatUp",
-  description: "Contact ChatUp support or book a demo for inbox contact extraction and marketing sync.",
+  title: "Contact - OMAZYNC",
+  description: "Contact OMAZYNC support or book a demo for inbox contact extraction and marketing sync.",
 };
 
 export default function ContactPage() {

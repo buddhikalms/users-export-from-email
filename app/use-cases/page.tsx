@@ -20,9 +20,9 @@ import { CTASection } from "@/components/marketing/CTASection";
 import { Section, SectionIntro } from "@/components/marketing/Section";
 
 export const metadata: Metadata = {
-  title: "Use Cases - ChatUp",
+  title: "Use Cases - OMAZYNC",
   description:
-    "Choose the best ChatUp plan for agencies, PR teams, publishers, recruiters, sales teams, founders, freelancers, and directories.",
+    "Choose the best OMAZYNC plan for agencies, PR teams, publishers, recruiters, sales teams, founders, freelancers, and directories.",
 };
 
 const planMatches = [
@@ -152,7 +152,7 @@ export default function UseCasesPage() {
               Find the right plan for the inbox workflow you already have.
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600 dark:text-slate-300">
-              ChatUp helps agencies, PR teams, publishers, recruiters, sales teams, and founders
+              OMAZYNC helps agencies, PR teams, publishers, recruiters, sales teams, and founders
               turn mailbox history into clean exports and marketing syncs.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -277,7 +277,7 @@ export default function UseCasesPage() {
 
                 <div className="mt-5 grid gap-3 text-sm leading-6 text-slate-600 dark:text-slate-300">
                   <p><strong className="text-slate-950 dark:text-white">Problem:</strong> {item.pain}</p>
-                  <p><strong className="text-slate-950 dark:text-white">How ChatUp helps:</strong> {item.outcome}</p>
+                  <p><strong className="text-slate-950 dark:text-white">How OMAZYNC helps:</strong> {item.outcome}</p>
                 </div>
 
                 <div className="mt-5 rounded-2xl bg-slate-50 p-4 dark:bg-slate-950/70">

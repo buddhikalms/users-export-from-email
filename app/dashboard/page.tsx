@@ -12,7 +12,7 @@ import {
 } from "@/lib/dashboard-data";
 
 export const metadata = {
-  title: "Dashboard - ChatUp",
+  title: "Dashboard - OMAZYNC",
   description: "Monitor mailbox syncs, extracted contacts, exports, and marketing integrations.",
 };
 

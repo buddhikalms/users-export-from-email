@@ -32,7 +32,7 @@ export function MarketingHeader({ signedIn = false }: { signedIn?: boolean }) {
           <span className="grid h-9 w-9 place-items-center rounded-xl bg-slate-950 text-white shadow-sm dark:bg-white dark:text-slate-950">
             <Send className="h-4 w-4" />
           </span>
-          <span>ChatUp</span>
+          <span>OMAZYNC</span>
         </Link>
 
         <nav className="hidden items-center gap-7 text-sm font-medium text-slate-600 dark:text-slate-300 lg:flex">
@@ -112,7 +112,7 @@ export function MarketingHeader({ signedIn = false }: { signedIn?: boolean }) {
               transition={{ type: "spring", damping: 28, stiffness: 260 }}
             >
               <div className="flex items-center justify-between">
-                <span className="font-semibold">ChatUp</span>
+                <span className="font-semibold">OMAZYNC</span>
                 <Button
                   size="sm"
                   variant="ghost"
