@@ -60,9 +60,9 @@ export function Hero() {
               }}
               transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
             >
-              Discover Valuable Contacts{" "}
-              <span className="bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500 bg-clip-text text-transparent">
-                Hidden Inside Your Inbox
+              The Om Place For{" "}
+              <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                Zen Contact Management
               </span>
             </motion.h1>
             <motion.p
