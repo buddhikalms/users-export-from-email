@@ -34,7 +34,7 @@ const config: Config = {
         sm: "calc(var(--radius) - 4px)",
       },
       boxShadow: {
-        glow: "0 30px 120px rgba(13, 82, 72, 0.18)",
+        glow: "0 30px 120px rgba(3, 183, 178, 0.18)",
       },
       backgroundImage: {
         "hero-grid":

@@ -50,7 +50,7 @@ export function DashboardMockup() {
               Scan mailbox folders, review contacts, then export or sync.
             </div>
           </div>
-          <div className="hidden items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700 sm:flex dark:bg-emerald-400/10 dark:text-emerald-300">
+          <div className="hidden items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary sm:flex dark:bg-primary/10 dark:text-primary">
             <RefreshCcw className="h-3.5 w-3.5" />
             Sync complete
           </div>
@@ -67,12 +67,12 @@ export function DashboardMockup() {
                   key={title}
                   className={
                     index === 2
-                      ? "rounded-xl border border-blue-200 bg-blue-50 p-3 dark:border-blue-300/20 dark:bg-blue-400/10"
+                      ? "rounded-xl border border-secondary/25 bg-secondary/10 p-3 dark:border-secondary/25 dark:bg-secondary/10"
                       : "rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-white/10 dark:bg-white/[0.04]"
                   }
                 >
                   <div className="flex items-center gap-2">
-                    <Icon className="h-4 w-4 text-blue-600 dark:text-blue-300" />
+                    <Icon className="h-4 w-4 text-secondary dark:text-secondary" />
                     <span className="text-sm font-semibold text-slate-950 dark:text-white">
                       {title}
                     </span>
@@ -92,7 +92,7 @@ export function DashboardMockup() {
                   key={label}
                   className="rounded-xl border border-slate-200 bg-white p-4 dark:border-white/10 dark:bg-white/[0.04]"
                 >
-                  <Icon className="h-4 w-4 text-blue-600 dark:text-blue-300" />
+                  <Icon className="h-4 w-4 text-secondary dark:text-secondary" />
                   <div className="mt-3 text-2xl font-semibold text-slate-950 dark:text-white">
                     {value}
                   </div>
@@ -142,7 +142,7 @@ export function DashboardMockup() {
                             {folder}
                           </td>
                           <td className="px-4 py-3">
-                            <span className="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700 dark:bg-blue-400/10 dark:text-blue-200">
+                            <span className="rounded-full bg-secondary/10 px-2.5 py-1 text-xs font-medium text-secondary dark:bg-secondary/10 dark:text-secondary">
                               {source}
                             </span>
                           </td>
@@ -175,12 +175,12 @@ export function DashboardMockup() {
                   </div>
                 </div>
 
-                <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-300/20 dark:bg-emerald-400/10">
-                  <div className="flex items-center gap-2 text-sm font-semibold text-emerald-800 dark:text-emerald-200">
+                <div className="rounded-xl border border-primary/25 bg-primary/10 p-4 dark:border-primary/25 dark:bg-primary/10">
+                  <div className="flex items-center gap-2 text-sm font-semibold text-primary dark:text-primary">
                     <CheckCircle2 className="h-4 w-4" />
                     Clean list ready
                   </div>
-                  <p className="mt-2 text-sm leading-6 text-emerald-900/80 dark:text-emerald-100/80">
+                  <p className="mt-2 text-sm leading-6 text-primary dark:text-primary">
                     Duplicate emails, mailto links, and forwarded-chain noise are
                     cleaned before anything reaches your spreadsheet or platform.
                   </p>

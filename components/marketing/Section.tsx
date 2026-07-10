@@ -28,7 +28,7 @@ export function SectionIntro({
   return (
     <div className={cn("mb-10", align === "center" ? "mx-auto max-w-3xl text-center" : "max-w-3xl")}>
       {eyebrow ? (
-        <p className="mb-3 text-sm font-semibold uppercase tracking-[0.18em] text-blue-600 dark:text-blue-300">
+        <p className="mb-3 text-sm font-semibold uppercase tracking-[0.18em] text-secondary dark:text-secondary">
           {eyebrow}
         </p>
       ) : null}

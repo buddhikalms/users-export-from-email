@@ -7,7 +7,7 @@ export function CTASection() {
   return (
     <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
       <div className="overflow-hidden rounded-[2rem] bg-slate-950 px-6 py-12 text-center text-white shadow-2xl shadow-slate-950/20 sm:px-10">
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-blue-300">Extract. Clean. Sync.</p>
+        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-secondary">Extract. Clean. Sync.</p>
         <h2 className="mx-auto mt-4 max-w-3xl text-3xl font-semibold tracking-tight md:text-5xl">
           Start building your contact database from the inbox you already use.
         </h2>

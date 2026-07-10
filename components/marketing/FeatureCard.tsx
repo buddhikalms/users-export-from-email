@@ -13,7 +13,7 @@ export function FeatureCard({
     <article
       className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm shadow-slate-200/50 dark:border-white/10 dark:bg-white/[0.04] dark:shadow-none"
     >
-      <div className="grid h-11 w-11 place-items-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-400/10 dark:text-blue-300">
+      <div className="grid h-11 w-11 place-items-center rounded-xl bg-secondary/10 text-secondary dark:bg-secondary/10 dark:text-secondary">
         <Icon className="h-5 w-5" />
       </div>
       <h3 className="mt-5 text-lg font-semibold text-slate-950 dark:text-white">{title}</h3>

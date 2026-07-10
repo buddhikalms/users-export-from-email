@@ -142,10 +142,10 @@ const outcomes = [
 export default function UseCasesPage() {
   return (
     <main>
-      <section className="relative overflow-hidden bg-[linear-gradient(180deg,#ffffff_0%,#eef6ff_54%,#ffffff_100%)] dark:bg-[linear-gradient(180deg,#020617_0%,#0f172a_58%,#020617_100%)]">
+      <section className="relative overflow-hidden bg-[linear-gradient(180deg,#ffffff_0%,#ffffff_54%,#ffffff_100%)] dark:bg-[linear-gradient(180deg,#020617_0%,#0f172a_58%,#020617_100%)]">
         <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8 lg:py-24">
           <div className="flex flex-col justify-center">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-blue-600 dark:text-blue-300">
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-secondary dark:text-secondary">
               Use Cases
             </p>
             <h1 className="mt-4 text-5xl font-semibold tracking-tight text-slate-950 dark:text-white md:text-7xl">
@@ -156,7 +156,7 @@ export default function UseCasesPage() {
               turn mailbox history into clean exports and marketing syncs.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Button asChild size="lg" className="bg-gradient-to-r from-slate-950 to-blue-700 text-white hover:opacity-90">
+              <Button asChild size="lg" className="bg-gradient-to-r from-slate-950 to-secondary text-white hover:opacity-90">
                 <Link href={"/pricing" as any}>
                   Compare Plans
                   <ArrowRight className="h-4 w-4" />
@@ -172,7 +172,7 @@ export default function UseCasesPage() {
             <div className="rounded-[1.5rem] bg-slate-950 p-5 text-white">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-semibold">Plan finder</span>
-                <Sparkles className="h-5 w-5 text-blue-300" />
+                <Sparkles className="h-5 w-5 text-secondary" />
               </div>
               <div className="mt-5 grid gap-3">
                 {planMatches.map((item) => (
@@ -180,7 +180,7 @@ export default function UseCasesPage() {
                     key={item.plan}
                     className={
                       item.featured
-                        ? "rounded-2xl border border-blue-300/60 bg-blue-500/15 p-4"
+                        ? "rounded-2xl border border-secondary/25 bg-secondary/10 p-4"
                         : "rounded-2xl border border-white/10 bg-white/[0.04] p-4"
                     }
                   >
@@ -206,7 +206,7 @@ export default function UseCasesPage() {
         <div className="grid gap-4 md:grid-cols-4">
           {outcomes.map((item) => (
             <div key={item} className="flex gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-white/10 dark:bg-white/[0.04]">
-              <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-blue-600 dark:text-blue-300" />
+              <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-secondary dark:text-secondary" />
               <span className="text-sm font-medium text-slate-700 dark:text-slate-200">{item}</span>
             </div>
           ))}
@@ -230,7 +230,7 @@ export default function UseCasesPage() {
               key={title}
               className="rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-white/[0.04]"
             >
-              <CheckCircle2 className="h-5 w-5 text-blue-600 dark:text-blue-300" />
+              <CheckCircle2 className="h-5 w-5 text-secondary dark:text-secondary" />
               <h2 className="mt-4 font-semibold text-slate-950 dark:text-white">
                 {title}
               </h2>
@@ -255,11 +255,11 @@ export default function UseCasesPage() {
             return (
               <article
                 key={item.title}
-                className="group rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-blue-300 hover:shadow-xl hover:shadow-blue-950/10 dark:border-white/10 dark:bg-white/[0.04] dark:hover:border-blue-300/50"
+                className="group rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-secondary/25 hover:shadow-xl hover:shadow-secondary/20 dark:border-white/10 dark:bg-white/[0.04] dark:hover:border-secondary/25"
               >
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div className="flex items-center gap-3">
-                    <div className="grid h-12 w-12 place-items-center rounded-2xl bg-blue-50 text-blue-600 dark:bg-blue-400/10 dark:text-blue-300">
+                    <div className="grid h-12 w-12 place-items-center rounded-2xl bg-secondary/10 text-secondary dark:bg-secondary/10 dark:text-secondary">
                       <Icon className="h-5 w-5" />
                     </div>
                     <div>
@@ -268,7 +268,7 @@ export default function UseCasesPage() {
                     </div>
                   </div>
                   <Link
-                    className="rounded-full bg-slate-950 px-3 py-1 text-xs font-semibold text-white transition group-hover:bg-blue-700 dark:bg-white dark:text-slate-950 dark:group-hover:bg-blue-200"
+                    className="rounded-full bg-slate-950 px-3 py-1 text-xs font-semibold text-white transition group-hover:bg-secondary dark:bg-white dark:text-slate-950 dark:group-hover:bg-secondary dark:group-hover:text-white"
                     href={"/pricing" as any}
                   >
                     View plan
@@ -281,7 +281,7 @@ export default function UseCasesPage() {
                 </div>
 
                 <div className="mt-5 rounded-2xl bg-slate-50 p-4 dark:bg-slate-950/70">
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-blue-600 dark:text-blue-300">
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-secondary dark:text-secondary">
                     Example workflow
                   </p>
                   <div className="mt-3 grid gap-2 sm:grid-cols-2">
@@ -309,7 +309,7 @@ export default function UseCasesPage() {
                   </div>
                 </div>
 
-                <div className="mt-5 flex items-center gap-3 rounded-2xl border border-blue-100 bg-blue-50 p-4 text-sm font-medium text-blue-900 dark:border-blue-300/20 dark:bg-blue-400/10 dark:text-blue-100">
+                <div className="mt-5 flex items-center gap-3 rounded-2xl border border-secondary/25 bg-secondary/10 p-4 text-sm font-medium text-secondary dark:border-secondary/25 dark:bg-secondary/10 dark:text-secondary">
                   <Sparkles className="h-5 w-5 shrink-0" />
                   {item.result}
                 </div>
@@ -326,11 +326,11 @@ export default function UseCasesPage() {
               key={item.plan}
               className={
                 item.featured
-                  ? "rounded-[1.5rem] border border-blue-500 bg-slate-950 p-6 text-white shadow-2xl shadow-blue-950/15"
+                  ? "rounded-[1.5rem] border border-secondary/25 bg-slate-950 p-6 text-white shadow-2xl shadow-secondary/20"
                   : "rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-white/[0.04]"
               }
             >
-              <p className={item.featured ? "text-sm font-semibold text-blue-300" : "text-sm font-semibold text-blue-600 dark:text-blue-300"}>
+              <p className={item.featured ? "text-sm font-semibold text-secondary" : "text-sm font-semibold text-secondary dark:text-secondary"}>
                 {item.fit}
               </p>
               <h2 className="mt-3 text-2xl font-semibold">{item.plan}</h2>

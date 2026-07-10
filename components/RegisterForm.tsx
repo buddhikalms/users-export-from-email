@@ -133,13 +133,13 @@ export function RegisterForm({ googleAuthEnabled }: { googleAuthEnabled: boolean
             </Alert>
           ) : null}
 
-          <Button className="h-12 w-full rounded-xl bg-blue-600 shadow-lg shadow-blue-600/15 hover:bg-blue-700" disabled={loading} type="submit">
+          <Button className="h-12 w-full rounded-xl bg-primary text-white shadow-lg shadow-primary/20 hover:bg-primary/90" disabled={loading} type="submit">
             {loading ? "Creating account..." : "Create Account"}
           </Button>
 
           <p className="pt-1 text-center text-sm text-muted-foreground">
             Already registered?{" "}
-            <Link className="font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400" href="/login">
+            <Link className="font-semibold text-secondary hover:text-secondary dark:text-secondary" href="/login">
               Sign in
             </Link>
           </p>

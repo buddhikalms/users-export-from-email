@@ -35,8 +35,8 @@ export function HeroIllustration() {
       <svg aria-hidden="true" className="absolute left-1/2 top-8 h-[530px] w-[520px] max-w-none -translate-x-1/2" viewBox="0 0 520 540">
         <defs>
           <linearGradient id="lineGradient" x1="0" x2="1">
-            <stop stopColor="#1E3A8A" stopOpacity=".28" />
-            <stop offset="1" stopColor="#0EA5A4" stopOpacity=".72" />
+            <stop stopColor="#007FD4" stopOpacity=".28" />
+            <stop offset="1" stopColor="#03B7B2" stopOpacity=".72" />
           </linearGradient>
         </defs>
         {connectorPaths.map((path, index) => (
@@ -58,7 +58,7 @@ export function HeroIllustration() {
             cx={index === 1 ? 205 : index === 2 ? 315 : index === 4 ? 190 : index === 5 ? 330 : 260}
             cy={cy}
             r="3.5"
-            fill="#0EA5A4"
+            fill="#03B7B2"
             animate={reduceMotion ? undefined : { opacity: [0.25, 1, 0.25], r: [3, 4.5, 3] }}
             transition={{ duration: 2, delay: index * 0.25, repeat: Infinity }}
           />
@@ -71,7 +71,7 @@ export function HeroIllustration() {
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
         style={{ perspective: 800 }}
       >
-        <div className="absolute inset-0 translate-y-5 rounded-[1.75rem] bg-secondary shadow-[0_28px_55px_-18px_rgba(30,58,138,0.6)] [transform:rotateX(8deg)_rotateY(-8deg)]" />
+        <div className="absolute inset-0 translate-y-5 rounded-[1.75rem] bg-secondary shadow-[0_28px_55px_-18px_rgba(0,127,212,0.6)] [transform:rotateX(8deg)_rotateY(-8deg)]" />
         <div className="absolute inset-x-0 top-5 h-20 overflow-hidden rounded-[1.75rem] border border-white/30 bg-gradient-to-br from-secondary to-primary">
           <div className="absolute inset-x-0 top-0 h-full origin-top bg-secondary/45 [clip-path:polygon(0_0,50%_63%,100%_0)]" />
           <Mail className="absolute left-1/2 top-1/2 h-9 w-9 -translate-x-1/2 -translate-y-1/2 text-white" />

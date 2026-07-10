@@ -44,7 +44,7 @@ export function VaultSetup({
         <CardTitle>Create Security Vault</CardTitle>
       </CardHeader>
       <CardContent className="space-y-5">
-        <Alert className="border-amber-300/60 bg-amber-50">
+        <Alert className="border-primary/25 bg-primary/10">
           <ShieldAlert className="mb-2 h-4 w-4" />
           <AlertTitle>Recovery warning</AlertTitle>
           <AlertDescription>

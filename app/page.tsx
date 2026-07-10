@@ -152,7 +152,7 @@ export default function MarketingHomePage() {
       </Section>
 
       <section className="relative border-y border-slate-200/70 bg-slate-50/80 py-20 dark:border-white/10 dark:bg-white/[0.025] lg:py-28">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.1),transparent_42%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,127,212,0.1),transparent_42%)]" />
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Reveal>
             <SectionIntro
@@ -162,9 +162,9 @@ export default function MarketingHomePage() {
             />
           </Reveal>
           <Reveal delay={0.1}>
-            <div className="mx-auto -mt-3 max-w-4xl rounded-2xl border border-blue-200 bg-blue-50/80 px-5 py-4 text-center shadow-sm dark:border-blue-400/20 dark:bg-blue-400/10">
+            <div className="mx-auto -mt-3 max-w-4xl rounded-2xl border border-secondary/25 bg-secondary/10 px-5 py-4 text-center shadow-sm dark:border-secondary/25 dark:bg-secondary/10">
               <p className="text-sm font-medium leading-6 text-slate-700 dark:text-slate-200 sm:text-base">
-                <span className="font-semibold text-blue-700 dark:text-blue-300">
+                <span className="font-semibold text-secondary dark:text-secondary">
                   One tool
                 </span>{" "}
                 to import and export email contacts, sync with email marketing
@@ -224,14 +224,14 @@ export default function MarketingHomePage() {
 
       <Section className="pb-20 pt-8 lg:pb-28">
         <Reveal>
-          <div className="relative overflow-hidden rounded-[2rem] bg-slate-950 px-6 py-16 text-center text-white shadow-[0_32px_90px_-38px_rgba(37,99,235,0.55)] sm:px-12 lg:py-20 dark:bg-blue-600">
-            <div className="absolute -left-24 -top-24 h-72 w-72 rounded-full bg-blue-600/40 blur-3xl dark:bg-white/15" />
-            <div className="absolute -bottom-32 -right-20 h-80 w-80 rounded-full bg-orange-400/20 blur-3xl" />
-            <FileSpreadsheet className="relative mx-auto h-8 w-8 text-blue-300 dark:text-white" />
+          <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-primary to-secondary px-6 py-16 text-center text-white shadow-[0_32px_90px_-38px_rgba(0,127,212,0.55)] sm:px-12 lg:py-20">
+            <div className="absolute -left-24 -top-24 h-72 w-72 rounded-full bg-secondary/10 blur-3xl dark:bg-white/15" />
+            <div className="absolute -bottom-32 -right-20 h-80 w-80 rounded-full bg-primary/10 blur-3xl" />
+            <FileSpreadsheet className="relative mx-auto h-8 w-8 text-secondary dark:text-white" />
             <h2 className="relative mx-auto mt-6 max-w-3xl text-3xl font-semibold tracking-tight sm:text-5xl">
               Start discovering contacts hidden inside your inbox today.
             </h2>
-            <p className="relative mx-auto mt-5 max-w-2xl text-slate-300 dark:text-blue-50">
+            <p className="relative mx-auto mt-5 max-w-2xl text-slate-300 dark:text-secondary">
               Connect a mailbox, choose your folders, and build a cleaner
               contact database in minutes.
             </p>
@@ -240,14 +240,14 @@ export default function MarketingHomePage() {
                 asChild
                 size="lg"
                 variant="outline"
-                className="border-white/20 bg-white/10 text-white hover:bg-white/20 dark:bg-white dark:text-blue-700"
+                className="border-white/20 bg-white/10 text-white hover:bg-white/20 dark:bg-white dark:text-secondary"
               >
                 <Link href="/contact">View Demo</Link>
               </Button>
               <Button
                 asChild
                 size="lg"
-                className="bg-white text-slate-950 hover:bg-blue-50 dark:bg-slate-950 dark:text-white"
+                className="bg-white text-slate-950 hover:bg-secondary/10 dark:bg-slate-950 dark:text-white"
               >
                 <Link href="/register">
                   Get Started <ArrowRight className="h-4 w-4" />

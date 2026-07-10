@@ -26,20 +26,20 @@ export function WorkflowAnimation() {
               reduceMotion
                 ? undefined
                 : {
-                    backgroundColor: ["rgba(248,250,252,0)", "rgba(239,246,255,1)", "rgba(248,250,252,0)"],
-                    borderColor: ["rgba(226,232,240,0)", "rgba(147,197,253,.65)", "rgba(226,232,240,0)"],
+                    backgroundColor: ["rgba(248,250,252,0)", "rgba(3,183,178,0.08)", "rgba(248,250,252,0)"],
+                    borderColor: ["rgba(226,232,240,0)", "rgba(0,127,212,.65)", "rgba(226,232,240,0)"],
                     y: [0, -2, 0],
                   }
             }
             transition={{ duration: 1.5, delay: index * 1.15, repeat: Infinity, repeatDelay: 5.4, ease: "easeInOut" }}
           >
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-blue-50 text-blue-600">
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-secondary/10 text-secondary">
               <Icon className="h-4 w-4" />
             </span>
             <span className="text-xs font-semibold leading-4 text-slate-700">{label}</span>
             {index < steps.length - 1 ? (
               <motion.span
-                className="absolute -right-2 top-1/2 z-10 hidden h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-blue-500 md:block"
+                className="absolute -right-2 top-1/2 z-10 hidden h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-secondary md:block"
                 animate={reduceMotion ? undefined : { x: [-3, 5], opacity: [0, 1, 0] }}
                 transition={{ duration: 1.1, delay: index * 1.15 + 0.5, repeat: Infinity, repeatDelay: 5.8 }}
               />

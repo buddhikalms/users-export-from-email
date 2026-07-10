@@ -15,8 +15,8 @@ export function HeroBackground({ x, y }: { x: MotionValue<number>; y: MotionValu
 
   return (
     <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,#f8fbff_0%,#ffffff_72%)]" />
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(14,165,164,0.055)_1px,transparent_1px),linear-gradient(90deg,rgba(30,58,138,0.055)_1px,transparent_1px)] bg-[size:58px_58px] [mask-image:linear-gradient(to_bottom,black,transparent_88%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,#ffffff_0%,#ffffff_72%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(3,183,178,0.055)_1px,transparent_1px),linear-gradient(90deg,rgba(0,127,212,0.055)_1px,transparent_1px)] bg-[size:58px_58px] [mask-image:linear-gradient(to_bottom,black,transparent_88%)]" />
       <motion.div style={{ x: meshX, y: meshY }} className="absolute inset-0">
         <motion.div
           className="absolute -left-40 top-8 h-[30rem] w-[30rem] rounded-full bg-primary/20 blur-[120px]"
@@ -33,7 +33,7 @@ export function HeroBackground({ x, y }: { x: MotionValue<number>; y: MotionValu
       {particles.map(([left, top, size], index) => (
         <motion.span
           key={`${left}-${top}`}
-          className="absolute rounded-full bg-primary/45 shadow-[0_0_12px_rgba(14,165,164,0.55)]"
+          className="absolute rounded-full bg-primary/45 shadow-[0_0_12px_rgba(3,183,178,0.55)]"
           style={{ left: `${left}%`, top: `${top}%`, width: size, height: size }}
           animate={reduceMotion ? undefined : { opacity: [0.2, 0.8, 0.2], y: [0, -10, 0] }}
           transition={{ duration: 4 + (index % 3), delay: index * 0.25, repeat: Infinity, ease: "easeInOut" }}

@@ -72,7 +72,7 @@ export function MarketingHeader({ signedIn = false }: { signedIn?: boolean }) {
           </Button>
           <Button
             asChild
-            className="bg-gradient-to-r from-slate-950 to-blue-700 text-white hover:opacity-90"
+            className="bg-gradient-to-r from-slate-950 to-secondary text-white hover:opacity-90"
           >
             <Link href={(signedIn ? "/dashboard" : "/register") as any}>
               Start Free
