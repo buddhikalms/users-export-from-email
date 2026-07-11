@@ -108,6 +108,7 @@ async function fetchForwardedSource(client: ImapFlow, uid: number) {
 async function scanFolder(input: {
   client: ImapFlow;
   folderPath: string;
+  uids: number[];
   ignoredEmails: string[];
   job: Job<EmailSyncJobData>;
   processedMessages: number;
@@ -116,15 +117,10 @@ async function scanFolder(input: {
   extractForwardedChains: boolean;
   dateRange?: SyncDateRange;
 }) {
-  const mailbox = await input.client.mailboxOpen(input.folderPath, { readOnly: true });
+  await input.client.mailboxOpen(input.folderPath, { readOnly: true });
   const displayName = normalizeFolderName(input.folderPath);
   const contactMap = createMutableContactMap();
   let processedMessages = input.processedMessages;
-  const matchingUids =
-    mailbox.exists > 0
-      ? await input.client.search(buildSearchQuery(input.dateRange), { uid: true })
-      : [];
-  const uids = Array.isArray(matchingUids) ? matchingUids : [];
 
   await updateProgress(input.syncRunId, {
     currentFolder: displayName,
@@ -132,7 +128,7 @@ async function scanFolder(input: {
     processedMessages,
   });
 
-  for (const chunk of chunkNumbers(uids, BATCH_SIZE)) {
+  for (const chunk of chunkNumbers(input.uids, BATCH_SIZE)) {
     await assertNotCancelled(input.syncRunId);
 
     for await (const message of input.client.fetch(chunk.join(","), {
@@ -182,7 +178,7 @@ async function scanFolder(input: {
       folderPath: input.folderPath,
       displayName,
       contacts: finalizeFolderContacts(contactMap),
-      totalMessagesScanned: uids.length,
+      totalMessagesScanned: input.uids.length,
     } satisfies FolderSyncResult,
     processedMessages,
   };
@@ -214,11 +210,15 @@ async function runEmailSync(job: Job<EmailSyncJobData>) {
     await client.connect();
 
     let totalMessages = 0;
+    const folderUids = new Map<string, number[]>();
     for (const folderPath of folders) {
       await assertNotCancelled(syncRunId);
-      await client.mailboxOpen(folderPath, { readOnly: true });
-      const matchingUids = await client.search(buildSearchQuery(dateRange), { uid: true });
-      totalMessages += Array.isArray(matchingUids) ? matchingUids.length : 0;
+      const mailbox = await client.mailboxOpen(folderPath, { readOnly: true });
+      const matchingUids =
+        mailbox.exists > 0 ? await client.search(buildSearchQuery(dateRange), { uid: true }) : [];
+      const uids = Array.isArray(matchingUids) ? matchingUids : [];
+      folderUids.set(folderPath, uids);
+      totalMessages += uids.length;
     }
 
     await updateProgress(syncRunId, { totalMessages });
@@ -229,6 +229,7 @@ async function runEmailSync(job: Job<EmailSyncJobData>) {
       const scanned = await scanFolder({
         client,
         folderPath,
+        uids: folderUids.get(folderPath) ?? [],
         ignoredEmails: ignoredEmails.map((item) => item.email),
         job,
         processedMessages,

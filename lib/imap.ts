@@ -121,12 +121,26 @@ function buildSearchQuery(dateRange: SyncDateRange = {}) {
   };
 }
 
+function shouldFetchBody(subject: string | null | undefined) {
+  return /(^|\s)(fw|fwd|forwarded)\s*:/i.test(subject ?? "");
+}
+
 function chunkNumbers(values: number[], size: number) {
   const chunks: number[][] = [];
   for (let index = 0; index < values.length; index += size) {
     chunks.push(values.slice(index, index + size));
   }
   return chunks;
+}
+
+async function fetchForwardedSource(client: ImapFlow, uid: number) {
+  const message = await client.fetchOne(
+    String(uid),
+    { source: true },
+    { uid: true } as Parameters<ImapFlow["fetchOne"]>[2],
+  );
+
+  return message && message.source ? extractTextFromRawMessage(message.source) : "";
 }
 
 export async function testImapConnection(settings: ConnectionSettings) {
@@ -190,7 +204,7 @@ export async function syncSelectedFolders(
           for await (const message of client.fetch(chunk.join(","), {
             envelope: true,
             internalDate: true,
-            source: true,
+            uid: true,
           }, { uid: true })) {
             const sourceFolder = normalizeFolderName(folderPath);
             collectContactsFromEnvelope(
@@ -200,14 +214,18 @@ export async function syncSelectedFolders(
               message.internalDate ?? undefined,
               ignoredEmails,
             );
-            collectContactsFromForwardedBody(
-              contactMap,
-              extractTextFromRawMessage(message.source),
-              message.envelope,
-              sourceFolder,
-              message.internalDate ?? undefined,
-              ignoredEmails,
-            );
+
+            if (message.uid && shouldFetchBody(message.envelope?.subject)) {
+              const body = await fetchForwardedSource(client, message.uid);
+              collectContactsFromForwardedBody(
+                contactMap,
+                body,
+                message.envelope,
+                sourceFolder,
+                message.internalDate ?? undefined,
+                ignoredEmails,
+              );
+            }
           }
         }
       }
