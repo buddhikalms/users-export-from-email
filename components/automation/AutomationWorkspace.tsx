@@ -22,6 +22,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   automationSchedulePresets,
+  buildMonthlySchedule,
+  getNextRunFromSchedule,
+  parseMonthlyScheduleDay,
   type AutomationTriggerValue,
 } from "@/lib/automation";
 import { formatCount, formatDateTime } from "@/lib/dashboard-data";
@@ -76,6 +79,7 @@ type FormState = {
   conditionText: string;
   actionText: string;
   nextRunAt: string;
+  monthlyDay: string;
 };
 
 const emptyForm: FormState = {
@@ -94,6 +98,7 @@ const emptyForm: FormState = {
   conditionText: "",
   actionText: "",
   nextRunAt: "",
+  monthlyDay: "1",
 };
 
 const ruleTemplates: Array<{
@@ -148,8 +153,31 @@ function getDefaultNextRun(minutesFromNow = 60) {
   return toDateTimeLocalValue(new Date(Date.now() + minutesFromNow * 60 * 1000));
 }
 
+function getNextRunForSchedule(schedule: string) {
+  const nextRun = getNextRunFromSchedule(schedule);
+
+  return nextRun ? toDateTimeLocalValue(nextRun) : getDefaultNextRun(getPresetMinutes(schedule));
+}
+
 function getPresetMinutes(schedule: string) {
   return automationSchedulePresets.find((preset) => preset.schedule === schedule)?.minutes ?? 60;
+}
+
+function getScheduleValue(schedule: string, monthlyDay: string) {
+  return schedule === "monthly" ? buildMonthlySchedule(monthlyDay) : schedule;
+}
+
+function getScheduleSelectValue(schedule: string) {
+  return parseMonthlyScheduleDay(schedule) ? "monthly" : schedule;
+}
+
+function getScheduleLabel(schedule: string | null) {
+  const monthlyDay = parseMonthlyScheduleDay(schedule);
+  if (monthlyDay) {
+    return `Monthly on day ${monthlyDay}`;
+  }
+
+  return schedule ?? "";
 }
 
 export function AutomationWorkspace({
@@ -291,6 +319,7 @@ export function AutomationWorkspace({
       actionText:
         trigger === "SCHEDULED" ? "Export users from the selected email account to the selected platform." : "",
       nextRunAt: trigger === "SCHEDULED" ? getDefaultNextRun(60) : "",
+      monthlyDay: "1",
     });
     setStatus(null);
     setModalOpen(true);
@@ -298,6 +327,7 @@ export function AutomationWorkspace({
 
   function openTemplate(template: (typeof ruleTemplates)[number]) {
     const schedule = template.schedule ?? "";
+    const monthlyDay = String(parseMonthlyScheduleDay(schedule) ?? 1);
     const route = getDefaultRoute();
 
     setForm({
@@ -306,10 +336,11 @@ export function AutomationWorkspace({
       trigger: template.trigger,
       name: template.name,
       schedule,
+      monthlyDay,
       conditionText: template.conditionText ?? "",
       actionText: template.actionText ?? "",
       nextRunAt:
-        template.trigger === "SCHEDULED" ? getDefaultNextRun(getPresetMinutes(schedule)) : "",
+        template.trigger === "SCHEDULED" ? getNextRunForSchedule(schedule) : "",
     });
     setStatus(null);
     setModalOpen(true);
@@ -323,7 +354,10 @@ export function AutomationWorkspace({
       const response = await fetch("/api/automation/rules", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          schedule: getScheduleValue(form.schedule, form.monthlyDay),
+        }),
       });
       const payload = (await response.json()) as { error?: string; message?: string };
 
@@ -445,7 +479,9 @@ export function AutomationWorkspace({
                         Next run: {formatDateTime(rule.nextRunAt ? new Date(rule.nextRunAt) : null)}
                       </p>
                       {rule.schedule ? (
-                        <p className="mt-1 text-xs text-muted-foreground">Schedule: {rule.schedule}</p>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          Schedule: {getScheduleLabel(rule.schedule)}
+                        </p>
                       ) : null}
                       {rule.emailAccountId && rule.marketingAccountId ? (
                         <p className="mt-1 text-xs text-muted-foreground">
@@ -567,6 +603,7 @@ export function AutomationWorkspace({
                       setForm((current) => {
                         const trigger = event.target.value as AutomationTriggerValue;
                         const schedule = trigger === "SCHEDULED" ? current.schedule || "hourly" : "";
+                        const scheduleValue = getScheduleValue(schedule, current.monthlyDay);
 
                         return {
                           ...current,
@@ -574,7 +611,7 @@ export function AutomationWorkspace({
                           schedule,
                           nextRunAt:
                             trigger === "SCHEDULED" && !current.nextRunAt
-                              ? getDefaultNextRun(getPresetMinutes(schedule))
+                              ? getNextRunForSchedule(scheduleValue)
                               : current.nextRunAt,
                         };
                       })
@@ -728,13 +765,18 @@ export function AutomationWorkspace({
                   className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:opacity-60 dark:bg-card"
                   disabled={form.trigger !== "SCHEDULED"}
                   id="schedule"
-                  value={form.schedule}
+                  value={getScheduleSelectValue(form.schedule)}
                   onChange={(event) =>
-                    setForm((current) => ({
-                      ...current,
-                      schedule: event.target.value,
-                      nextRunAt: getDefaultNextRun(getPresetMinutes(event.target.value)),
-                    }))
+                    setForm((current) => {
+                      const schedule = event.target.value;
+                      const scheduleValue = getScheduleValue(schedule, current.monthlyDay);
+
+                      return {
+                        ...current,
+                        schedule,
+                        nextRunAt: schedule ? getNextRunForSchedule(scheduleValue) : "",
+                      };
+                    })
                   }
                 >
                   <option value="">Manual or event based</option>
@@ -745,6 +787,39 @@ export function AutomationWorkspace({
                   ))}
                 </select>
               </div>
+              {getScheduleSelectValue(form.schedule) === "monthly" ? (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium" htmlFor="monthly-day">
+                    Day of month
+                  </label>
+                  <select
+                    className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-card"
+                    disabled={form.trigger !== "SCHEDULED"}
+                    id="monthly-day"
+                    value={form.monthlyDay}
+                    onChange={(event) =>
+                      setForm((current) => {
+                        const scheduleValue = buildMonthlySchedule(event.target.value);
+
+                        return {
+                          ...current,
+                          monthlyDay: event.target.value,
+                          nextRunAt: getNextRunForSchedule(scheduleValue),
+                        };
+                      })
+                    }
+                  >
+                    {Array.from({ length: 31 }, (_, index) => String(index + 1)).map((day) => (
+                      <option key={day} value={day}>
+                        Day {day}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="text-xs leading-5 text-muted-foreground">
+                    If a month has fewer days, OMAZYNC runs on the last day of that month.
+                  </p>
+                </div>
+              ) : null}
               <div className="space-y-2">
                 <label className="text-sm font-medium" htmlFor="conditions">
                   Conditions

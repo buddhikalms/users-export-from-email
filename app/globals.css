@@ -65,6 +65,30 @@ a {
   @apply transition-colors;
 }
 
+input,
+select,
+textarea {
+  color: hsl(var(--foreground));
+}
+
+select option {
+  background: hsl(var(--card));
+  color: hsl(var(--card-foreground));
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: hsl(var(--muted-foreground));
+}
+
+.dark input:not([type="checkbox"]):not([type="radio"]),
+.dark select,
+.dark textarea {
+  background: hsl(var(--card));
+  color: hsl(var(--foreground));
+  color-scheme: dark;
+}
+
 ::selection {
   background: hsl(var(--primary) / 0.18);
 }

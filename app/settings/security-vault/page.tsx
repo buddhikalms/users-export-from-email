@@ -82,7 +82,7 @@ export default function SecurityVaultPage() {
         ) : null}
 
         {vault.loading ? (
-          <div className="rounded-[1.75rem] border border-dashed border-border bg-white/70 p-8 text-sm text-muted-foreground">
+          <div className="rounded-[1.75rem] border border-dashed border-border bg-white/70 dark:bg-card/75 p-8 text-sm text-muted-foreground">
             Loading encrypted vault metadata...
           </div>
         ) : !vault.hasVault ? (

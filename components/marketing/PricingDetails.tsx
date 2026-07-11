@@ -69,6 +69,15 @@ const addOnGroups = [
   },
 ] as const;
 
+type PricingDetailsProps = {
+  addOns?: Array<{
+    id: string;
+    name: string;
+    category: string;
+    price: number;
+  }>;
+};
+
 const services = [
   ["Account setup assistance", "$29"],
   ["Contact data cleanup", "$19"],
@@ -95,7 +104,27 @@ function Value({ value }: { value: string | boolean }) {
   return <span>{value}</span>;
 }
 
-export function PricingDetails() {
+function getAddOnGroups(addOns?: PricingDetailsProps["addOns"]) {
+  if (!addOns?.length) return addOnGroups;
+
+  const grouped = new Map<string, Array<[string, string]>>();
+  for (const addOn of addOns.filter((item) => item.id !== "none")) {
+    const items = grouped.get(addOn.category) ?? [];
+    items.push([addOn.name, addOn.price > 0 ? `$${addOn.price}/month` : "Included"]);
+    grouped.set(addOn.category, items);
+  }
+
+  const icons = [UsersRound, PlugZap, Settings2];
+  return Array.from(grouped.entries()).map(([title, items], index) => ({
+    title,
+    icon: icons[index % icons.length],
+    items,
+  }));
+}
+
+export function PricingDetails({ addOns }: PricingDetailsProps) {
+  const visibleAddOnGroups = getAddOnGroups(addOns);
+
   return (
     <div className="space-y-24">
       <section>
@@ -137,7 +166,7 @@ export function PricingDetails() {
           <p className="mt-3 leading-7 text-slate-600 dark:text-slate-300">Choose an add-on from the package dropdown above, or use this list to compare extra capacity and integrations.</p>
         </div>
         <div className="grid items-start gap-5 lg:grid-cols-3">
-          {addOnGroups.map(({ title, icon: Icon, items }) => (
+          {visibleAddOnGroups.map(({ title, icon: Icon, items }) => (
             <article key={title} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-white/[0.03]">
               <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-blue/10 text-brand-blue dark:bg-brand-blue/10 dark:text-brand-light-purple"><Icon className="h-5 w-5" /></div>
               <h3 className="mt-5 text-lg font-bold text-slate-950 dark:text-white">{title}</h3>

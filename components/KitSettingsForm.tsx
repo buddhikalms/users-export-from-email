@@ -262,7 +262,7 @@ export function KitSettingsForm() {
             <Label htmlFor="kit-api-version">Kit API key type</Label>
             <select
               id="kit-api-version"
-              className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+              className="flex h-11 w-full rounded-2xl border border-input bg-white/85 dark:bg-card/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
               value={form.apiVersion}
               onChange={(event) =>
                 updateField("apiVersion", event.target.value as FormState["apiVersion"])
@@ -349,14 +349,14 @@ export function KitSettingsForm() {
         </CardHeader>
         <CardContent className="space-y-4">
           {accounts.length === 0 ? (
-            <div className="rounded-3xl border border-dashed border-border bg-white/60 p-8 text-center text-sm text-muted-foreground">
+            <div className="rounded-3xl border border-dashed border-border bg-white/60 dark:bg-card/70 p-8 text-center text-sm text-muted-foreground">
               No Kit accounts are connected yet.
             </div>
           ) : (
             accounts.map((account) => (
               <div
                 key={account.id}
-                className="rounded-3xl border border-border/70 bg-white/80 p-5"
+                className="rounded-3xl border border-border/70 bg-white/80 dark:bg-card/80 p-5"
               >
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div className="space-y-2">

@@ -1,127 +1,151 @@
-import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
+import {
+  Activity,
+  BriefcaseBusiness,
+  CreditCard,
+  Database,
+  MailCheck,
+  RefreshCw,
+  UsersRound,
+  Webhook,
+} from "lucide-react";
 
-import { authOptions } from "@/auth";
+import { SalesCharts } from "@/components/admin/SalesCharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { db } from "@/lib/db";
 
-export default async function AdminPage() {
-  const session = await getServerSession(authOptions);
+function formatNumber(value: number) {
+  return new Intl.NumberFormat("en-US").format(value);
+}
 
-  if (!session?.user) {
-    redirect("/login");
-  }
+function monthKey(value: Date) {
+  return new Intl.DateTimeFormat("en-US", { month: "short", year: "2-digit" }).format(value);
+}
 
-  if (session.user.role !== "ADMIN") {
-    redirect("/settings");
-  }
+function buildSalesData(subscriptions: Array<{ createdAt: Date; lastPaymentAt: Date | null }>) {
+  const months = Array.from({ length: 6 }, (_, index) => {
+    const date = new Date();
+    date.setMonth(date.getMonth() - (5 - index), 1);
+    date.setHours(0, 0, 0, 0);
+    return date;
+  });
 
-  const [userCount, accountCount, users, accounts] = await Promise.all([
+  return months.map((date) => {
+    const key = monthKey(date);
+    return {
+      month: key,
+      payments: subscriptions.filter((item) => item.lastPaymentAt && monthKey(item.lastPaymentAt) === key).length,
+      subscriptions: subscriptions.filter((item) => monthKey(item.createdAt) === key).length,
+    };
+  });
+}
+
+function formatLabel(value: string | null | undefined) {
+  return value ? value.replace(/_/g, " ").toLowerCase() : "none";
+}
+
+export default async function AdminOverviewPage() {
+  const [
+    userCount,
+    activeSubscriptionCount,
+    savedAccountCount,
+    contactCount,
+    syncRunCount,
+    exportRunCount,
+    integrationAccountCount,
+    backgroundJobCount,
+    automationRuleCount,
+    failedSyncCount,
+    failedJobCount,
+    subscriptions,
+    planGroups,
+  ] = await Promise.all([
     db.user.count(),
+    db.subscription.count({ where: { status: "ACTIVE" } }),
     db.savedEmailAccount.count(),
-    db.user.findMany({
-      orderBy: {
-        createdAt: "asc",
-      },
-      include: {
-        _count: {
-          select: {
-            savedAccounts: true,
-          },
-        },
-      },
+    db.contact.count(),
+    db.syncRun.count(),
+    db.exportRun.count(),
+    db.integrationAccount.count(),
+    db.backgroundJob.count(),
+    db.automationRule.count(),
+    db.syncRun.count({ where: { status: "FAILED" } }),
+    db.backgroundJob.count({ where: { status: "FAILED" } }),
+    db.subscription.findMany({
+      select: { createdAt: true, lastPaymentAt: true },
     }),
-    db.savedEmailAccount.findMany({
-      orderBy: {
-        updatedAt: "desc",
-      },
-      include: {
-        owner: {
-          select: {
-            name: true,
-            email: true,
-          },
-        },
-      },
-      take: 20,
+    db.subscription.groupBy({
+      by: ["plan"],
+      _count: { _all: true },
+      orderBy: { _count: { plan: "desc" } },
     }),
   ]);
 
+  const stats = [
+    ["Users", userCount, UsersRound],
+    ["Active subscriptions", activeSubscriptionCount, CreditCard],
+    ["Mailboxes", savedAccountCount, MailCheck],
+    ["Contacts", contactCount, Database],
+    ["Sync runs", syncRunCount, RefreshCw],
+    ["Export runs", exportRunCount, BriefcaseBusiness],
+    ["Integrations", integrationAccountCount, Webhook],
+    ["Jobs", backgroundJobCount, Activity],
+  ] as const;
+  const salesData = buildSalesData(subscriptions);
+  const planData = planGroups.map((group) => ({
+    plan: formatLabel(group.plan),
+    count: group._count._all,
+  }));
+
   return (
-    <main className="w-full">
-      <div className="mb-8 space-y-3">
-        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">
-          Admin
-        </p>
-        <h1 className="text-4xl">Authentication and account oversight</h1>
-        <p className="max-w-3xl text-base leading-7 text-muted-foreground">
-          Admin users can inspect who has access and how many email accounts are
-          currently stored in the database.
-        </p>
-      </div>
+    <main className="space-y-6">
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {stats.map(([label, value, Icon]) => (
+          <Card key={label}>
+            <CardContent className="flex items-start justify-between p-5">
+              <div>
+                <p className="text-sm text-muted-foreground">{label}</p>
+                <p className="mt-3 text-3xl font-semibold">{formatNumber(value)}</p>
+              </div>
+              <div className="grid h-11 w-11 place-items-center rounded-2xl bg-primary/10 text-primary">
+                <Icon className="h-5 w-5" />
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </section>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <SalesCharts planData={planData} salesData={salesData} />
+
+      <section className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Users</CardTitle>
+            <CardTitle className="text-lg">Operations</CardTitle>
           </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-semibold">{userCount}</p>
+          <CardContent className="space-y-2 text-sm text-muted-foreground">
+            <p>Automation rules: {formatNumber(automationRuleCount)}</p>
+            <p>Failed syncs: {formatNumber(failedSyncCount)}</p>
+            <p>Failed jobs: {formatNumber(failedJobCount)}</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Saved Email Accounts</CardTitle>
+            <CardTitle className="text-lg">Billing</CardTitle>
           </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-semibold">{accountCount}</p>
+          <CardContent className="space-y-2 text-sm text-muted-foreground">
+            <p>Total subscription records: {formatNumber(subscriptions.length)}</p>
+            <p>Payments recorded: {formatNumber(subscriptions.filter((item) => item.lastPaymentAt).length)}</p>
           </CardContent>
         </Card>
-      </div>
-
-      <div className="mt-6 grid gap-6 lg:grid-cols-2">
         <Card>
-          <CardHeader>
-            <CardTitle>Workspace Users</CardTitle>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg">Security</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3 text-sm">
-            {users.map((user) => (
-              <div
-                key={user.id}
-                className="rounded-2xl border border-border/70 bg-white/80 p-4"
-              >
-                <div className="font-medium">{user.name}</div>
-                <div className="text-muted-foreground">{user.email}</div>
-                <div className="mt-2 text-xs uppercase tracking-[0.18em] text-primary">
-                  {user.role} / {user._count.savedAccounts} saved accounts
-                </div>
-              </div>
-            ))}
+          <CardContent className="space-y-2 text-sm text-muted-foreground">
+            <p>Admin-only pages are protected by server-side session checks.</p>
+            <p>Encrypted API keys and mailbox passwords are not displayed.</p>
           </CardContent>
         </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Saved Accounts</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3 text-sm">
-            {accounts.map((account) => (
-              <div
-                key={account.id}
-                className="rounded-2xl border border-border/70 bg-white/80 p-4"
-              >
-                <div className="font-medium">{account.label}</div>
-                <div className="text-muted-foreground">
-                  {account.email} / {account.host}:{account.port}
-                </div>
-                <div className="mt-2 text-xs text-primary">
-                  Owner: {account.owner.name} ({account.owner.email})
-                </div>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      </div>
+      </section>
     </main>
   );
 }

@@ -207,7 +207,7 @@ export function FolderSelector({
       return (
         <div key={node.id} className="space-y-2">
           <div
-            className="flex items-start gap-3 rounded-2xl border border-white/70 bg-white/80 p-3 transition hover:border-primary/25"
+            className="flex items-start gap-3 rounded-2xl border border-white/70 bg-white/80 dark:bg-card/80 p-3 transition hover:border-primary/25"
             style={{ marginLeft: depth ? `${Math.min(depth * 18, 72)}px` : undefined }}
           >
             <button
@@ -322,7 +322,7 @@ export function FolderSelector({
           </Button>
         </div>
 
-        <div className="grid gap-4 rounded-3xl border border-border/70 bg-white/70 p-4 md:grid-cols-[1fr_1fr_auto] md:items-end">
+        <div className="grid gap-4 rounded-3xl border border-border/70 bg-white/70 dark:bg-card/75 p-4 md:grid-cols-[1fr_1fr_auto] md:items-end">
           <div className="space-y-2">
             <label className="text-sm font-medium" htmlFor="sync-since">
               Scan messages from
@@ -360,11 +360,11 @@ export function FolderSelector({
 
         <div className="grid gap-3">
           {loading ? (
-            <div className="rounded-3xl border border-dashed border-border bg-white/60 p-8 text-center text-sm text-muted-foreground">
+            <div className="rounded-3xl border border-dashed border-border bg-white/60 dark:bg-card/70 p-8 text-center text-sm text-muted-foreground">
               Loading mail folders...
             </div>
           ) : folders.length === 0 ? (
-            <div className="rounded-3xl border border-dashed border-border bg-white/60 p-8 text-center text-sm text-muted-foreground">
+            <div className="rounded-3xl border border-dashed border-border bg-white/60 dark:bg-card/70 p-8 text-center text-sm text-muted-foreground">
               No mail folders were returned for this account.
             </div>
           ) : (

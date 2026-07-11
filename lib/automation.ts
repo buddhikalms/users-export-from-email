@@ -33,6 +33,12 @@ export const automationSchedulePresets = [
     schedule: "weekly",
     minutes: 60 * 24 * 7,
   },
+  {
+    value: "monthly",
+    label: "Monthly",
+    schedule: "monthly",
+    minutes: 60 * 24 * 30,
+  },
 ] as const;
 
 export type AutomationSchedulePresetValue =
@@ -44,6 +50,10 @@ export function getAutomationSchedulePreset(value: string | null | undefined) {
   }
 
   const normalized = value.trim().toLowerCase();
+  if (parseMonthlyScheduleDay(normalized)) {
+    return automationSchedulePresets.find((preset) => preset.value === "monthly") ?? null;
+  }
+
   return (
     automationSchedulePresets.find(
       (preset) => preset.value === normalized || preset.schedule === normalized,
@@ -51,10 +61,59 @@ export function getAutomationSchedulePreset(value: string | null | undefined) {
   );
 }
 
+export function buildMonthlySchedule(day: number | string) {
+  const parsedDay = Number(day);
+  const safeDay = Number.isInteger(parsedDay)
+    ? Math.min(31, Math.max(1, parsedDay))
+    : 1;
+
+  return `monthly:${safeDay}`;
+}
+
+export function parseMonthlyScheduleDay(schedule: string | null | undefined) {
+  const match = schedule?.trim().toLowerCase().match(/^monthly:(\d{1,2})$/);
+  if (!match) {
+    return null;
+  }
+
+  const day = Number(match[1]);
+  if (!Number.isInteger(day) || day < 1 || day > 31) {
+    return null;
+  }
+
+  return day;
+}
+
+function daysInMonth(year: number, month: number) {
+  return new Date(year, month + 1, 0).getDate();
+}
+
+function getNextMonthlyRun(day: number, from: Date) {
+  const next = new Date(from);
+  next.setSeconds(0, 0);
+
+  const setSafeDay = () => {
+    next.setDate(Math.min(day, daysInMonth(next.getFullYear(), next.getMonth())));
+  };
+
+  setSafeDay();
+  if (next <= from) {
+    next.setMonth(next.getMonth() + 1, 1);
+    setSafeDay();
+  }
+
+  return next;
+}
+
 export function getNextRunFromSchedule(
   schedule: string | null | undefined,
   from: Date = new Date(),
 ) {
+  const monthlyDay = parseMonthlyScheduleDay(schedule);
+  if (monthlyDay) {
+    return getNextMonthlyRun(monthlyDay, from);
+  }
+
   const preset = getAutomationSchedulePreset(schedule);
 
   if (!preset) {

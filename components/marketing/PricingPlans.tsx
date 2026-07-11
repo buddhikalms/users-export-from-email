@@ -53,8 +53,10 @@ type Plan = {
 type AddOn = {
   id: string;
   name: string;
+  category?: string;
   price: number;
   description: string;
+  sortOrder?: number;
 };
 
 const addOns: AddOn[] = [
@@ -214,12 +216,38 @@ const plans: Plan[] = [
 
 const groups: FeatureGroup[] = ["Capacity", "Workflow", "Support"];
 
-export function PricingPlans() {
-  const [selectedPlan, setSelectedPlan] = useState(2);
+type PricingPlansProps = {
+  catalogPlans?: Array<Pick<Plan, "slug" | "name" | "audience" | "monthly" | "summary" | "idealFor" | "quickFeatures" | "exclusions" | "featured">>;
+  catalogAddOns?: AddOn[];
+};
+
+function mergePlans(catalogPlans?: PricingPlansProps["catalogPlans"]) {
+  if (!catalogPlans?.length) return plans;
+
+  return catalogPlans
+    .map((catalogPlan) => {
+      const visualPlan = plans.find((plan) => plan.slug === catalogPlan.slug);
+      if (!visualPlan) return null;
+
+      return {
+        ...visualPlan,
+        ...catalogPlan,
+        features: visualPlan.features,
+        icon: visualPlan.icon,
+      };
+    })
+    .filter((plan): plan is Plan => Boolean(plan));
+}
+
+export function PricingPlans({ catalogPlans, catalogAddOns }: PricingPlansProps) {
+  const visiblePlans = mergePlans(catalogPlans);
+  const visibleAddOns = catalogAddOns?.length ? catalogAddOns : addOns;
+  const initialPlan = Math.max(0, visiblePlans.findIndex((plan) => plan.featured));
+  const [selectedPlan, setSelectedPlan] = useState(initialPlan);
   const [selectedAddOnId, setSelectedAddOnId] = useState("none");
   const reduceMotion = useReducedMotion();
-  const selected = plans[selectedPlan];
-  const selectedAddOn = addOns.find((addOn) => addOn.id === selectedAddOnId) ?? addOns[0];
+  const selected = visiblePlans[selectedPlan] ?? visiblePlans[initialPlan] ?? visiblePlans[0];
+  const selectedAddOn = visibleAddOns.find((addOn) => addOn.id === selectedAddOnId) ?? visibleAddOns[0] ?? addOns[0];
   const canConfigureAddOns = selected.slug !== "free" && selected.slug !== "enterprise";
   const configuredMonthly =
     selected.monthly === null ? null : selected.monthly + selectedAddOn.price;
@@ -236,7 +264,7 @@ export function PricingPlans() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-        {plans.map((plan, index) => {
+        {visiblePlans.map((plan, index) => {
           const active = selectedPlan === index;
           const Icon = plan.icon;
 
@@ -319,7 +347,7 @@ export function PricingPlans() {
                       value={selectedAddOnId}
                       onChange={(event) => setSelectedAddOnId(event.target.value)}
                     >
-                      {addOns.map((addOn) => (
+                      {visibleAddOns.map((addOn) => (
                         <option key={addOn.id} value={addOn.id}>
                           {addOn.name}
                           {addOn.price ? ` (+$${addOn.price}/mo)` : ""}

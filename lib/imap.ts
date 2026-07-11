@@ -1,4 +1,4 @@
-import { ImapFlow } from "imapflow";
+import { ImapFlow, type FetchMessageObject } from "imapflow";
 
 import {
   buildAllContacts,
@@ -201,6 +201,13 @@ export async function syncSelectedFolders(
 
       if (uids.length > 0) {
         for (const chunk of chunkNumbers(uids, 100)) {
+          const forwardedCandidates: Array<{
+            uid: number;
+            envelope: FetchMessageObject["envelope"];
+            internalDate?: FetchMessageObject["internalDate"];
+            sourceFolder: string;
+          }> = [];
+
           for await (const message of client.fetch(chunk.join(","), {
             envelope: true,
             internalDate: true,
@@ -216,16 +223,25 @@ export async function syncSelectedFolders(
             );
 
             if (message.uid && shouldFetchBody(message.envelope?.subject)) {
-              const body = await fetchForwardedSource(client, message.uid);
-              collectContactsFromForwardedBody(
-                contactMap,
-                body,
-                message.envelope,
+              forwardedCandidates.push({
+                uid: message.uid,
+                envelope: message.envelope,
+                internalDate: message.internalDate ?? undefined,
                 sourceFolder,
-                message.internalDate ?? undefined,
-                ignoredEmails,
-              );
+              });
             }
+          }
+
+          for (const candidate of forwardedCandidates) {
+            const body = await fetchForwardedSource(client, candidate.uid);
+            collectContactsFromForwardedBody(
+              contactMap,
+              body,
+              candidate.envelope,
+              candidate.sourceFolder,
+              candidate.internalDate,
+              ignoredEmails,
+            );
           }
         }
       }

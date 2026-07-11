@@ -30,7 +30,7 @@ export default function FoldersPage() {
   if (!ready || !connection) {
     return (
       <main className="w-full">
-        <div className="rounded-[1.75rem] border border-dashed border-border bg-white/70 p-8 text-sm text-muted-foreground">
+        <div className="rounded-[1.75rem] border border-dashed border-border bg-white/70 dark:bg-card/75 p-8 text-sm text-muted-foreground">
           Preparing your folder selection workspace...
         </div>
       </main>

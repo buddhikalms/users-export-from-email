@@ -189,6 +189,41 @@ model Subscription {
   @@index([paypalPlanId])
 }
 
+model PricingPlan {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  name          String
+  audience      String
+  monthlyPrice  Decimal? @db.Decimal(10, 2)
+  summary       String   @db.Text
+  idealFor      String   @db.Text
+  quickFeatures Json
+  exclusions    Json
+  isFeatured    Boolean  @default(false)
+  isActive      Boolean  @default(true)
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([isActive, sortOrder])
+}
+
+model PricingAddOn {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  category    String   @default("General")
+  monthlyPrice Decimal  @default(0) @db.Decimal(10, 2)
+  description String   @db.Text
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isActive, sortOrder])
+  @@index([category])
+}
+
 model PayPalWebhookEvent {
   id            String   @id @default(cuid())
   paypalEventId String   @unique

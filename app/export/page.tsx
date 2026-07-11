@@ -33,7 +33,7 @@ export default function ExportPage() {
   if (!ready || !syncResult) {
     return (
       <main className="w-full">
-        <div className="rounded-[1.75rem] border border-dashed border-border bg-white/70 p-8 text-sm text-muted-foreground">
+        <div className="rounded-[1.75rem] border border-dashed border-border bg-white/70 dark:bg-card/75 p-8 text-sm text-muted-foreground">
           Preparing workbook export data...
         </div>
       </main>
@@ -83,7 +83,7 @@ export default function ExportPage() {
                 </label>
                 <select
                   id="platform"
-                  className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-card"
+                  className="flex h-11 w-full rounded-2xl border border-input bg-white/85 dark:bg-card/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-card"
                   defaultValue="kit"
                 >
                   {integrationRegistry.map((integration) => (
@@ -99,7 +99,7 @@ export default function ExportPage() {
                 </label>
                 <select
                   id="account"
-                  className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-card"
+                  className="flex h-11 w-full rounded-2xl border border-input bg-white/85 dark:bg-card/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-card"
                   disabled
                   defaultValue=""
                 >
@@ -112,7 +112,7 @@ export default function ExportPage() {
                 </label>
                 <select
                   id="destination"
-                  className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-card"
+                  className="flex h-11 w-full rounded-2xl border border-input bg-white/85 dark:bg-card/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-card"
                   disabled
                   defaultValue=""
                 >
@@ -125,7 +125,7 @@ export default function ExportPage() {
                 </label>
                 <select
                   id="dedupe"
-                  className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-card"
+                  className="flex h-11 w-full rounded-2xl border border-input bg-white/85 dark:bg-card/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-card"
                   defaultValue="strict"
                 >
                   <option value="strict">Strict email dedupe</option>
@@ -181,7 +181,7 @@ export default function ExportPage() {
               </label>
               <select
                 id="last-seen-mode"
-                className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                className="flex h-11 w-full rounded-2xl border border-input bg-white/85 dark:bg-card/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
                 value={filter.mode}
                 onChange={(event) =>
                   setFilter((current) => ({
@@ -203,7 +203,7 @@ export default function ExportPage() {
               <input
                 id="last-seen-date"
                 type="date"
-                className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
+                className="flex h-11 w-full rounded-2xl border border-input bg-white/85 dark:bg-card/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
                 disabled={filter.mode === "all"}
                 value={filter.date ?? ""}
                 onChange={(event) =>

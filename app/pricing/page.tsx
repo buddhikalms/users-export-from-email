@@ -4,6 +4,7 @@ import { CTASection } from "@/components/marketing/CTASection";
 import { PricingPlans } from "@/components/marketing/PricingPlans";
 import { PricingDetails } from "@/components/marketing/PricingDetails";
 import { Section, SectionIntro } from "@/components/marketing/Section";
+import { getPricingCatalog } from "@/lib/pricing-catalog";
 
 export const metadata: Metadata = {
   title: "Pricing - OMAZYNC",
@@ -11,7 +12,9 @@ export const metadata: Metadata = {
     "Compare Starter, Professional, Agency, and Enterprise plans for OMAZYNC.",
 };
 
-export default function PricingPage() {
+export default async function PricingPage() {
+  const { plans, addOns } = await getPricingCatalog();
+
   return (
     <main className="overflow-hidden bg-white dark:bg-slate-950">
       <Section className="relative pt-20 lg:pt-28">
@@ -22,11 +25,11 @@ export default function PricingPage() {
           title="Affordable pricing that scales with your inbox workflow."
           description="Built for freelancers, agencies, marketers, publishers, recruiters, and growing businesses. Start free, upgrade as you grow, and pay only for what you need."
         />
-        <PricingPlans />
+        <PricingPlans catalogAddOns={addOns} catalogPlans={plans} />
         </div>
       </Section>
       <Section className="pt-4 lg:pt-8">
-        <PricingDetails />
+        <PricingDetails addOns={addOns} />
       </Section>
       <CTASection />
     </main>

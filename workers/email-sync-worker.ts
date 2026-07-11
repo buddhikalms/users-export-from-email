@@ -1,6 +1,6 @@
 import { setTimeout as sleep } from "node:timers/promises";
 import { Worker, type Job } from "bullmq";
-import { ImapFlow } from "imapflow";
+import { ImapFlow, type FetchMessageObject } from "imapflow";
 
 import { getRedisConnectionOptions, EMAIL_SYNC_QUEUE_NAME } from "@/lib/queue";
 import type { EmailSyncJobData } from "@/lib/sync-jobs";
@@ -130,6 +130,12 @@ async function scanFolder(input: {
 
   for (const chunk of chunkNumbers(input.uids, BATCH_SIZE)) {
     await assertNotCancelled(input.syncRunId);
+    const forwardedCandidates: Array<{
+      uid: number;
+      envelope: FetchMessageObject["envelope"];
+      internalDate?: FetchMessageObject["internalDate"];
+      sourceFolder: string;
+    }> = [];
 
     for await (const message of input.client.fetch(chunk.join(","), {
       envelope: true,
@@ -146,18 +152,27 @@ async function scanFolder(input: {
       );
 
       if (message.uid && shouldFetchBody(message.envelope?.subject, input.extractForwardedChains)) {
-        const body = await fetchForwardedSource(input.client, message.uid);
-        collectContactsFromForwardedBody(
-          contactMap,
-          body,
-          message.envelope,
+        forwardedCandidates.push({
+          uid: message.uid,
+          envelope: message.envelope,
+          internalDate: message.internalDate ?? undefined,
           sourceFolder,
-          message.internalDate ?? undefined,
-          input.ignoredEmails,
-        );
+        });
       }
 
       processedMessages += 1;
+    }
+
+    for (const candidate of forwardedCandidates) {
+      const body = await fetchForwardedSource(input.client, candidate.uid);
+      collectContactsFromForwardedBody(
+        contactMap,
+        body,
+        candidate.envelope,
+        candidate.sourceFolder,
+        candidate.internalDate,
+        input.ignoredEmails,
+      );
     }
 
     const contactsFound = finalizeFolderContacts(contactMap).length;

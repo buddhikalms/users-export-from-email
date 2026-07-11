@@ -161,7 +161,7 @@ function VaultKitExportPanel({ syncResult }: { syncResult: SyncResult }) {
       </CardHeader>
       <CardContent className="space-y-5">
         {!vault.hasVault ? (
-          <div className="rounded-3xl border border-dashed border-border bg-white/60 p-6 text-sm text-muted-foreground">
+          <div className="rounded-3xl border border-dashed border-border bg-white/60 dark:bg-card/70 p-6 text-sm text-muted-foreground">
             Create a Security Vault before using encrypted platform credentials.
           </div>
         ) : !vault.isUnlocked ? (
@@ -171,7 +171,7 @@ function VaultKitExportPanel({ syncResult }: { syncResult: SyncResult }) {
             }}
           />
         ) : vaultKitAccounts.length === 0 ? (
-          <div className="rounded-3xl border border-dashed border-border bg-white/60 p-6 text-sm text-muted-foreground">
+          <div className="rounded-3xl border border-dashed border-border bg-white/60 dark:bg-card/70 p-6 text-sm text-muted-foreground">
             Add a Kit account to the unlocked vault before exporting.
           </div>
         ) : (
@@ -183,7 +183,7 @@ function VaultKitExportPanel({ syncResult }: { syncResult: SyncResult }) {
                 </label>
                 <select
                   id="vault-kit-account"
-                  className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                  className="flex h-11 w-full rounded-2xl border border-input bg-white/85 dark:bg-card/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
                   value={selectedAccountId}
                   onChange={(event) => setSelectedAccountId(event.target.value)}
                 >
@@ -200,7 +200,7 @@ function VaultKitExportPanel({ syncResult }: { syncResult: SyncResult }) {
                 </label>
                 <select
                   id="vault-kit-destination-type"
-                  className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                  className="flex h-11 w-full rounded-2xl border border-input bg-white/85 dark:bg-card/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
                   value={destinationType}
                   onChange={(event) => setDestinationType(event.target.value as DestinationType)}
                 >
@@ -214,7 +214,7 @@ function VaultKitExportPanel({ syncResult }: { syncResult: SyncResult }) {
                 </label>
                 <select
                   id="vault-kit-destination"
-                  className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                  className="flex h-11 w-full rounded-2xl border border-input bg-white/85 dark:bg-card/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
                   disabled={loadingDestinations}
                   value={destinationType === "tag" ? selectedTagId : selectedFormId}
                   onChange={(event) =>
@@ -352,7 +352,7 @@ function VaultPlatformExportPanel({ syncResult }: { syncResult: SyncResult }) {
       </CardHeader>
       <CardContent className="space-y-5">
         {!vault.hasVault ? (
-          <div className="rounded-3xl border border-dashed border-border bg-white/60 p-6 text-sm text-muted-foreground">
+          <div className="rounded-3xl border border-dashed border-border bg-white/60 dark:bg-card/70 p-6 text-sm text-muted-foreground">
             Create a Security Vault before using encrypted platform credentials.
           </div>
         ) : !vault.isUnlocked ? (
@@ -362,7 +362,7 @@ function VaultPlatformExportPanel({ syncResult }: { syncResult: SyncResult }) {
             }}
           />
         ) : accounts.length === 0 ? (
-          <div className="rounded-3xl border border-dashed border-border bg-white/60 p-6 text-sm text-muted-foreground">
+          <div className="rounded-3xl border border-dashed border-border bg-white/60 dark:bg-card/70 p-6 text-sm text-muted-foreground">
             Add Mailchimp, Brevo, HubSpot, Beehiiv, or ActiveCampaign credentials to
             the unlocked vault before exporting.
           </div>
@@ -375,7 +375,7 @@ function VaultPlatformExportPanel({ syncResult }: { syncResult: SyncResult }) {
                 </label>
                 <select
                   id="vault-platform-account"
-                  className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                  className="flex h-11 w-full rounded-2xl border border-input bg-white/85 dark:bg-card/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
                   value={selectedAccountId}
                   onChange={(event) => setSelectedAccountId(event.target.value)}
                 >
@@ -392,7 +392,7 @@ function VaultPlatformExportPanel({ syncResult }: { syncResult: SyncResult }) {
                 </label>
                 <select
                   id="vault-platform-destination-type"
-                  className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                  className="flex h-11 w-full rounded-2xl border border-input bg-white/85 dark:bg-card/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
                   value={destinationType}
                   onChange={(event) =>
                     setDestinationType(event.target.value as IntegrationDestinationType)
@@ -411,7 +411,7 @@ function VaultPlatformExportPanel({ syncResult }: { syncResult: SyncResult }) {
                 </label>
                 <input
                   id="vault-platform-destination"
-                  className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                  className="flex h-11 w-full rounded-2xl border border-input bg-white/85 dark:bg-card/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
                   value={destinationName}
                   onChange={(event) => setDestinationName(event.target.value)}
                 />
@@ -645,7 +645,7 @@ export function KitSyncPanel({ syncResult }: { syncResult: SyncResult }) {
             </label>
             <select
               id="kit-account"
-              className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+              className="flex h-11 w-full rounded-2xl border border-input bg-white/85 dark:bg-card/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
               value={selectedAccountId}
               onChange={(event) => setSelectedAccountId(event.target.value)}
             >
@@ -665,7 +665,7 @@ export function KitSyncPanel({ syncResult }: { syncResult: SyncResult }) {
             </label>
             <select
               id="destination-type"
-              className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+              className="flex h-11 w-full rounded-2xl border border-input bg-white/85 dark:bg-card/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
               value={destinationType}
               onChange={(event) => setDestinationType(event.target.value as DestinationType)}
             >
@@ -681,7 +681,7 @@ export function KitSyncPanel({ syncResult }: { syncResult: SyncResult }) {
               </label>
               <select
                 id="kit-tag"
-                className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                className="flex h-11 w-full rounded-2xl border border-input bg-white/85 dark:bg-card/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
                 disabled={!selectedAccountId || loadingDestinations}
                 value={selectedTagId}
                 onChange={(event) => setSelectedTagId(event.target.value)}
@@ -703,7 +703,7 @@ export function KitSyncPanel({ syncResult }: { syncResult: SyncResult }) {
               </label>
               <select
                 id="kit-form"
-                className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                className="flex h-11 w-full rounded-2xl border border-input bg-white/85 dark:bg-card/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
                 disabled={!selectedAccountId || loadingDestinations}
                 value={selectedFormId}
                 onChange={(event) => setSelectedFormId(event.target.value)}
@@ -722,19 +722,19 @@ export function KitSyncPanel({ syncResult }: { syncResult: SyncResult }) {
         </div>
 
         <div className="grid gap-3 text-sm text-muted-foreground md:grid-cols-3">
-          <div className="rounded-3xl border border-border/70 bg-white/75 p-4">
+          <div className="rounded-3xl border border-border/70 bg-white/75 dark:bg-card/75 p-4">
             <div className="text-2xl font-semibold text-foreground">
               {syncResult.allContacts.length}
             </div>
             contacts ready for cleaning
           </div>
-          <div className="rounded-3xl border border-border/70 bg-white/75 p-4">
+          <div className="rounded-3xl border border-border/70 bg-white/75 dark:bg-card/75 p-4">
             <div className="text-2xl font-semibold text-foreground">
               {syncResult.folders.length}
             </div>
             synced folders
           </div>
-          <div className="rounded-3xl border border-border/70 bg-white/75 p-4">
+          <div className="rounded-3xl border border-border/70 bg-white/75 dark:bg-card/75 p-4">
             <div className="text-2xl font-semibold text-foreground">
               {selectedAccount?.apiVersion.toUpperCase() ?? "-"}
             </div>
@@ -776,7 +776,7 @@ export function KitSyncPanel({ syncResult }: { syncResult: SyncResult }) {
 
         {showModal ? (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/30 px-4 backdrop-blur-sm">
-            <div className="max-h-[82vh] w-full max-w-3xl overflow-hidden rounded-3xl border border-border bg-white shadow-xl">
+            <div className="max-h-[82vh] w-full max-w-3xl overflow-hidden rounded-3xl border border-border bg-white dark:bg-card shadow-xl">
               <div className="flex items-start justify-between gap-4 border-b border-border/70 p-5">
                 <div>
                   <h3 className="text-xl font-semibold">Export Contacts to Kit</h3>
@@ -805,7 +805,7 @@ export function KitSyncPanel({ syncResult }: { syncResult: SyncResult }) {
 
                 {summary ? (
                   <>
-                    <div className="rounded-2xl border border-border/70 bg-white/80 p-4 text-sm">
+                    <div className="rounded-2xl border border-border/70 bg-white/80 dark:bg-card/80 p-4 text-sm">
                       <div className="font-semibold">{summary.kitAccountName}</div>
                       <div className="text-muted-foreground">
                         {summary.destinationType} / {summary.destinationName}
@@ -822,7 +822,7 @@ export function KitSyncPanel({ syncResult }: { syncResult: SyncResult }) {
                       ].map(([label, value]) => (
                         <div
                           key={label}
-                          className="rounded-2xl border border-border/70 bg-white/80 p-4"
+                          className="rounded-2xl border border-border/70 bg-white/80 dark:bg-card/80 p-4"
                         >
                           <div className="text-2xl font-semibold">{value}</div>
                           <div className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
@@ -833,7 +833,7 @@ export function KitSyncPanel({ syncResult }: { syncResult: SyncResult }) {
                     </div>
                   </>
                 ) : (
-                  <div className="rounded-3xl border border-dashed border-border bg-white/60 p-8 text-center text-sm text-muted-foreground">
+                  <div className="rounded-3xl border border-dashed border-border bg-white/60 dark:bg-card/70 p-8 text-center text-sm text-muted-foreground">
                     Uploading in batches. This can take a moment for larger contact lists.
                   </div>
                 )}

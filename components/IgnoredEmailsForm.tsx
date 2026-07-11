@@ -196,11 +196,11 @@ export function IgnoredEmailsForm() {
         ) : null}
 
         {loading ? (
-          <div className="rounded-3xl border border-dashed border-border bg-white/60 p-6 text-center text-sm text-muted-foreground">
+          <div className="rounded-3xl border border-dashed border-border bg-white/60 dark:bg-card/70 p-6 text-center text-sm text-muted-foreground">
             Loading ignored emails...
           </div>
         ) : ignoredEmails.length === 0 ? (
-          <div className="rounded-3xl border border-dashed border-border bg-white/60 p-6 text-center text-sm text-muted-foreground">
+          <div className="rounded-3xl border border-dashed border-border bg-white/60 dark:bg-card/70 p-6 text-center text-sm text-muted-foreground">
             No ignored emails yet.
           </div>
         ) : (
@@ -208,7 +208,7 @@ export function IgnoredEmailsForm() {
             {ignoredEmails.map((item) => (
               <div
                 key={item.id}
-                className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/70 bg-white/85 px-4 py-3"
+                className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/70 bg-white/85 dark:bg-card/85 px-4 py-3"
               >
                 <span className="text-sm font-medium">{item.email}</span>
                 <Button

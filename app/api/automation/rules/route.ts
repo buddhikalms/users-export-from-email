@@ -4,6 +4,7 @@ import {
   buildAutomationRulePayload,
   getAutomationSchedulePreset,
   getNextRunFromSchedule,
+  parseMonthlyScheduleDay,
 } from "@/lib/automation";
 import { db } from "@/lib/db";
 import { getVerifiedSessionUserId, staleSessionMessage } from "@/lib/session-user";
@@ -29,7 +30,9 @@ export async function POST(request: Request) {
     }
 
     const schedulePreset = getAutomationSchedulePreset(parsed.data.schedule);
-    const schedule = schedulePreset?.schedule ?? parsed.data.schedule ?? null;
+    const schedule = parseMonthlyScheduleDay(parsed.data.schedule)
+      ? parsed.data.schedule
+      : schedulePreset?.schedule ?? parsed.data.schedule ?? null;
     const nextRunAt = parsed.data.nextRunAt
       ? new Date(parsed.data.nextRunAt)
       : getNextRunFromSchedule(schedule);

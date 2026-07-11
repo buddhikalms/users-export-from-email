@@ -37,12 +37,12 @@ export function VaultStatus({
         </Badge>
       </CardHeader>
       <CardContent className="grid gap-4 md:grid-cols-[1fr_1fr_220px_auto]">
-        <div className="rounded-2xl border border-border/70 bg-white/75 p-4">
+        <div className="rounded-2xl border border-border/70 bg-white/75 dark:bg-card/75 p-4">
           <ShieldCheck className="mb-2 h-4 w-4 text-primary" />
           <div className="text-2xl font-semibold">{emailAccountCount}</div>
           <div className="text-sm text-muted-foreground">Email accounts</div>
         </div>
-        <div className="rounded-2xl border border-border/70 bg-white/75 p-4">
+        <div className="rounded-2xl border border-border/70 bg-white/75 dark:bg-card/75 p-4">
           <ShieldCheck className="mb-2 h-4 w-4 text-primary" />
           <div className="text-2xl font-semibold">{marketingAccountCount}</div>
           <div className="text-sm text-muted-foreground">Marketing accounts</div>
@@ -53,7 +53,7 @@ export function VaultStatus({
           </label>
           <select
             id="vault-auto-lock"
-            className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+            className="flex h-11 w-full rounded-2xl border border-input bg-white/85 dark:bg-card/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
             value={autoLock}
             onChange={(event) => onAutoLockChange(Number(event.target.value))}
           >

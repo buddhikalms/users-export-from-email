@@ -441,18 +441,18 @@ export function ConnectionForm() {
         </CardHeader>
         <CardContent className="space-y-4">
           {loadingAccounts ? (
-            <div className="rounded-3xl border border-dashed border-border bg-white/60 p-8 text-center text-sm text-muted-foreground">
+            <div className="rounded-3xl border border-dashed border-border bg-white/60 dark:bg-card/70 p-8 text-center text-sm text-muted-foreground">
               Loading saved accounts...
             </div>
           ) : savedAccounts.length === 0 ? (
-            <div className="rounded-3xl border border-dashed border-border bg-white/60 p-8 text-center text-sm text-muted-foreground">
+            <div className="rounded-3xl border border-dashed border-border bg-white/60 dark:bg-card/70 p-8 text-center text-sm text-muted-foreground">
               No email accounts are saved yet. Use the form to add your first one.
             </div>
           ) : (
             savedAccounts.map((account) => (
               <div
                 key={account.id}
-                className="rounded-[1.5rem] border border-white/70 bg-white/85 p-5"
+                className="rounded-[1.5rem] border border-white/70 bg-white/85 dark:bg-card/85 p-5"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="space-y-2">
@@ -509,7 +509,7 @@ export function ConnectionForm() {
         </CardHeader>
         <CardContent className="space-y-4">
           {!vault.hasVault ? (
-            <div className="rounded-3xl border border-dashed border-border bg-white/60 p-6 text-sm text-muted-foreground">
+            <div className="rounded-3xl border border-dashed border-border bg-white/60 dark:bg-card/70 p-6 text-sm text-muted-foreground">
               No vault exists yet. Create one from the Security Vault page.
             </div>
           ) : !vault.isUnlocked ? (
@@ -522,7 +522,7 @@ export function ConnectionForm() {
             vault.vaultData.emailAccounts.map((account) => (
               <div
                 key={account.id}
-                className="flex flex-wrap items-start justify-between gap-3 rounded-[1.5rem] border border-white/70 bg-white/85 p-5"
+                className="flex flex-wrap items-start justify-between gap-3 rounded-[1.5rem] border border-white/70 bg-white/85 dark:bg-card/85 p-5"
               >
                 <div>
                   <h3 className="text-lg font-semibold">{account.name}</h3>
@@ -538,7 +538,7 @@ export function ConnectionForm() {
               </div>
             ))
           ) : (
-            <div className="rounded-3xl border border-dashed border-border bg-white/60 p-6 text-sm text-muted-foreground">
+            <div className="rounded-3xl border border-dashed border-border bg-white/60 dark:bg-card/70 p-6 text-sm text-muted-foreground">
               No email credentials are saved in the unlocked vault.
             </div>
           )}
@@ -563,7 +563,7 @@ export function ConnectionForm() {
               <Label htmlFor="provider">Email provider</Label>
               <select
                 id="provider"
-                className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                className="flex h-11 w-full rounded-2xl border border-input bg-white/85 dark:bg-card/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
                 value={providerId}
                 onChange={(event) =>
                   applyProviderPreset(event.target.value as ProviderPreset["id"])
@@ -653,7 +653,7 @@ export function ConnectionForm() {
               <Label htmlFor="security">Security type</Label>
               <select
                 id="security"
-                className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                className="flex h-11 w-full rounded-2xl border border-input bg-white/85 dark:bg-card/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
                 value={form.security}
                 onChange={(event) =>
                   updateField("security", event.target.value as FormState["security"])
