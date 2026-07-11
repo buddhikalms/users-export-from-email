@@ -6,15 +6,9 @@ import { PricingDetails } from "@/components/marketing/PricingDetails";
 import { Section, SectionIntro } from "@/components/marketing/Section";
 
 export const metadata: Metadata = {
-<<<<<<< HEAD
   title: "Pricing - OMAZYNC",
   description:
     "Compare Starter, Professional, Agency, and Enterprise plans for OMAZYNC.",
-=======
-  title: "Pricing - Omazync",
-  description:
-    "Compare Free, Starter, Professional, Business, and Enterprise Email Exporter plans and add-ons from Omazync.",
->>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
 };
 
 export default function PricingPage() {

@@ -14,11 +14,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-<<<<<<< HEAD
   title: "OMAZYNC - Extract, Clean & Sync Email Contacts",
-=======
-  title: "Omazync - Extract, Clean & Sync Email Contacts",
->>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
   description:
     "Extract contacts from Outlook and IMAP mailboxes, clean duplicates, export to Excel, and sync to Kit, Zoho Campaigns, and Brevo.",
 };

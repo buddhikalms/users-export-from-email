@@ -33,21 +33,13 @@ export function WorkflowAnimation() {
             }
             transition={{ duration: 1.5, delay: index * 1.15, repeat: Infinity, repeatDelay: 5.4, ease: "easeInOut" }}
           >
-<<<<<<< HEAD
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-secondary/10 text-secondary">
-=======
             <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-brand-blue/10 text-brand-blue">
->>>>>>> 218bcf8 (feature : load balance)
               <Icon className="h-4 w-4" />
             </span>
             <span className="text-xs font-semibold leading-4 text-slate-700">{label}</span>
             {index < steps.length - 1 ? (
               <motion.span
-<<<<<<< HEAD
-                className="absolute -right-2 top-1/2 z-10 hidden h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-secondary md:block"
-=======
                 className="absolute -right-2 top-1/2 z-10 hidden h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-brand-blue md:block"
->>>>>>> 218bcf8 (feature : load balance)
                 animate={reduceMotion ? undefined : { x: [-3, 5], opacity: [0, 1, 0] }}
                 transition={{ duration: 1.1, delay: index * 1.15 + 0.5, repeat: Infinity, repeatDelay: 5.8 }}
               />

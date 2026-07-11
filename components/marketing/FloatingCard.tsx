@@ -22,15 +22,9 @@ export function FloatingCard({
 }) {
   const reduceMotion = useReducedMotion();
   const tones = {
-<<<<<<< HEAD
-    blue: "bg-secondary/10 text-secondary",
-    cyan: "bg-primary/10 text-primary",
-    emerald: "bg-primary/10 text-primary",
-=======
     blue: "bg-brand-blue/10 text-brand-blue",
     cyan: "bg-brand-turquoise/10 text-brand-turquoise",
     emerald: "bg-brand-purple/10 text-brand-purple",
->>>>>>> 218bcf8 (feature : load balance)
   };
 
   return (

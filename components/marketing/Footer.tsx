@@ -43,20 +43,13 @@ export function MarketingFooter() {
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.1fr_2fr] lg:px-8">
         <div>
           <Link className="flex items-center gap-3 font-semibold" href="/">
-<<<<<<< HEAD
             <Image
-              alt="Omazync"
+              alt="OMAZYNC"
               className="h-10 w-36 rounded-md object-cover"
               height={1024}
               src="/Omazync-logo.png"
               width={1536}
             />
-=======
-            <span className="grid h-9 w-9 place-items-center rounded-xl bg-slate-950 text-white dark:bg-white dark:text-slate-950">
-              <Send className="h-4 w-4" />
-            </span>
-            <span>Omazync</span>
->>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
           </Link>
           <p className="mt-4 max-w-sm text-sm leading-6 text-slate-600 dark:text-slate-300">
             Extract. Clean. Sync. Turn Outlook and IMAP folders into clean, marketing-ready contact data.
@@ -78,11 +71,7 @@ export function MarketingFooter() {
         </div>
       </div>
       <div className="mx-auto flex max-w-7xl flex-col gap-3 border-t border-slate-200 px-4 py-6 text-xs text-slate-500 dark:border-white/10 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-<<<<<<< HEAD
-        <span>© 2026 OMAZYNC. All rights reserved.</span>
-=======
-        <span>© 2026 Omazync. All rights reserved.</span>
->>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
+        <span>(c) 2026 OMAZYNC. All rights reserved.</span>
         <span>Privacy-first email contact extraction and marketing sync.</span>
       </div>
     </footer>

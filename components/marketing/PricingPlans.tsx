@@ -98,7 +98,7 @@ const addOns: AddOn[] = [
     id: "api-webhooks",
     name: "API access + webhooks",
     price: 8,
-    description: "Connect Omazync to custom workflows.",
+    description: "Connect OMAZYNC to custom workflows.",
   },
 ];
 
@@ -183,7 +183,7 @@ const plans: Plan[] = [
       { icon: Building2, title: "Shared workspace", description: "Keep shared contact operations in one coordinated workspace.", group: "Workflow" },
       { icon: Layers3, title: "Multiple marketing accounts", description: "Connect multiple destinations for brands or clients.", group: "Workflow" },
       { icon: Clock3, title: "Scheduled synchronization", description: "Run recurring syncs without manual starts.", group: "Workflow" },
-      { icon: Workflow, title: "API access and webhooks", description: "Connect Omazync to custom and event-driven workflows.", group: "Workflow" },
+      { icon: Workflow, title: "API access and webhooks", description: "Connect OMAZYNC to custom and event-driven workflows.", group: "Workflow" },
       { icon: ShieldCheck, title: "Activity logs", description: "Track important workspace and synchronization activity.", group: "Support" },
       { icon: Headphones, title: "Premium support", description: "Receive premium assistance for critical workflows.", group: "Support" },
     ],
@@ -231,7 +231,7 @@ export function PricingPlans() {
           Choose a plan to explore exactly what is included and excluded.
         </p>
         <span className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600 shadow-sm dark:border-white/10 dark:bg-white/[0.04] dark:text-slate-300">
-          Monthly pricing · Cancel anytime
+          Monthly pricing - Cancel anytime
         </span>
       </div>
 
@@ -252,7 +252,7 @@ export function PricingPlans() {
               className={cn(
                 "group relative flex min-h-[350px] flex-col overflow-hidden rounded-3xl border p-5 text-left transition-[border-color,box-shadow,background-color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-950",
                 active
-                  ? "border-brand-blue bg-white shadow-[0_20px_60px_-28px_rgba(4,130,230,0.55)] dark:bg-brand-blue/[0.08]"
+                  ? "border-brand-blue bg-white shadow-[0_20px_60px_-28px_rgba(0,127,212,0.55)] dark:bg-brand-blue/[0.08]"
                   : "border-slate-200 bg-white/70 hover:border-brand-light-purple hover:bg-white dark:border-white/10 dark:bg-white/[0.025] dark:hover:border-brand-blue/40",
               )}
             >
@@ -279,7 +279,7 @@ export function PricingPlans() {
               </span>
               <span className="mt-5 text-sm leading-6 text-slate-600 dark:text-slate-300">{plan.summary}</span>
               <span className="mt-auto flex items-center gap-1 pt-5 text-sm font-semibold text-brand-blue dark:text-brand-light-purple">
-                {active ? "Selected — see details below" : "Explore this plan"}
+                {active ? "Selected - see details below" : "Explore this plan"}
                 <ChevronRight className={cn("h-4 w-4 transition-transform", active && "rotate-90")} />
               </span>
               {active ? <motion.span layoutId="selected-plan-line" className="absolute inset-x-6 bottom-0 h-1 rounded-t-full bg-brand-blue" /> : null}
@@ -367,7 +367,7 @@ export function PricingPlans() {
                         {selected.slug === "enterprise" ? "Request a custom quote" : "Start free"}<ArrowRight className="h-4 w-4" />
                       </Link>
                     </Button>
-                    <p className="mt-3 text-center text-xs text-slate-400">{selected.slug === "enterprise" ? "We’ll shape the solution with you." : "No credit card required."}</p>
+                    <p className="mt-3 text-center text-xs text-slate-400">{selected.slug === "enterprise" ? "We'll shape the solution with you." : "No credit card required."}</p>
                   </>
                 ) : (
                   <PayPalCheckout plan={selected.slug} interval="monthly" />
@@ -377,7 +377,7 @@ export function PricingPlans() {
               <div className="p-6 sm:p-8">
                 <div className="mb-6 flex items-center justify-between gap-4">
                   <div>
-                    <p className="font-semibold">What’s included</p>
+                    <p className="font-semibold">What's included</p>
                     <p className="mt-1 text-sm text-slate-400">Everything in the previous plan, plus the capabilities below.</p>
                   </div>
                   <span className="hidden rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-slate-300 sm:block">{selected.features.length} highlighted features</span>

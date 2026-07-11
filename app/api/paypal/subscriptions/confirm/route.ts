@@ -38,7 +38,7 @@ export async function POST(request: Request) {
     const selection = findPlanByPayPalId(subscription.plan_id);
     if (!selection) {
       return NextResponse.json(
-        { error: "This PayPal plan does not belong to Omazync." },
+        { error: "This PayPal plan does not belong to OMAZYNC." },
         { status: 400 },
       );
     }

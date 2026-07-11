@@ -18,11 +18,7 @@ import { FeatureCard } from "@/components/marketing/FeatureCard";
 import { Section, SectionIntro } from "@/components/marketing/Section";
 
 export const metadata: Metadata = {
-<<<<<<< HEAD
   title: "Features - OMAZYNC",
-=======
-  title: "Features - Omazync",
->>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
   description:
     "Explore Outlook sync, folder-wise extraction, duplicate cleanup, Excel exports, marketing sync, analytics, and secure credential vault features.",
 };
@@ -48,11 +44,7 @@ export default function FeaturesPage() {
         <SectionIntro
           eyebrow="Features"
           title="A complete workflow for inbox-to-platform contact operations."
-<<<<<<< HEAD
           description="OMAZYNC handles extraction, cleaning, export, sync, security, history, and analytics in one focused workspace."
-=======
-          description="Omazync handles extraction, cleaning, export, sync, security, history, and analytics in one focused workspace."
->>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
         />
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {features.map(([title, description, Icon]) => (

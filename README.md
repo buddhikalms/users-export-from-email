@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 # OMAZYNC
-=======
-# Omazync
->>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
 
 Next.js 16 App Router application for securely managing multiple email IMAP accounts, extracting unique contacts from selected folders, and exporting folder-wise results to Excel.
 
@@ -159,11 +155,7 @@ Zoho paid organization/domain accounts:
 The Kit sync cleans and normalizes emails, skips common system senders, dedupes contacts, upserts subscribers in Kit, applies selected tags, optionally adds subscribers to a selected form, retries failed uploads once, and returns a summary with upload logs.
 
 
-<<<<<<< HEAD
 ## Keywords - search on OMAZYNC
-=======
-## Keywords - search on Omazync
->>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
 Subject wise filter and keywords filter
 ## PayPal subscriptions
 
@@ -171,7 +163,7 @@ Paid pricing plans use PayPal recurring subscriptions. Start in the PayPal
 sandbox, create one `SERVICE` product, then create these three active billing
 plans:
 
-| Omazync plan | Billing frequency | Price |
+| OMAZYNC plan | Billing frequency | Price |
 | --- | --- | ---: |
 | Starter | Monthly | $9 |
 | Professional | Monthly | $19 |

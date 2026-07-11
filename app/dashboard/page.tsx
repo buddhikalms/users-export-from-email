@@ -12,11 +12,7 @@ import {
 } from "@/lib/dashboard-data";
 
 export const metadata = {
-<<<<<<< HEAD
   title: "Dashboard - OMAZYNC",
-=======
-  title: "Dashboard - Omazync",
->>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
   description: "Monitor mailbox syncs, extracted contacts, exports, and marketing integrations.",
 };
 

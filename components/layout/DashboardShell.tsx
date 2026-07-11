@@ -213,7 +213,7 @@ function Sidebar({
       <div className="flex h-16 items-center justify-between border-b border-border/70 px-4">
         <Link className="flex min-w-0 items-center gap-3" href={"/dashboard" as any}>
           <Image
-            alt="Omazync"
+            alt="OMAZYNC"
             className={cn(
               "h-10 shrink-0 rounded-md object-cover",
               collapsed ? "w-12 object-[25%_50%]" : "w-32",
@@ -225,10 +225,7 @@ function Sidebar({
           />
           {!collapsed ? (
             <div className="min-w-0">
-<<<<<<< HEAD
-=======
-              <div className="truncate text-sm font-semibold">Omazync</div>
->>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
+              <div className="truncate text-sm font-semibold">OMAZYNC</div>
               <div className="truncate text-xs text-muted-foreground">Lead extraction CRM</div>
             </div>
           ) : null}

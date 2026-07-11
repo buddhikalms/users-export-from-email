@@ -60,15 +60,9 @@ export function Hero() {
               }}
               transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
             >
-<<<<<<< HEAD
-              The Om Place For{" "}
-              <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                Zen Contact Management
-=======
               Discover Valuable Contacts{" "}
               <span className="bg-gradient-to-r from-brand-purple via-brand-blue to-brand-turquoise bg-clip-text text-transparent">
                 Hidden Inside Your Inbox
->>>>>>> 218bcf8 (feature : load balance)
               </span>
             </motion.h1>
             <motion.p
@@ -78,11 +72,7 @@ export function Hero() {
                 show: { opacity: 1, y: 0 },
               }}
             >
-<<<<<<< HEAD
               OMAZYNC helps businesses automatically extract valuable contacts
-=======
-              Omazync helps businesses automatically extract valuable contacts
->>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
               from Outlook, Microsoft 365, Exchange, and IMAP email accounts,
               remove duplicates, organize contacts, and sync directly to your
               favorite marketing platforms.

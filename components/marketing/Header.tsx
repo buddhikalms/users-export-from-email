@@ -30,28 +30,14 @@ export function MarketingHeader({ signedIn = false }: { signedIn?: boolean }) {
     <header className="sticky top-0 z-50 border-b border-brand-blue/15 bg-brand-white/85 backdrop-blur-xl dark:border-white/10 dark:bg-brand-navy/85">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link className="flex items-center gap-3 font-semibold" href="/">
-<<<<<<< HEAD
-<<<<<<< HEAD
           <Image
-            alt="Omazync"
+            alt="OMAZYNC"
             className="h-10 w-36 rounded-md object-cover"
             height={1024}
             priority
             src="/Omazync-logo.png"
             width={1536}
           />
-=======
-          <span className="grid h-9 w-9 place-items-center rounded-xl bg-slate-950 text-white shadow-sm dark:bg-white dark:text-slate-950">
-            <Send className="h-4 w-4" />
-          </span>
-          <span>Omazync</span>
->>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
-=======
-          <span className="grid h-9 w-9 place-items-center rounded-xl bg-brand-navy text-white shadow-sm dark:bg-white dark:text-brand-navy">
-            <Send className="h-4 w-4" />
-          </span>
-          <span className="text-brand-navy dark:text-white">Omazync</span>
->>>>>>> 218bcf8 (feature : load balance)
         </Link>
 
         <nav className="hidden items-center gap-7 text-sm font-medium text-brand-navy/65 dark:text-slate-300 lg:flex">
@@ -86,11 +72,7 @@ export function MarketingHeader({ signedIn = false }: { signedIn?: boolean }) {
           </Button>
           <Button
             asChild
-<<<<<<< HEAD
-            className="bg-gradient-to-r from-slate-950 to-secondary text-white hover:opacity-90"
-=======
             className="bg-gradient-to-r from-brand-turquoise to-brand-blue text-white hover:opacity-90"
->>>>>>> 218bcf8 (feature : load balance)
           >
             <Link href={(signedIn ? "/dashboard" : "/register") as any}>
               Start Free
@@ -135,17 +117,13 @@ export function MarketingHeader({ signedIn = false }: { signedIn?: boolean }) {
               transition={{ type: "spring", damping: 28, stiffness: 260 }}
             >
               <div className="flex items-center justify-between">
-<<<<<<< HEAD
                 <Image
-                  alt="Omazync"
+                  alt="OMAZYNC"
                   className="h-10 w-36 rounded-md object-cover"
                   height={1024}
                   src="/Omazync-logo.png"
                   width={1536}
                 />
-=======
-                <span className="font-semibold">Omazync</span>
->>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
                 <Button
                   size="sm"
                   variant="ghost"

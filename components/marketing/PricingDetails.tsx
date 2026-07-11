@@ -175,7 +175,7 @@ export function PricingDetails() {
         <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
           <div>
             <Sparkles className="h-7 w-7 text-brand-light-purple" />
-            <h2 className="mt-5 text-3xl font-bold tracking-tight sm:text-4xl">Why choose Omazync Email Exporter?</h2>
+            <h2 className="mt-5 text-3xl font-bold tracking-tight sm:text-4xl">Why choose OMAZYNC Email Exporter?</h2>
             <p className="mt-4 leading-7 text-slate-300">Discover, organize, export, and sync valuable contacts without locking your data away.</p>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -190,7 +190,7 @@ export function PricingDetails() {
         <div className="mt-10 flex flex-col items-start justify-between gap-5 border-t border-white/10 pt-8 sm:flex-row sm:items-center">
           <div>
             <p className="font-semibold">Need a custom solution?</p>
-            <p className="mt-1 text-sm text-slate-400">Let’s shape a multi-client, enterprise, or white-label deployment around you.</p>
+            <p className="mt-1 text-sm text-slate-400">Let's shape a multi-client, enterprise, or white-label deployment around you.</p>
           </div>
           <Button asChild className="bg-white text-slate-950 hover:bg-brand-blue/10">
             <Link href="/contact">Discuss your requirements <ArrowRight className="h-4 w-4" /></Link>

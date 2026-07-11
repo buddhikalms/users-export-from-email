@@ -11,10 +11,10 @@ const config: Config = {
     extend: {
       colors: {
         brand: {
-          turquoise: "#01BCB6",
-          blue: "#0482E6",
-          purple: "#5F1FF0",
-          "light-purple": "#A06EFB",
+          turquoise: "#03B7B2",
+          blue: "#007FD4",
+          purple: "#007FD4",
+          "light-purple": "#03B7B2",
           navy: "#050E34",
           white: "#FDFDFD",
         },
@@ -42,11 +42,7 @@ const config: Config = {
         sm: "calc(var(--radius) - 4px)",
       },
       boxShadow: {
-<<<<<<< HEAD
         glow: "0 30px 120px rgba(3, 183, 178, 0.18)",
-=======
-        glow: "0 30px 120px rgba(95, 31, 240, 0.18)",
->>>>>>> 218bcf8 (feature : load balance)
       },
       backgroundImage: {
         "hero-grid":

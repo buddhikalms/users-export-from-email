@@ -5,11 +5,7 @@ import { IntegrationCard } from "@/components/marketing/IntegrationCard";
 import { Section, SectionIntro } from "@/components/marketing/Section";
 
 export const metadata: Metadata = {
-<<<<<<< HEAD
   title: "Integrations - OMAZYNC",
-=======
-  title: "Integrations - Omazync",
->>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
   description:
     "Sync Outlook and IMAP contacts to Kit, Zoho Campaigns, and Brevo.",
 };
@@ -37,11 +33,7 @@ export default function IntegrationsPage() {
         <SectionIntro
           eyebrow="Integrations"
           title="Connect your inbox to the marketing platforms that run your growth."
-<<<<<<< HEAD
           description="OMAZYNC supports direct syncs, queue-ready workflows, and clean exports for teams using multiple accounts and client destinations."
-=======
-          description="Omazync supports direct syncs, queue-ready workflows, and clean exports for teams using multiple accounts and client destinations."
->>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
         />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {integrations.map(([name, description, status]) => (

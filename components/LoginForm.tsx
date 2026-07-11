@@ -45,11 +45,7 @@ export function LoginForm({ googleAuthEnabled }: { googleAuthEnabled: boolean })
     <Card className="w-full border-slate-200/80 bg-white/95 shadow-[0_30px_80px_-32px_rgba(15,23,42,0.35)] dark:border-white/10 dark:bg-slate-900/90">
       <CardHeader className="px-7 pb-5 pt-8 text-center sm:px-8">
         <CardTitle className="text-3xl text-slate-950 dark:text-white">Sign In</CardTitle>
-<<<<<<< HEAD
         <CardDescription>Use your OMAZYNC workspace credentials.</CardDescription>
-=======
-        <CardDescription>Use your Omazync workspace credentials.</CardDescription>
->>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
       </CardHeader>
       <CardContent className="px-7 pb-8 sm:px-8">
         <GoogleAuthButton enabled={googleAuthEnabled} />
@@ -84,20 +80,12 @@ export function LoginForm({ googleAuthEnabled }: { googleAuthEnabled: boolean })
             </Alert>
           ) : null}
 
-<<<<<<< HEAD
-          <Button className="h-12 w-full rounded-xl bg-primary text-white shadow-lg shadow-primary/20 hover:bg-primary/90" disabled={loading} type="submit">
-=======
           <Button className="h-12 w-full rounded-xl bg-brand-turquoise shadow-lg shadow-brand-turquoise/15 hover:bg-brand-blue" disabled={loading} type="submit">
->>>>>>> 218bcf8 (feature : load balance)
             {loading ? "Signing in..." : "Sign In"}
           </Button>
           <p className="pt-1 text-center text-sm text-muted-foreground">
             Need an account?{" "}
-<<<<<<< HEAD
-            <Link className="font-semibold text-secondary hover:text-secondary dark:text-secondary" href="/register">Register</Link>
-=======
             <Link className="font-semibold text-brand-blue hover:text-brand-purple dark:text-brand-light-purple" href="/register">Register</Link>
->>>>>>> 218bcf8 (feature : load balance)
           </p>
         </form>
       </CardContent>

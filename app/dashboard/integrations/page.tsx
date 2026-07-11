@@ -7,11 +7,7 @@ import { launchIntegrationRegistry } from "@/lib/integrations/registry";
 import { prismaPlatformByIntegrationId } from "@/lib/integrations/platforms";
 
 export const metadata = {
-<<<<<<< HEAD
   title: "Integrations - OMAZYNC",
-=======
-  title: "Integrations - Omazync",
->>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
   description: "Manage connected marketing accounts and platform sync jobs.",
 };
 

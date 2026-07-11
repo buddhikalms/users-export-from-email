@@ -45,11 +45,7 @@ export function EcosystemDiagram() {
                 stroke="currentColor"
                 strokeDasharray="7 9"
                 strokeWidth="1.5"
-<<<<<<< HEAD
-                className="text-secondary dark:text-secondary"
-=======
                 className="text-brand-light-purple/80 dark:text-brand-blue/35"
->>>>>>> 218bcf8 (feature : load balance)
                 animate={reduceMotion ? undefined : { strokeDashoffset: [0, -32] }}
                 transition={{ duration: 3.5 + index * 0.08, repeat: Infinity, ease: "linear" }}
               />
@@ -59,27 +55,15 @@ export function EcosystemDiagram() {
 
         <div className="absolute left-1/2 top-1/2 z-20 h-48 w-48 -translate-x-1/2 -translate-y-1/2">
           <motion.div
-<<<<<<< HEAD
-            className="grid h-full w-full place-items-center rounded-full border border-secondary/25 bg-white text-center shadow-[0_0_0_16px_rgba(0,127,212,0.16),0_28px_80px_-24px_rgba(0,127,212,0.55)] dark:border-secondary/25 dark:bg-slate-900 dark:shadow-[0_0_0_16px_rgba(0,127,212,0.14),0_28px_80px_-24px_rgba(0,127,212,0.4)]"
-=======
-            className="grid h-full w-full place-items-center rounded-full border border-brand-blue/25 bg-white text-center shadow-[0_0_0_16px_rgba(1,188,182,0.12),0_28px_80px_-24px_rgba(4,130,230,0.55)] dark:border-brand-blue/30 dark:bg-slate-900 dark:shadow-[0_0_0_16px_rgba(95,31,240,0.14),0_28px_80px_-24px_rgba(4,130,230,0.4)]"
->>>>>>> 218bcf8 (feature : load balance)
+            className="grid h-full w-full place-items-center rounded-full border border-brand-blue/25 bg-white text-center shadow-[0_0_0_16px_rgba(3,183,178,0.12),0_28px_80px_-24px_rgba(0,127,212,0.55)] dark:border-brand-blue/30 dark:bg-slate-900 dark:shadow-[0_0_0_16px_rgba(0,127,212,0.14),0_28px_80px_-24px_rgba(0,127,212,0.4)]"
             animate={reduceMotion ? undefined : { scale: [1, 1.035, 1] }}
             transition={{ duration: 3.6, repeat: Infinity, ease: "easeInOut" }}
           >
             <div>
-<<<<<<< HEAD
-              <span className="mx-auto mb-3 grid h-10 w-10 place-items-center rounded-full bg-secondary text-white">
-=======
               <span className="mx-auto mb-3 grid h-10 w-10 place-items-center rounded-full bg-brand-blue text-white">
->>>>>>> 218bcf8 (feature : load balance)
                 <MailCheck className="h-5 w-5" />
               </span>
-<<<<<<< HEAD
               <p className="text-xl font-semibold text-slate-950 dark:text-white">OMAZYNC</p>
-=======
-              <p className="text-xl font-semibold text-slate-950 dark:text-white">Omazync</p>
->>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
               <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">one connected system</p>
             </div>
           </motion.div>
@@ -99,11 +83,7 @@ export function EcosystemDiagram() {
               transition={{ duration: 0.45, delay: index * 0.09, ease: [0.22, 1, 0.36, 1] }}
             >
               <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white/95 p-4 shadow-[0_16px_36px_-24px_rgba(15,23,42,0.45)] backdrop-blur dark:border-white/10 dark:bg-slate-900/95">
-<<<<<<< HEAD
-                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-secondary/10 text-secondary dark:bg-secondary/10 dark:text-secondary">
-=======
                 <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-brand-blue/10 text-brand-blue dark:bg-brand-blue/10 dark:text-brand-light-purple">
->>>>>>> 218bcf8 (feature : load balance)
                   <Icon className="h-4 w-4" />
                 </span>
                 <span className="text-sm font-semibold text-slate-800 dark:text-slate-100">{node.title}</span>
@@ -115,29 +95,13 @@ export function EcosystemDiagram() {
 
       <div className="grid gap-3 md:hidden">
         <motion.div
-<<<<<<< HEAD
           className="mb-3 rounded-3xl bg-gradient-to-br from-primary to-secondary p-7 text-center text-white shadow-xl"
           animate={reduceMotion ? undefined : { scale: [1, 1.02, 1] }}
           transition={{ duration: 3.6, repeat: Infinity, ease: "easeInOut" }}
         >
-<<<<<<< HEAD
           <MailCheck className="mx-auto h-6 w-6 text-secondary dark:text-white" />
           <p className="mt-3 text-xl font-semibold">OMAZYNC</p>
           <p className="mt-1 text-sm text-slate-300 dark:text-secondary">one connected system</p>
-=======
-          <MailCheck className="mx-auto h-6 w-6 text-blue-300 dark:text-white" />
-          <p className="mt-3 text-xl font-semibold">Omazync</p>
-          <p className="mt-1 text-sm text-slate-300 dark:text-blue-100">one connected system</p>
->>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
-=======
-          className="mb-3 rounded-3xl bg-slate-950 p-7 text-center text-white shadow-xl dark:bg-brand-blue"
-          animate={reduceMotion ? undefined : { scale: [1, 1.02, 1] }}
-          transition={{ duration: 3.6, repeat: Infinity, ease: "easeInOut" }}
-        >
-          <MailCheck className="mx-auto h-6 w-6 text-brand-light-purple dark:text-white" />
-          <p className="mt-3 text-xl font-semibold">Omazync</p>
-          <p className="mt-1 text-sm text-slate-300 dark:text-brand-light-purple">one connected system</p>
->>>>>>> 218bcf8 (feature : load balance)
         </motion.div>
         {nodes.map((node, index) => {
           const Icon = node.icon;
@@ -150,11 +114,7 @@ export function EcosystemDiagram() {
               viewport={{ once: true }}
               transition={{ delay: index * 0.06 }}
             >
-<<<<<<< HEAD
-              <span className="grid h-10 w-10 place-items-center rounded-xl bg-secondary/10 text-secondary dark:bg-secondary/10 dark:text-secondary">
-=======
               <span className="grid h-10 w-10 place-items-center rounded-xl bg-brand-blue/10 text-brand-blue dark:bg-brand-blue/10 dark:text-brand-light-purple">
->>>>>>> 218bcf8 (feature : load balance)
                 <Icon className="h-4 w-4" />
               </span>
               <span className="text-sm font-semibold text-slate-800 dark:text-slate-100">{node.title}</span>

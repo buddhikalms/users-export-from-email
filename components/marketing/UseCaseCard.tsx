@@ -17,11 +17,7 @@ export function UseCaseCard({
       </span>
       <h3 className="mt-6 text-lg font-semibold text-slate-950 dark:text-white">{title}</h3>
       <p className="mt-2 flex-1 text-sm leading-6 text-slate-600 dark:text-slate-300">{description}</p>
-<<<<<<< HEAD
-      <ArrowRight className="mt-5 h-4 w-4 text-secondary transition-transform group-hover:translate-x-1" />
-=======
       <ArrowRight className="mt-5 h-4 w-4 text-brand-blue transition-transform group-hover:translate-x-1" />
->>>>>>> 218bcf8 (feature : load balance)
     </article>
   );
 }

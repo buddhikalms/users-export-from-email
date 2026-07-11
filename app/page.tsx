@@ -31,11 +31,7 @@ import { UseCaseCard } from "@/components/marketing/UseCaseCard";
 import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
-<<<<<<< HEAD
   title: "OMAZYNC - Turn Your Inbox Into a Contact Database",
-=======
-  title: "Omazync - Turn Your Inbox Into a Contact Database",
->>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
   description:
     "Extract, clean, organize, export, and sync contacts from Outlook and IMAP mailboxes.",
 };
@@ -156,33 +152,19 @@ export default function MarketingHomePage() {
       </Section>
 
       <section className="relative border-y border-slate-200/70 bg-slate-50/80 py-20 dark:border-white/10 dark:bg-white/[0.025] lg:py-28">
-<<<<<<< HEAD
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,127,212,0.1),transparent_42%)]" />
-=======
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(4,130,230,0.1),transparent_42%)]" />
->>>>>>> 218bcf8 (feature : load balance)
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Reveal>
             <SectionIntro
-<<<<<<< HEAD
               eyebrow="OMAZYNC Ecosystem"
-=======
-              eyebrow="Omazync Ecosystem"
->>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
               title="Your inbox, connected to everything that comes next"
               description="Bring every contact workflow into one coordinated system."
             />
           </Reveal>
           <Reveal delay={0.1}>
-<<<<<<< HEAD
-            <div className="mx-auto -mt-3 max-w-4xl rounded-2xl border border-secondary/25 bg-secondary/10 px-5 py-4 text-center shadow-sm dark:border-secondary/25 dark:bg-secondary/10">
-              <p className="text-sm font-medium leading-6 text-slate-700 dark:text-slate-200 sm:text-base">
-                <span className="font-semibold text-secondary dark:text-secondary">
-=======
             <div className="mx-auto -mt-3 max-w-4xl rounded-2xl border border-brand-blue/25 bg-brand-blue/10 px-5 py-4 text-center shadow-sm dark:border-brand-blue/20 dark:bg-brand-blue/10">
               <p className="text-sm font-medium leading-6 text-slate-700 dark:text-slate-200 sm:text-base">
                 <span className="font-semibold text-brand-blue dark:text-brand-light-purple">
->>>>>>> 218bcf8 (feature : load balance)
                   One tool
                 </span>{" "}
                 to import and export email contacts, sync with email marketing
@@ -201,7 +183,7 @@ export default function MarketingHomePage() {
           <SectionIntro
             align="left"
             eyebrow="Immediate impact"
-            title="Four things you’ll feel on day one"
+            title="Four things you'll feel on day one"
             description="Less repetitive work, cleaner data, and a much shorter path from conversation to campaign."
           />
         </Reveal>
@@ -224,11 +206,7 @@ export default function MarketingHomePage() {
           <SectionIntro
             eyebrow="Made for real workflows"
             title="Built for teams that live in email"
-<<<<<<< HEAD
             description="Wherever valuable relationships arrive by email, OMAZYNC turns them into usable data."
-=======
-            description="Wherever valuable relationships arrive by email, Omazync turns them into usable data."
->>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
           />
         </Reveal>
         <Stagger className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -246,17 +224,7 @@ export default function MarketingHomePage() {
 
       <Section className="pb-20 pt-8 lg:pb-28">
         <Reveal>
-<<<<<<< HEAD
-          <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-primary to-secondary px-6 py-16 text-center text-white shadow-[0_32px_90px_-38px_rgba(0,127,212,0.55)] sm:px-12 lg:py-20">
-            <div className="absolute -left-24 -top-24 h-72 w-72 rounded-full bg-secondary/10 blur-3xl dark:bg-white/15" />
-            <div className="absolute -bottom-32 -right-20 h-80 w-80 rounded-full bg-primary/10 blur-3xl" />
-            <FileSpreadsheet className="relative mx-auto h-8 w-8 text-secondary dark:text-white" />
-            <h2 className="relative mx-auto mt-6 max-w-3xl text-3xl font-semibold tracking-tight sm:text-5xl">
-              Start discovering contacts hidden inside your inbox today.
-            </h2>
-            <p className="relative mx-auto mt-5 max-w-2xl text-slate-300 dark:text-secondary">
-=======
-          <div className="relative overflow-hidden rounded-[2rem] bg-slate-950 px-6 py-16 text-center text-white shadow-[0_32px_90px_-38px_rgba(4,130,230,0.55)] sm:px-12 lg:py-20 dark:bg-brand-blue">
+          <div className="relative overflow-hidden rounded-[2rem] bg-slate-950 px-6 py-16 text-center text-white shadow-[0_32px_90px_-38px_rgba(0,127,212,0.55)] sm:px-12 lg:py-20 dark:bg-brand-blue">
             <div className="absolute -left-24 -top-24 h-72 w-72 rounded-full bg-brand-blue/40 blur-3xl dark:bg-white/15" />
             <div className="absolute -bottom-32 -right-20 h-80 w-80 rounded-full bg-orange-400/20 blur-3xl" />
             <FileSpreadsheet className="relative mx-auto h-8 w-8 text-brand-light-purple dark:text-white" />
@@ -264,7 +232,6 @@ export default function MarketingHomePage() {
               Start discovering contacts hidden inside your inbox today.
             </h2>
             <p className="relative mx-auto mt-5 max-w-2xl text-slate-300 dark:text-brand-white">
->>>>>>> 218bcf8 (feature : load balance)
               Connect a mailbox, choose your folders, and build a cleaner
               contact database in minutes.
             </p>
@@ -273,22 +240,14 @@ export default function MarketingHomePage() {
                 asChild
                 size="lg"
                 variant="outline"
-<<<<<<< HEAD
-                className="border-white/20 bg-white/10 text-white hover:bg-white/20 dark:bg-white dark:text-secondary"
-=======
                 className="border-white/20 bg-white/10 text-white hover:bg-white/20 dark:bg-white dark:text-brand-blue"
->>>>>>> 218bcf8 (feature : load balance)
               >
                 <Link href="/contact">View Demo</Link>
               </Button>
               <Button
                 asChild
                 size="lg"
-<<<<<<< HEAD
-                className="bg-white text-slate-950 hover:bg-secondary/10 dark:bg-slate-950 dark:text-white"
-=======
                 className="bg-white text-slate-950 hover:bg-brand-blue/10 dark:bg-slate-950 dark:text-white"
->>>>>>> 218bcf8 (feature : load balance)
               >
                 <Link href="/register">
                   Get Started <ArrowRight className="h-4 w-4" />

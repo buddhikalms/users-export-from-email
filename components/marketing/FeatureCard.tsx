@@ -13,11 +13,7 @@ export function FeatureCard({
     <article
       className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm shadow-slate-200/50 dark:border-white/10 dark:bg-white/[0.04] dark:shadow-none"
     >
-<<<<<<< HEAD
-      <div className="grid h-11 w-11 place-items-center rounded-xl bg-secondary/10 text-secondary dark:bg-secondary/10 dark:text-secondary">
-=======
       <div className="grid h-11 w-11 place-items-center rounded-xl bg-brand-blue/10 text-brand-blue dark:bg-brand-blue/10 dark:text-brand-light-purple">
->>>>>>> 218bcf8 (feature : load balance)
         <Icon className="h-5 w-5" />
       </div>
       <h3 className="mt-5 text-lg font-semibold text-slate-950 dark:text-white">{title}</h3>

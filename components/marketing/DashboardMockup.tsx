@@ -44,11 +44,7 @@ export function DashboardMockup() {
         <div className="flex items-center justify-between border-b border-slate-200 bg-slate-50 px-5 py-4 dark:border-white/10 dark:bg-slate-950">
           <div>
             <div className="text-sm font-semibold text-slate-950 dark:text-white">
-<<<<<<< HEAD
               OMAZYNC Dashboard
-=======
-              Omazync Dashboard
->>>>>>> 5d8ace5 (security: fix vulnerbilities, load testing)
             </div>
             <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">
               Scan mailbox folders, review contacts, then export or sync.
@@ -71,20 +67,12 @@ export function DashboardMockup() {
                   key={title}
                   className={
                     index === 2
-<<<<<<< HEAD
-                      ? "rounded-xl border border-secondary/25 bg-secondary/10 p-3 dark:border-secondary/25 dark:bg-secondary/10"
-=======
                       ? "rounded-xl border border-brand-blue/25 bg-brand-blue/10 p-3 dark:border-brand-light-purple/20 dark:bg-brand-blue/10"
->>>>>>> 218bcf8 (feature : load balance)
                       : "rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-white/10 dark:bg-white/[0.04]"
                   }
                 >
                   <div className="flex items-center gap-2">
-<<<<<<< HEAD
-                    <Icon className="h-4 w-4 text-secondary dark:text-secondary" />
-=======
                     <Icon className="h-4 w-4 text-brand-blue dark:text-brand-light-purple" />
->>>>>>> 218bcf8 (feature : load balance)
                     <span className="text-sm font-semibold text-slate-950 dark:text-white">
                       {title}
                     </span>
@@ -104,11 +92,7 @@ export function DashboardMockup() {
                   key={label}
                   className="rounded-xl border border-slate-200 bg-white p-4 dark:border-white/10 dark:bg-white/[0.04]"
                 >
-<<<<<<< HEAD
-                  <Icon className="h-4 w-4 text-secondary dark:text-secondary" />
-=======
                   <Icon className="h-4 w-4 text-brand-blue dark:text-brand-light-purple" />
->>>>>>> 218bcf8 (feature : load balance)
                   <div className="mt-3 text-2xl font-semibold text-slate-950 dark:text-white">
                     {value}
                   </div>
@@ -158,11 +142,7 @@ export function DashboardMockup() {
                             {folder}
                           </td>
                           <td className="px-4 py-3">
-<<<<<<< HEAD
-                            <span className="rounded-full bg-secondary/10 px-2.5 py-1 text-xs font-medium text-secondary dark:bg-secondary/10 dark:text-secondary">
-=======
                             <span className="rounded-full bg-brand-blue/10 px-2.5 py-1 text-xs font-medium text-brand-blue dark:bg-brand-blue/10 dark:text-brand-light-purple">
->>>>>>> 218bcf8 (feature : load balance)
                               {source}
                             </span>
                           </td>
