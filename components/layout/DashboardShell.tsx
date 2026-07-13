@@ -37,6 +37,7 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import { signOut } from "next-auth/react";
 
+import { OmaAssistantWorkspace } from "@/components/assistant/OmaAssistantWorkspace";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/layout/ThemeProvider";
@@ -58,6 +59,7 @@ const navGroups = [
       { label: "Folders", href: "/folders", icon: FolderTree },
       { label: "Contacts", href: "/contacts", icon: UsersRound },
       { label: "Exports", href: "/export", icon: FileSpreadsheet },
+      { label: "OMA Assistant", href: "/assistant", icon: Bot },
     ],
   },
   {
@@ -74,7 +76,7 @@ const navGroups = [
     items: [
       { label: "Sync History", href: "/sync-history", icon: History },
       { label: "Analytics", href: "/analytics", icon: BarChart3 },
-      { label: "AI Readiness", href: "/automation", icon: Bot },
+      { label: "AI Readiness", href: "/assistant", icon: Bot },
       { label: "Settings", href: "/settings", icon: Settings },
       { label: "Security Vault", href: "/settings/security-vault", icon: ShieldCheck },
       { label: "Logs", href: "/logs", icon: ListChecks },
@@ -84,6 +86,7 @@ const navGroups = [
 
 const quickActions = [
   { label: "Connect email account", href: "/settings" },
+  { label: "Ask OMA", href: "/assistant" },
   { label: "Open integrations", href: "/integrations" },
   { label: "Build automation", href: "/automation" },
   { label: "Open analytics", href: "/analytics" },
@@ -371,6 +374,55 @@ function CommandPalette({
   );
 }
 
+function AssistantDrawer({
+  open,
+  onClose,
+}: {
+  open: boolean;
+  onClose: () => void;
+}) {
+  return (
+    <AnimatePresence>
+      {open ? (
+        <motion.div
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 z-[70] flex justify-end bg-foreground/35 backdrop-blur-sm"
+          exit={{ opacity: 0 }}
+          initial={{ opacity: 0 }}
+          onClick={onClose}
+        >
+          <motion.div
+            animate={{ x: 0 }}
+            className="flex h-full w-full max-w-3xl flex-col overflow-hidden border-l border-border bg-card shadow-2xl sm:w-[88vw] lg:w-[720px]"
+            exit={{ x: 760 }}
+            initial={{ x: 760 }}
+            onClick={(event) => event.stopPropagation()}
+            transition={{ type: "spring", damping: 30, stiffness: 260 }}
+          >
+            <div className="flex h-14 shrink-0 items-center justify-between border-b border-border px-4">
+              <div className="flex items-center gap-3">
+                <span className="grid h-9 w-9 place-items-center rounded-full bg-primary text-primary-foreground">
+                  <Bot className="h-4 w-4" />
+                </span>
+                <div>
+                  <div className="text-sm font-semibold">OMA Voice Assistant</div>
+                  <div className="text-xs text-muted-foreground">Available while you are logged in</div>
+                </div>
+              </div>
+              <Button size="sm" variant="ghost" onClick={onClose}>
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+            <div className="min-h-0 flex-1">
+              <OmaAssistantWorkspace mode="panel" />
+            </div>
+          </motion.div>
+        </motion.div>
+      ) : null}
+    </AnimatePresence>
+  );
+}
+
 export function DashboardShell({
   children,
   user,
@@ -383,6 +435,7 @@ export function DashboardShell({
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
+  const [assistantOpen, setAssistantOpen] = useState(false);
   const activeLabel = useMemo(() => {
     for (const group of navGroups) {
       const active = group.items.find((item) => isActive(pathname, item.href));
@@ -403,6 +456,7 @@ export function DashboardShell({
 
       if (event.key === "Escape") {
         setCommandOpen(false);
+        setAssistantOpen(false);
       }
     }
 
@@ -453,6 +507,10 @@ export function DashboardShell({
             >
               Vault {vaultUnlocked ? "unlocked" : "locked"}
             </Badge>
+            <Button size="sm" variant="outline" onClick={() => setAssistantOpen(true)}>
+              <Bot className="h-4 w-4" />
+              <span className="hidden sm:inline">Ask OMA</span>
+            </Button>
             <Button size="sm" variant="outline">
               <Bell className="h-4 w-4" />
             </Button>
@@ -474,6 +532,14 @@ export function DashboardShell({
         </main>
       </div>
       <CommandPalette open={commandOpen} onClose={() => setCommandOpen(false)} />
+      <AssistantDrawer open={assistantOpen} onClose={() => setAssistantOpen(false)} />
+      <Button
+        className="fixed bottom-5 right-5 z-40 h-14 w-14 rounded-full shadow-2xl"
+        title="Open OMA voice assistant"
+        onClick={() => setAssistantOpen(true)}
+      >
+        <Bot className="h-5 w-5" />
+      </Button>
     </div>
   );
 }

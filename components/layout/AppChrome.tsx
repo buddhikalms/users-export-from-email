@@ -19,6 +19,7 @@ const dashboardPrefixes = [
   "/contacts",
   "/export",
   "/automation",
+  "/assistant",
   "/sync-history",
   "/analytics",
   "/logs",
