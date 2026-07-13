@@ -1,5 +1,9 @@
+import Link from "next/link";
+import { Settings } from "lucide-react";
+
 import { AdminTable, type AdminTableRow } from "@/components/admin/AdminTable";
 import { SalesCharts } from "@/components/admin/SalesCharts";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { db } from "@/lib/db";
 
@@ -86,11 +90,19 @@ export default async function AdminBillingPage() {
 
   return (
     <main className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-semibold tracking-tight">Billing & Sales</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Track subscription mix, payment activity, and PayPal webhook events.
-        </p>
+      <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+        <div>
+          <h2 className="text-2xl font-semibold tracking-tight">Billing & Sales</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Track subscription mix, payment activity, and PayPal webhook events.
+          </p>
+        </div>
+        <Button asChild variant="outline">
+          <Link href="/admin/billing/paypal">
+            <Settings className="h-4 w-4" />
+            Sync PayPal Plans
+          </Link>
+        </Button>
       </div>
 
       <SalesCharts

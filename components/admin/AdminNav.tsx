@@ -21,7 +21,7 @@ export function AdminNav() {
   return (
     <nav className="flex gap-2 overflow-x-auto rounded-2xl border border-border bg-card/80 p-2 shadow-sm lg:flex-col lg:overflow-visible">
       {adminLinks.map((item) => {
-        const active = pathname === item.href;
+        const active = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(`${item.href}/`));
         const Icon = item.icon;
 
         return (

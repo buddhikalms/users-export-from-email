@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 
 export type PricingPlanCatalogItem = {
   slug: "free" | "starter" | "professional" | "business" | "enterprise";
+  code?: string;
   name: string;
   audience: string;
   monthly: number | null;
@@ -38,6 +39,7 @@ export const defaultPricingPlans: PricingPlanCatalogItem[] = [
   },
   {
     slug: "starter",
+    code: "STARTER_MONTHLY",
     name: "Starter",
     audience: "For individuals and small businesses",
     monthly: 3.99,
@@ -49,6 +51,7 @@ export const defaultPricingPlans: PricingPlanCatalogItem[] = [
   },
   {
     slug: "professional",
+    code: "PROFESSIONAL_MONTHLY",
     name: "Professional",
     audience: "For marketers, agencies, and publishers",
     monthly: 5.99,
@@ -61,6 +64,7 @@ export const defaultPricingPlans: PricingPlanCatalogItem[] = [
   },
   {
     slug: "business",
+    code: "BUSINESS_MONTHLY",
     name: "Business",
     audience: "For growing and collaborative teams",
     monthly: 9.99,
@@ -146,6 +150,7 @@ export async function seedDefaultPricingCatalog() {
         where: { slug: plan.slug },
         create: {
           slug: plan.slug,
+          code: plan.code,
           name: plan.name,
           audience: plan.audience,
           monthlyPrice: plan.monthly,

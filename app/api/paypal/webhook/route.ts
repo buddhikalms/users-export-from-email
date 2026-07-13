@@ -90,7 +90,7 @@ export async function POST(request: Request) {
     if (!status) return;
 
     const selection = resource.plan_id
-      ? findPlanByPayPalId(resource.plan_id)
+      ? await findPlanByPayPalId(resource.plan_id)
       : null;
     await tx.subscription.updateMany({
       where: { paypalSubscriptionId: subscriptionId },

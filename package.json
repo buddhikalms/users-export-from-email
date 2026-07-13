@@ -6,6 +6,7 @@
     "dev": "next dev --webpack",
     "build": "next build",
     "start": "next start",
+    "test": "node --test tests/*.test.ts",
     "worker:email-sync": "tsx workers/email-sync-worker.ts",
     "test:security": "node --test tests/vault-security.test.ts",
     "load:smoke": "k6 run load-tests/smoke-test.js",

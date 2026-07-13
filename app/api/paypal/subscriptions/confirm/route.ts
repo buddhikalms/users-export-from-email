@@ -35,7 +35,7 @@ export async function POST(request: Request) {
     const subscription = await paypalRequest<PayPalSubscription>(
       `/v1/billing/subscriptions/${encodeURIComponent(parsed.data.subscriptionId)}`,
     );
-    const selection = findPlanByPayPalId(subscription.plan_id);
+    const selection = await findPlanByPayPalId(subscription.plan_id);
     if (!selection) {
       return NextResponse.json(
         { error: "This PayPal plan does not belong to OMAZYNC." },

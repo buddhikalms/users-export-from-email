@@ -49,7 +49,7 @@ export async function GET(request: Request) {
   try {
     return NextResponse.json({
       clientId: getPayPalClientId(),
-      planId: getPayPalPlanId(plan.data, interval.data),
+      planId: await getPayPalPlanId(plan.data, interval.data),
     });
   } catch (error) {
     return NextResponse.json(

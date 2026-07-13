@@ -190,22 +190,37 @@ model Subscription {
 }
 
 model PricingPlan {
-  id            String   @id @default(cuid())
-  slug          String   @unique
-  name          String
-  audience      String
-  monthlyPrice  Decimal? @db.Decimal(10, 2)
-  summary       String   @db.Text
-  idealFor      String   @db.Text
-  quickFeatures Json
-  exclusions    Json
-  isFeatured    Boolean  @default(false)
-  isActive      Boolean  @default(true)
-  sortOrder     Int      @default(0)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id                      String          @id @default(cuid())
+  slug                    String          @unique
+  code                    String?         @unique
+  name                    String
+  audience                String
+  monthlyPrice            Decimal?        @db.Decimal(10, 2)
+  currency                String          @default("USD")
+  billingInterval         BillingInterval @default(MONTHLY)
+  billingIntervalCount    Int             @default(1)
+  summary                 String          @db.Text
+  idealFor                String          @db.Text
+  quickFeatures           Json
+  exclusions              Json
+  isFeatured              Boolean         @default(false)
+  isActive                Boolean         @default(true)
+  sortOrder               Int             @default(0)
+  paypalSandboxProductId  String?
+  paypalSandboxPlanId     String?
+  paypalSandboxPlanStatus String?
+  paypalLiveProductId     String?
+  paypalLivePlanId        String?
+  paypalLivePlanStatus    String?
+  lastSandboxSyncAt       DateTime?
+  lastLiveSyncAt          DateTime?
+  createdAt               DateTime        @default(now())
+  updatedAt               DateTime        @updatedAt
 
   @@index([isActive, sortOrder])
+  @@index([code])
+  @@index([paypalSandboxPlanId])
+  @@index([paypalLivePlanId])
 }
 
 model PricingAddOn {
