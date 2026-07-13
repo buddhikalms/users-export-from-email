@@ -13,7 +13,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export function LoginForm({ googleAuthEnabled }: { googleAuthEnabled: boolean }) {
+export function LoginForm({
+  callbackUrl,
+  googleAuthEnabled,
+}: {
+  callbackUrl: string;
+  googleAuthEnabled: boolean;
+}) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -37,7 +43,7 @@ export function LoginForm({ googleAuthEnabled }: { googleAuthEnabled: boolean })
       return;
     }
 
-    router.push("/settings");
+    router.push(callbackUrl);
     router.refresh();
   }
 
@@ -48,7 +54,7 @@ export function LoginForm({ googleAuthEnabled }: { googleAuthEnabled: boolean })
         <CardDescription>Use your OMAZYNC workspace credentials.</CardDescription>
       </CardHeader>
       <CardContent className="px-7 pb-8 sm:px-8">
-        <GoogleAuthButton enabled={googleAuthEnabled} />
+        <GoogleAuthButton callbackUrl={callbackUrl} enabled={googleAuthEnabled} />
         {googleAuthEnabled ? (
           <div className="my-5 flex items-center gap-3">
             <span className="h-px flex-1 bg-slate-200 dark:bg-white/10" />

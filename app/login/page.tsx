@@ -5,10 +5,22 @@ import { authOptions, googleAuthEnabled } from "@/auth";
 import { AuthPageHeader } from "@/components/AuthPageHeader";
 import { LoginForm } from "@/components/LoginForm";
 
-export default async function LoginPage() {
+function getSafeCallbackUrl(value: string | string[] | undefined) {
+  const callbackUrl = Array.isArray(value) ? value[0] : value;
+  if (!callbackUrl?.startsWith("/") || callbackUrl.startsWith("//")) return "/settings";
+  return callbackUrl;
+}
+
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ callbackUrl?: string | string[] }>;
+}) {
   const session = await getServerSession(authOptions);
+  const callbackUrl = getSafeCallbackUrl((await searchParams).callbackUrl);
+
   if (session?.user) {
-    redirect("/settings");
+    redirect(callbackUrl);
   }
 
   return (
@@ -18,7 +30,7 @@ export default async function LoginPage() {
       <div className="relative mx-auto max-w-6xl">
         <AuthPageHeader />
         <div className="mx-auto flex min-h-[calc(100vh-9rem)] max-w-md items-center pb-16">
-          <LoginForm googleAuthEnabled={googleAuthEnabled} />
+          <LoginForm callbackUrl={callbackUrl} googleAuthEnabled={googleAuthEnabled} />
         </div>
       </div>
     </main>

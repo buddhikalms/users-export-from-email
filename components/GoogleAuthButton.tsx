@@ -5,7 +5,13 @@ import { signIn } from "next-auth/react";
 
 import { Button } from "@/components/ui/button";
 
-export function GoogleAuthButton({ enabled }: { enabled: boolean }) {
+export function GoogleAuthButton({
+  callbackUrl = "/settings",
+  enabled,
+}: {
+  callbackUrl?: string;
+  enabled: boolean;
+}) {
   const [loading, setLoading] = useState(false);
 
   if (!enabled) {
@@ -20,7 +26,7 @@ export function GoogleAuthButton({ enabled }: { enabled: boolean }) {
       variant="outline"
       onClick={() => {
         setLoading(true);
-        void signIn("google", { callbackUrl: "/settings" });
+        void signIn("google", { callbackUrl });
       }}
     >
       <svg aria-hidden="true" className="h-5 w-5" viewBox="0 0 24 24">

@@ -4,11 +4,25 @@ import Link from "next/link";
 import { authOptions } from "@/auth";
 import { ConnectionForm } from "@/components/ConnectionForm";
 import { IgnoredEmailsForm } from "@/components/IgnoredEmailsForm";
+import { BillingManagement } from "@/components/settings/BillingManagement";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { db } from "@/lib/db";
 
 export default async function SettingsPage() {
   const session = await getServerSession(authOptions);
+  const subscription = session?.user?.id
+    ? await db.subscription.findUnique({
+        where: { userId: session.user.id },
+        select: {
+          plan: true,
+          interval: true,
+          status: true,
+          paypalSubscriptionId: true,
+          currentPeriodEnd: true,
+        },
+      })
+    : null;
 
   return (
     <main className="w-full">
@@ -39,6 +53,7 @@ export default async function SettingsPage() {
       </div>
 
       <div className="space-y-6">
+        <BillingManagement subscription={subscription} />
         <IgnoredEmailsForm />
         <ConnectionForm />
       </div>

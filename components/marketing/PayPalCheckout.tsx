@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { AlertCircle, CheckCircle2, Loader2, LockKeyhole } from "lucide-react";
+import { AlertCircle, CheckCircle2, CreditCard, Loader2, LockKeyhole } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -76,7 +76,7 @@ export function PayPalCheckout({
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [state, setState] = useState<
-    "loading" | "ready" | "signed-out" | "unavailable" | "success" | "cancelled"
+    "loading" | "ready" | "signed-out" | "unavailable" | "success" | "cancelled" | "manage"
   >("loading");
   const [message, setMessage] = useState("");
 
@@ -106,6 +106,11 @@ export function PayPalCheckout({
           return;
         }
         if (!response.ok || !config.clientId || !config.planId) {
+          if (response.status === 409) {
+            setState("manage");
+            setMessage(config.error ?? "Manage your current subscription before changing plans.");
+            return;
+          }
           throw new Error(config.error ?? "PayPal checkout is unavailable.");
         }
 
@@ -210,6 +215,20 @@ export function PayPalCheckout({
         <p className="mt-3 text-center text-xs text-slate-400">
           Your subscription will be linked securely to your account.
         </p>
+      </div>
+    );
+  }
+
+  if (state === "manage") {
+    return (
+      <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.055] p-4 text-center">
+        <p className="text-sm font-semibold text-white">{message}</p>
+        <Button asChild size="lg" className="mt-4 w-full bg-white text-slate-950 hover:bg-brand-blue/10">
+          <Link href="/settings">
+            Manage subscription
+            <CreditCard className="h-4 w-4" />
+          </Link>
+        </Button>
       </div>
     );
   }
