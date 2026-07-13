@@ -162,8 +162,8 @@ export function PayPalCheckout({
             }
           },
         });
-        await buttons.render(containerRef.current);
         if (active) setState("ready");
+        await buttons.render(containerRef.current);
       } catch (error) {
         if (active) {
           setMessage(
@@ -224,7 +224,7 @@ export function PayPalCheckout({
       ) : null}
       <div
         ref={containerRef}
-        className={state === "loading" ? "mt-3 min-h-12 opacity-0" : "min-h-12"}
+        className="min-h-12"
       />
       {state === "unavailable" || state === "cancelled" ? (
         <div className="mt-3 flex gap-2 rounded-xl border border-amber-300/20 bg-amber-300/10 p-3 text-xs leading-5 text-amber-100">
