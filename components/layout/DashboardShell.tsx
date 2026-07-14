@@ -59,7 +59,7 @@ const navGroups = [
       { label: "Folders", href: "/folders", icon: FolderTree },
       { label: "Contacts", href: "/contacts", icon: UsersRound },
       { label: "Exports", href: "/export", icon: FileSpreadsheet },
-      { label: "OMA Assistant", href: "/assistant", icon: Bot },
+      { label: "OM - Assistant", href: "/assistant", icon: Bot },
     ],
   },
   {
