@@ -183,7 +183,7 @@ export function getOmaAssistantResponse(input: string): OmaAssistantResponse {
 
   if (!selected) {
     return {
-      title: "OMA Assistant",
+      title: "OM - Assist",
       message:
         "I can help with mailbox syncs, exports, integrations, automations, reports, and troubleshooting. Tell me the outcome you want, and I will turn it into a safe next step.",
       checklist: [
@@ -210,4 +210,3 @@ export function getOmaAssistantResponse(input: string): OmaAssistantResponse {
     actionLinks: selected.actionLinks,
   };
 }
-

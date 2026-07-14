@@ -53,7 +53,7 @@ const starterPrompts = [
 ];
 
 const welcomeResponse: OmaAssistantResponse = {
-  title: "OMA Assistant",
+  title: "OM - Assist",
   message:
     "I am ready to help with syncs, exports, automations, reports, and troubleshooting. I will ask before any action that moves, exports, deletes, or schedules personal data.",
   checklist: [
@@ -231,7 +231,7 @@ export function OmaAssistantWorkspace({ mode = "page" }: { mode?: "page" | "pane
     const SpeechRecognition = getSpeechRecognition();
     if (!SpeechRecognition) {
       setSpeechSupported(false);
-      setVoiceStatus("Microphone permission is allowed, but speech recognition is not available in this browser. Use Chrome or Edge for OMA voice input.");
+      setVoiceStatus("Microphone permission is allowed, but speech recognition is not available in this browser. Use Chrome or Edge for OM - Assist voice input.");
       return;
     }
 
@@ -289,7 +289,7 @@ export function OmaAssistantWorkspace({ mode = "page" }: { mode?: "page" | "pane
 
     try {
       setListening(true);
-      setVoiceStatus("Listening... speak your OMA command now.");
+      setVoiceStatus("Listening... speak your OM - Assist command now.");
       recognition.start();
     } catch (error) {
       setListening(false);
@@ -312,7 +312,7 @@ export function OmaAssistantWorkspace({ mode = "page" }: { mode?: "page" | "pane
             <Bot className="h-6 w-6" />
           </div>
           <div className="min-w-0 flex-1">
-            <h1 className="text-xl font-semibold tracking-tight">OMA</h1>
+            <h1 className="text-xl font-semibold tracking-tight">OM - Assist</h1>
             <p className="text-sm text-muted-foreground">Voice and workflow assistant for OMAZYNC</p>
           </div>
           <Badge className="bg-emerald-500/12 text-emerald-700 dark:text-emerald-300">
@@ -371,7 +371,7 @@ export function OmaAssistantWorkspace({ mode = "page" }: { mode?: "page" | "pane
             </Button>
             <input
               className="h-11 min-w-0 flex-1 rounded-full border border-border bg-background px-4 text-sm outline-none transition focus:border-primary"
-              placeholder="Ask OMA to sync, export, report, automate, or troubleshoot..."
+              placeholder="Ask OM - Assist to sync, export, report, automate, or troubleshoot..."
               value={input}
               onChange={(event) => setInput(event.target.value)}
             />
@@ -399,9 +399,9 @@ export function OmaAssistantWorkspace({ mode = "page" }: { mode?: "page" | "pane
             <h2 className="text-base font-semibold">Operating Rules</h2>
           </div>
           <div className="mt-4 space-y-3 text-sm text-muted-foreground">
-            <p>OMA will not expose passwords, tokens, OAuth secrets, private emails, or other users' data.</p>
+            <p>OM - Assist will not expose passwords, tokens, OAuth secrets, private emails, or other users' data.</p>
             <p>Exports, destructive changes, external syncs, and recurring automations require confirmation.</p>
-            <p>When a tool is unavailable, OMA explains the limitation and sends you to the correct workspace.</p>
+            <p>When a tool is unavailable, OM - Assist explains the limitation and sends you to the correct workspace.</p>
           </div>
         </section>
 
@@ -423,7 +423,7 @@ export function OmaAssistantWorkspace({ mode = "page" }: { mode?: "page" | "pane
           </div>
           <p className="mt-4 text-sm leading-6 text-muted-foreground">
             {speechSupported
-              ? "Voice input is available. OMA will capture the final spoken command and submit it for the same safe workflow checks."
+              ? "Voice input is available. OM - Assist will capture the final spoken command and submit it for the same safe workflow checks."
               : "Voice input needs Chrome or Edge on HTTPS or localhost. Typed commands are available in every browser."}
           </p>
         </section>

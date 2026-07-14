@@ -215,6 +215,19 @@ const plans: Plan[] = [
 ];
 
 const groups: FeatureGroup[] = ["Capacity", "Workflow", "Support"];
+const planRank: Record<PlanSlug, number> = {
+  free: 0,
+  starter: 1,
+  professional: 2,
+  business: 3,
+  enterprise: 4,
+};
+const addOnIncludedFrom: Record<string, PlanSlug> = {
+  "extra-email": "professional",
+  "extra-volume": "professional",
+  "scheduled-sync": "business",
+  "api-webhooks": "business",
+};
 
 type PricingPlansProps = {
   catalogPlans?: Array<Pick<Plan, "slug" | "name" | "audience" | "monthly" | "summary" | "idealFor" | "quickFeatures" | "exclusions" | "featured">>;
@@ -239,18 +252,79 @@ function mergePlans(catalogPlans?: PricingPlansProps["catalogPlans"]) {
     .filter((plan): plan is Plan => Boolean(plan));
 }
 
+function formatMonthly(value: number) {
+  return `$${value.toFixed(value % 1 === 0 ? 0 : 2)}`;
+}
+
+function higherPaidPlans(selected: Plan, visiblePlans: Plan[]) {
+  return visiblePlans.filter(
+    (plan) =>
+      plan.monthly !== null &&
+      plan.monthly > 0 &&
+      selected.monthly !== null &&
+      planRank[plan.slug] > planRank[selected.slug],
+  );
+}
+
+function getUpgradeSuggestion(selected: Plan, visiblePlans: Plan[], selectedAddOns: AddOn[], configuredMonthly: number | null) {
+  if (selected.monthly === null || !selectedAddOns.length || configuredMonthly === null) return null;
+
+  const upgradeOptions = higherPaidPlans(selected, visiblePlans);
+  const priceMatch = upgradeOptions.find((plan) => plan.monthly !== null && configuredMonthly >= plan.monthly);
+  const includedMatch = upgradeOptions.find((plan) =>
+    selectedAddOns.some((addOn) => {
+      const includedFrom = addOnIncludedFrom[addOn.id];
+      return includedFrom ? planRank[plan.slug] >= planRank[includedFrom] : false;
+    }),
+  );
+  const suggestedPlan = priceMatch ?? includedMatch;
+  if (!suggestedPlan) return null;
+
+  const includedNames = selectedAddOns
+    .filter((addOn) => {
+      const includedFrom = addOnIncludedFrom[addOn.id];
+      return includedFrom ? planRank[suggestedPlan.slug] >= planRank[includedFrom] : false;
+    })
+    .map((addOn) => addOn.name);
+
+  return {
+    plan: suggestedPlan,
+    priceReached: Boolean(priceMatch && priceMatch.slug === suggestedPlan.slug),
+    includedNames,
+  };
+}
+
 export function PricingPlans({ catalogPlans, catalogAddOns }: PricingPlansProps) {
   const visiblePlans = mergePlans(catalogPlans);
   const visibleAddOns = catalogAddOns?.length ? catalogAddOns : addOns;
+  const purchasableAddOns = visibleAddOns.filter((addOn) => addOn.id !== "none");
   const initialPlan = Math.max(0, visiblePlans.findIndex((plan) => plan.featured));
   const [selectedPlan, setSelectedPlan] = useState(initialPlan);
-  const [selectedAddOnId, setSelectedAddOnId] = useState("none");
+  const [selectedAddOnIds, setSelectedAddOnIds] = useState<string[]>([]);
   const reduceMotion = useReducedMotion();
   const selected = visiblePlans[selectedPlan] ?? visiblePlans[initialPlan] ?? visiblePlans[0];
-  const selectedAddOn = visibleAddOns.find((addOn) => addOn.id === selectedAddOnId) ?? visibleAddOns[0] ?? addOns[0];
   const canConfigureAddOns = selected.slug !== "free" && selected.slug !== "enterprise";
+  const selectedAddOns = selectedAddOnIds
+    .map((id) => purchasableAddOns.find((addOn) => addOn.id === id))
+    .filter((addOn): addOn is AddOn => Boolean(addOn));
+  const addOnTotal = selectedAddOns.reduce((total, addOn) => total + addOn.price, 0);
   const configuredMonthly =
-    selected.monthly === null ? null : selected.monthly + selectedAddOn.price;
+    selected.monthly === null ? null : selected.monthly + addOnTotal;
+  const upgradeSuggestion = getUpgradeSuggestion(selected, visiblePlans, selectedAddOns, configuredMonthly);
+
+  function toggleAddOn(addOnId: string) {
+    setSelectedAddOnIds((current) =>
+      current.includes(addOnId) ? current.filter((id) => id !== addOnId) : [...current, addOnId],
+    );
+  }
+
+  function chooseSuggestedPlan(slug: PlanSlug) {
+    const nextIndex = visiblePlans.findIndex((plan) => plan.slug === slug);
+    if (nextIndex >= 0) {
+      setSelectedPlan(nextIndex);
+      setSelectedAddOnIds([]);
+    }
+  }
 
   return (
     <div>
@@ -335,30 +409,80 @@ export function PricingPlans({ catalogPlans, catalogAddOns }: PricingPlansProps)
 
                 {canConfigureAddOns ? (
                   <div className="mt-7 rounded-2xl border border-white/10 bg-white/[0.055] p-4">
-                    <label
-                      className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400"
-                      htmlFor="pricing-addon"
-                    >
-                      Add to this package
-                    </label>
-                    <select
-                      id="pricing-addon"
-                      className="mt-3 h-11 w-full rounded-xl border border-white/10 bg-slate-950 px-3 text-sm text-white outline-none transition focus:border-brand-light-purple"
-                      value={selectedAddOnId}
-                      onChange={(event) => setSelectedAddOnId(event.target.value)}
-                    >
-                      {visibleAddOns.map((addOn) => (
-                        <option key={addOn.id} value={addOn.id}>
-                          {addOn.name}
-                          {addOn.price ? ` (+$${addOn.price}/mo)` : ""}
-                        </option>
-                      ))}
-                    </select>
-                    <p className="mt-3 text-xs leading-5 text-slate-400">
-                      {selectedAddOn.description}
-                    </p>
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">
+                          Add to this package
+                        </p>
+                        <p className="mt-2 text-xs leading-5 text-slate-400">
+                          Choose one or more add-ons. We'll flag when a higher package is the better value.
+                        </p>
+                      </div>
+                      {selectedAddOns.length ? (
+                        <button
+                          className="shrink-0 text-xs font-semibold text-brand-light-purple transition hover:text-white"
+                          type="button"
+                          onClick={() => setSelectedAddOnIds([])}
+                        >
+                          Clear
+                        </button>
+                      ) : null}
+                    </div>
+                    <div className="mt-4 space-y-2">
+                      {purchasableAddOns.map((addOn) => {
+                        const checked = selectedAddOnIds.includes(addOn.id);
+                        return (
+                          <label
+                            key={addOn.id}
+                            className={cn(
+                              "flex cursor-pointer gap-3 rounded-xl border p-3 transition",
+                              checked
+                                ? "border-brand-light-purple bg-brand-blue/15"
+                                : "border-white/10 bg-slate-950/50 hover:border-white/20 hover:bg-white/[0.07]",
+                            )}
+                          >
+                            <input
+                              checked={checked}
+                              className="mt-1 h-4 w-4 accent-brand-blue"
+                              onChange={() => toggleAddOn(addOn.id)}
+                              type="checkbox"
+                            />
+                            <span className="min-w-0 flex-1">
+                              <span className="flex flex-wrap items-center justify-between gap-2 text-sm font-semibold text-white">
+                                <span>{addOn.name}</span>
+                                <span className="text-xs text-slate-300">+{formatMonthly(addOn.price)}/mo</span>
+                              </span>
+                              <span className="mt-1 block text-xs leading-5 text-slate-400">{addOn.description}</span>
+                            </span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                    {upgradeSuggestion ? (
+                      <div className="mt-4 rounded-xl border border-brand-light-purple/30 bg-brand-blue/15 p-3">
+                        <p className="text-sm font-semibold text-white">
+                          Consider {upgradeSuggestion.plan.name}
+                          {upgradeSuggestion.plan.monthly !== null ? ` at ${formatMonthly(upgradeSuggestion.plan.monthly)}/mo` : ""}
+                        </p>
+                        <p className="mt-1 text-xs leading-5 text-slate-300">
+                          {upgradeSuggestion.priceReached
+                            ? `Your configured ${selected.name} total reaches the next package price.`
+                            : `${upgradeSuggestion.includedNames.join(", ")} ${upgradeSuggestion.includedNames.length === 1 ? "is" : "are"} already covered in ${upgradeSuggestion.plan.name}.`}
+                        </p>
+                        <button
+                          className="mt-3 inline-flex items-center gap-1 text-xs font-bold text-brand-light-purple transition hover:text-white"
+                          type="button"
+                          onClick={() => chooseSuggestedPlan(upgradeSuggestion.plan.slug)}
+                        >
+                          View {upgradeSuggestion.plan.name}<ArrowRight className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    ) : null}
                     <div className="mt-4 flex items-end justify-between gap-3 border-t border-white/10 pt-4">
-                      <span className="text-xs text-slate-400">Package total</span>
+                      <span className="text-xs text-slate-400">
+                        Package total
+                        {addOnTotal > 0 ? <span className="mt-1 block">Add-ons: +{formatMonthly(addOnTotal)}/mo</span> : null}
+                      </span>
                       <span className="text-2xl font-bold text-white">
                         ${configuredMonthly?.toFixed(2)}
                         <span className="ml-1 text-sm font-medium text-slate-400">/mo</span>

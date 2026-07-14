@@ -5,8 +5,8 @@ import { authOptions } from "@/auth";
 import { OmaAssistantWorkspace } from "@/components/assistant/OmaAssistantWorkspace";
 
 export const metadata = {
-  title: "OMA Assistant - OMAZYNC",
-  description: "Use OMA to plan safe email syncs, exports, automations, reports, and troubleshooting workflows.",
+  title: "OM - Assist - OMAZYNC",
+  description: "Use OM - Assist to plan safe email syncs, exports, automations, reports, and troubleshooting workflows.",
 };
 
 export default async function AssistantPage() {
@@ -18,4 +18,3 @@ export default async function AssistantPage() {
 
   return <OmaAssistantWorkspace />;
 }
-
