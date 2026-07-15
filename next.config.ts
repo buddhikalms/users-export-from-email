@@ -16,7 +16,7 @@ const securityHeaders = [
       "img-src 'self' data: blob: https:",
       "font-src 'self' data:",
       "connect-src 'self' https://api-m.paypal.com https://api-m.sandbox.paypal.com https://www.paypal.com",
-      "frame-src https://www.paypal.com",
+      "frame-src https://www.paypal.com https://www.timetide.app",
       ...(isDevelopment ? [] : ["upgrade-insecure-requests"]),
     ].join("; "),
   },
