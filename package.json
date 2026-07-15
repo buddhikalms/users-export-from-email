@@ -47,6 +47,7 @@
     "lucide-react": "^0.511.0",
     "next": "^16.2.4",
     "next-auth": "^4.24.14",
+    "nodemailer": "^7.0.13",
     "prisma": "^6.17.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -60,6 +61,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.10.1",
+    "@types/nodemailer": "^8.0.1",
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
     "autoprefixer": "^10.4.20",

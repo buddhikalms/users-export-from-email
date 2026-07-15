@@ -9,6 +9,7 @@ import {
 } from "@/lib/api-guard";
 import { getNextUserRole, hashPassword } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { sendRegistrationNotifications } from "@/lib/notifications";
 import { registerSchema } from "@/lib/validation";
 
 export const runtime = "nodejs";
@@ -66,6 +67,11 @@ export async function POST(request: Request) {
         email: true,
         role: true,
       },
+    });
+
+    await sendRegistrationNotifications({
+      name: user.name,
+      email: user.email,
     });
 
     return NextResponse.json({

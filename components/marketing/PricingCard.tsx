@@ -32,7 +32,7 @@ export function PricingCard({
       </p>
       <div className="mt-6 text-4xl font-semibold">{price}</div>
       <Button asChild className={cn("mt-6", featured ? "bg-white text-slate-950 hover:bg-slate-100" : "")}>
-        <Link href={"/contact" as any}>{name === "Enterprise" ? "Contact Sales" : "Start Free"}</Link>
+        <Link href={(name === "Enterprise" ? "/book-demo" : "/register") as any}>{name === "Enterprise" ? "Contact Sales" : "Start Free"}</Link>
       </Button>
       <ul className="mt-6 grid gap-3 text-sm">
         {features.map((feature) => (

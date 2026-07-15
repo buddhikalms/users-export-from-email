@@ -10,7 +10,7 @@ export function CTAButtons() {
         <Link href="/register">Start Free <ArrowRight className="h-4 w-4" /></Link>
       </Button>
       <Button asChild size="lg" variant="outline" className="h-[3.25rem] border-brand-blue/25 bg-white/75 px-7 text-brand-navy shadow-sm backdrop-blur hover:bg-white hover:text-brand-blue">
-        <Link href="/contact"><Play className="h-4 w-4 fill-brand-blue text-brand-blue" /> View Live Demo</Link>
+        <Link href="/book-demo"><Play className="h-4 w-4 fill-brand-blue text-brand-blue" /> View Live Demo</Link>
       </Button>
     </div>
   );

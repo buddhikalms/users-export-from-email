@@ -242,7 +242,7 @@ export default function MarketingHomePage() {
                 variant="outline"
                 className="border-white/20 bg-white/10 text-white hover:bg-white/20 dark:bg-white dark:text-brand-blue"
               >
-                <Link href="/contact">View Demo</Link>
+                <Link href="/book-demo">View Demo</Link>
               </Button>
               <Button
                 asChild

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { db } from "@/lib/db";
+import { sendInvoiceNotification } from "@/lib/notifications";
 import { findPlanByPayPalId, paypalRequest } from "@/lib/paypal";
 
 export const runtime = "nodejs";
@@ -15,6 +16,7 @@ type WebhookEvent = {
     status?: string;
     subscriber?: { email_address?: string };
     billing_info?: { next_billing_time?: string };
+    amount?: { total?: string; currency?: string; value?: string };
   };
 };
 
@@ -60,6 +62,8 @@ export async function POST(request: Request) {
     where: { paypalEventId: event.id },
   });
   if (alreadyProcessed) return NextResponse.json({ received: true });
+
+  const shouldSendPaymentNotice = event.event_type === "PAYMENT.SALE.COMPLETED";
 
   await db.$transaction(async (tx) => {
     await tx.payPalWebhookEvent.create({
@@ -109,6 +113,38 @@ export async function POST(request: Request) {
       },
     });
   });
+
+  if (shouldSendPaymentNotice && subscriptionId) {
+    const subscription = await db.subscription.findUnique({
+      where: { paypalSubscriptionId: subscriptionId },
+      select: {
+        plan: true,
+        status: true,
+        paypalSubscriptionId: true,
+        currentPeriodEnd: true,
+        user: {
+          select: {
+            name: true,
+            email: true,
+          },
+        },
+      },
+    });
+
+    if (subscription) {
+      const total = resource.amount?.total ?? resource.amount?.value;
+      const currency = resource.amount?.currency;
+      await sendInvoiceNotification({
+        name: subscription.user.name,
+        email: subscription.user.email,
+        plan: subscription.plan,
+        status: subscription.status,
+        subscriptionId: subscription.paypalSubscriptionId,
+        nextBillingTime: subscription.currentPeriodEnd,
+        amount: total ? `${currency ? `${currency} ` : ""}${total}` : null,
+      });
+    }
+  }
 
   return NextResponse.json({ received: true });
 }

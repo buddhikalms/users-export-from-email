@@ -25,6 +25,7 @@ const footerColumns = [
     links: [
       ["About", "/about"],
       ["Blog", "/blog"],
+      ["Book Demo", "/book-demo"],
       ["Contact", "/contact"],
     ],
   },

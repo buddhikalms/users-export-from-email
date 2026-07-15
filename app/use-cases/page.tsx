@@ -163,7 +163,7 @@ export default function UseCasesPage() {
                 </Link>
               </Button>
               <Button asChild size="lg" variant="outline">
-                <Link href={"/contact" as any}>Book a Demo</Link>
+                <Link href={"/book-demo" as any}>Book a Demo</Link>
               </Button>
             </div>
           </div>

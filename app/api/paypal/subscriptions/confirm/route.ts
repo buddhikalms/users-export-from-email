@@ -4,6 +4,7 @@ import { z } from "zod";
 
 import { authOptions } from "@/auth";
 import { db } from "@/lib/db";
+import { sendInvoiceNotification } from "@/lib/notifications";
 import { findPlanByPayPalId, paypalRequest } from "@/lib/paypal";
 
 export const runtime = "nodejs";
@@ -85,12 +86,34 @@ export async function POST(request: Request) {
           ? new Date(subscription.billing_info.next_billing_time)
           : null,
       },
-      select: { plan: true, status: true },
+      select: {
+        plan: true,
+        status: true,
+        paypalSubscriptionId: true,
+        currentPeriodEnd: true,
+        user: {
+          select: {
+            name: true,
+            email: true,
+          },
+        },
+      },
     });
+
+    await sendInvoiceNotification({
+      name: saved.user.name,
+      email: saved.user.email,
+      plan: saved.plan,
+      status: saved.status,
+      subscriptionId: saved.paypalSubscriptionId,
+      nextBillingTime: saved.currentPeriodEnd,
+    });
+
+    const { user: _user, ...subscriptionResponse } = saved;
 
     return NextResponse.json({
       message: `${saved.plan.toLowerCase()} plan activated successfully.`,
-      subscription: saved,
+      subscription: subscriptionResponse,
     });
   } catch (error) {
     return NextResponse.json(

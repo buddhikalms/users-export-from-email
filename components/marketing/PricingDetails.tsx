@@ -222,7 +222,7 @@ export function PricingDetails({ addOns }: PricingDetailsProps) {
             <p className="mt-1 text-sm text-slate-400">Let's shape a multi-client, enterprise, or white-label deployment around you.</p>
           </div>
           <Button asChild className="bg-white text-slate-950 hover:bg-brand-blue/10">
-            <Link href="/contact">Discuss your requirements <ArrowRight className="h-4 w-4" /></Link>
+            <Link href="/book-demo">Discuss your requirements <ArrowRight className="h-4 w-4" /></Link>
           </Button>
         </div>
       </section>

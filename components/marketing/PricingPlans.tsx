@@ -515,7 +515,7 @@ export function PricingPlans({ catalogPlans, catalogAddOns }: PricingPlansProps)
                 {selected.slug === "free" || selected.slug === "enterprise" ? (
                   <>
                     <Button asChild size="lg" className="mt-8 w-full bg-white text-slate-950 hover:bg-brand-blue/10">
-                      <Link href={selected.slug === "enterprise" ? "/contact" : "/register"}>
+                      <Link href={selected.slug === "enterprise" ? "/book-demo" : "/register"}>
                         {selected.slug === "enterprise" ? "Request a custom quote" : "Start free"}<ArrowRight className="h-4 w-4" />
                       </Link>
                     </Button>
