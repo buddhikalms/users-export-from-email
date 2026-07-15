@@ -29,7 +29,7 @@ export default function ContactPage() {
           </form>
           <div className="grid gap-4">
             {[
-              [Mail, "Email", "support@omazync.example"],
+              [Mail, "Email", "support@omazync.com"],
               [MessageSquare, "Support", "Get help with mailbox connection, exports, and integrations."],
               [CalendarClock, "Demo booking", "Book a walkthrough for agency, publisher, or team workflows."],
             ].map(([Icon, title, body]) => (

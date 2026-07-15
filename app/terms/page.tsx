@@ -20,7 +20,7 @@ export default function TermsPage() {
           <h2>Acceptable use</h2>
           <p>Users must comply with applicable privacy, anti-spam, and marketing consent laws when exporting or syncing contacts.</p>
           <h2>Support</h2>
-          <p>For terms questions, contact support@omazync.example.</p>
+          <p>For terms questions, contact support@omazync.com.</p>
         </div>
       </Section>
     </main>

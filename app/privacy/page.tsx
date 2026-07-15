@@ -20,7 +20,7 @@ export default function PrivacyPage() {
           <h2>Security</h2>
           <p>The product is designed around encrypted credential workflows, no plain-text API key handling in normal operation, and privacy-first contact workflows.</p>
           <h2>Contact</h2>
-          <p>For privacy requests, contact support@omazync.example.</p>
+          <p>For privacy requests, contact support@omazync.com.</p>
         </div>
       </Section>
     </main>
