@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
+  Activity,
   BarChart3,
   Bell,
   Bot,
@@ -16,7 +17,9 @@ import {
   Download,
   FileSpreadsheet,
   FolderTree,
+  Gauge,
   History,
+  Layers3,
   LayoutDashboard,
   ListChecks,
   LogOut,
@@ -83,6 +86,21 @@ const navGroups = [
     ],
   },
 ];
+
+const adminNavGroup = {
+  label: "Admin",
+  items: [
+    { label: "Command Center", href: "/admin", icon: Gauge },
+    { label: "Live Operations", href: "/admin/live-operations", icon: Activity },
+    { label: "Users", href: "/admin/users", icon: UsersRound },
+    { label: "Queue Control", href: "/admin/queues", icon: Layers3 },
+    { label: "Admin Settings", href: "/admin/settings", icon: Settings },
+  ],
+};
+
+function getNavGroups(role?: string | null) {
+  return role === "ADMIN" ? [...navGroups, adminNavGroup] : navGroups;
+}
 
 const quickActions = [
   { label: "Connect email account", href: "/settings" },
@@ -206,6 +224,7 @@ function Sidebar({
   onToggle: () => void;
   onClose: () => void;
 }) {
+  const visibleNavGroups = getNavGroups(user.role);
   const sidebar = (
     <aside
       className={cn(
@@ -243,7 +262,7 @@ function Sidebar({
 
       <nav className="dashboard-scrollbar flex-1 overflow-y-auto px-3 py-5">
         <div className="space-y-6">
-          {navGroups.map((group) => (
+          {visibleNavGroups.map((group) => (
             <div key={group.label}>
               {!collapsed ? (
                 <div className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
@@ -423,7 +442,7 @@ function AssistantDrawer({
   );
 }
 
-export function DashboardShell({
+function DashboardWorkspaceShell({
   children,
   user,
 }: {
@@ -437,7 +456,7 @@ export function DashboardShell({
   const [commandOpen, setCommandOpen] = useState(false);
   const [assistantOpen, setAssistantOpen] = useState(false);
   const activeLabel = useMemo(() => {
-    for (const group of navGroups) {
+    for (const group of getNavGroups(user.role)) {
       const active = group.items.find((item) => isActive(pathname, item.href));
       if (active) {
         return active.label;
@@ -445,7 +464,7 @@ export function DashboardShell({
     }
 
     return "Dashboard";
-  }, [pathname]);
+  }, [pathname, user.role]);
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -542,4 +561,20 @@ export function DashboardShell({
       </Button>
     </div>
   );
+}
+
+export function DashboardShell({
+  children,
+  user,
+}: {
+  children: React.ReactNode;
+  user: SessionUser;
+}) {
+  const pathname = usePathname();
+
+  if (pathname === "/admin" || pathname.startsWith("/admin/")) {
+    return children;
+  }
+
+  return <DashboardWorkspaceShell user={user}>{children}</DashboardWorkspaceShell>;
 }
