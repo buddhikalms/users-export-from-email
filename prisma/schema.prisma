@@ -143,6 +143,37 @@ enum SubscriptionStatus {
   EXPIRED
 }
 
+enum AdminRoleName {
+  SUPER_ADMIN
+  ADMIN
+  SUPPORT_ADMIN
+  BILLING_ADMIN
+  OPERATIONS_ADMIN
+  SECURITY_ADMIN
+  READ_ONLY_ADMIN
+}
+
+enum LicenceStatus {
+  ACTIVE
+  SUSPENDED
+  REVOKED
+  EXPIRED
+  PENDING
+}
+
+enum IncidentSeverity {
+  INFO
+  WARNING
+  ERROR
+  CRITICAL
+}
+
+enum IncidentStatus {
+  OPEN
+  INVESTIGATING
+  RESOLVED
+}
+
 model User {
   id                  String               @id @default(cuid())
   name                String
@@ -165,6 +196,9 @@ model User {
   syncRuns            SyncRun[]
   exportRuns          ExportRun[]
   subscription        Subscription?
+  adminRoles          AdminRole[]
+  adminAuditLogs      AdminAuditLog[]       @relation("AdminAuditActor")
+  licences            Licence[]
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
 }
@@ -172,6 +206,7 @@ model User {
 model Subscription {
   id                   String             @id @default(cuid())
   userId               String             @unique
+  packageId            String?
   plan                 BillingPlan        @default(FREE)
   interval             BillingInterval    @default(MONTHLY)
   status               SubscriptionStatus @default(FREE)
@@ -179,14 +214,19 @@ model Subscription {
   paypalSubscriptionId String?            @unique
   paypalPlanId         String?
   payerEmail           String?
+  amount               Decimal?           @db.Decimal(10, 2)
+  failedPaymentCount   Int                @default(0)
   currentPeriodEnd     DateTime?
   lastPaymentAt        DateTime?
   createdAt            DateTime           @default(now())
   updatedAt            DateTime           @updatedAt
   user                 User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  package              Package?           @relation(fields: [packageId], references: [id], onDelete: SetNull)
+  addons               Addon[]
 
   @@index([status])
   @@index([paypalPlanId])
+  @@index([packageId])
 }
 
 model PricingPlan {
@@ -313,9 +353,240 @@ model Workspace {
   automationRules     AutomationRule[]
   apiLogs             ApiLog[]
   backgroundJobs      BackgroundJob[]
+  limitOverride       WorkspaceLimitOverride?
 
   @@unique([organizationId, slug])
   @@index([organizationId])
+}
+
+model AdminRole {
+  id          String        @id @default(cuid())
+  userId      String
+  role        AdminRoleName
+  createdAt   DateTime      @default(now())
+  assignedBy  String?
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permissions AdminPermission[]
+
+  @@unique([userId, role])
+  @@index([role])
+}
+
+model AdminPermission {
+  id          String    @id @default(cuid())
+  adminRoleId String
+  permission  String
+  createdAt   DateTime  @default(now())
+  adminRole   AdminRole @relation(fields: [adminRoleId], references: [id], onDelete: Cascade)
+
+  @@unique([adminRoleId, permission])
+  @@index([permission])
+}
+
+model AdminAuditLog {
+  id           String   @id @default(cuid())
+  adminUserId  String?
+  action       String
+  resourceType String
+  resourceId   String?
+  beforeState  Json?
+  afterState   Json?
+  ipAddress    String?
+  userAgent    String?  @db.Text
+  requestId    String?
+  createdAt    DateTime @default(now())
+  adminUser    User?    @relation("AdminAuditActor", fields: [adminUserId], references: [id], onDelete: SetNull)
+
+  @@index([adminUserId, createdAt])
+  @@index([resourceType, resourceId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+model QueueConfiguration {
+  id                   String   @id @default(cuid())
+  queueName            String   @unique
+  enabled              Boolean  @default(true)
+  concurrency          Int      @default(5)
+  maxJobsPerMinute     Int      @default(120)
+  maxJobsPerTenant     Int      @default(3)
+  maxJobsPerUser       Int      @default(2)
+  timeoutMs            Int      @default(900000)
+  maxAttempts          Int      @default(3)
+  retryBackoffMs       Int      @default(30000)
+  priorityWeight       Int      @default(10)
+  workerHeartbeatMs    Int      @default(30000)
+  maxStalledJobCount   Int      @default(2)
+  maintenanceWindow    String?
+  peakSettings         Json?
+  offPeakSettings      Json?
+  completedRetentionMs Int      @default(604800000)
+  failedRetentionMs    Int      @default(1209600000)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@index([enabled])
+}
+
+model WorkerHeartbeat {
+  id              String   @id @default(cuid())
+  workerName      String
+  queueName       String
+  state           String   @default("online")
+  lastHeartbeatAt DateTime @default(now())
+  runningJobs     Int      @default(0)
+  completedJobs   Int      @default(0)
+  failedJobs      Int      @default(0)
+  memoryMb        Int?
+  cpuPercent      Float?
+  uptimeSeconds   Int?
+  concurrency     Int      @default(1)
+  hostname        String?
+  appVersion      String?
+  lastError       String?  @db.Text
+  metadata        Json?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([workerName, queueName])
+  @@index([queueName, state])
+  @@index([lastHeartbeatAt])
+}
+
+model SystemIncident {
+  id          String           @id @default(cuid())
+  title       String
+  description String?          @db.Text
+  severity    IncidentSeverity @default(INFO)
+  status      IncidentStatus   @default(OPEN)
+  source      String?
+  metadata    Json?
+  resolvedAt  DateTime?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@index([severity, status])
+  @@index([createdAt])
+}
+
+model FeatureFlag {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  enabled     Boolean  @default(false)
+  description String?  @db.Text
+  rules       Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([enabled])
+}
+
+model Package {
+  id                      String         @id @default(cuid())
+  code                    String         @unique
+  name                    String
+  description             String?        @db.Text
+  monthlyPrice            Decimal?       @db.Decimal(10, 2)
+  yearlyPrice             Decimal?       @db.Decimal(10, 2)
+  currency                String         @default("USD")
+  emailAccountLimit       Int            @default(1)
+  monthlyScanLimit        Int            @default(500)
+  contactLimit            Int            @default(1000)
+  teamMemberLimit         Int            @default(1)
+  integrationLimit        Int            @default(1)
+  supportLevel            String         @default("standard")
+  isActive                Boolean        @default(true)
+  sortOrder               Int            @default(0)
+  createdAt               DateTime       @default(now())
+  updatedAt               DateTime       @updatedAt
+  features                PackageFeature[]
+  licences                Licence[]
+  subscriptions           Subscription[]
+
+  @@index([isActive, sortOrder])
+}
+
+model PackageFeature {
+  id        String   @id @default(cuid())
+  packageId String
+  key       String
+  enabled   Boolean  @default(true)
+  limit     Int?
+  metadata  Json?
+  package   Package  @relation(fields: [packageId], references: [id], onDelete: Cascade)
+
+  @@unique([packageId, key])
+  @@index([key])
+}
+
+model Licence {
+  id                 String              @id @default(cuid())
+  key                String              @unique
+  userId             String?
+  packageId          String?
+  plan               String              @default("free")
+  status             LicenceStatus       @default(PENDING)
+  activationLimit    Int                 @default(1)
+  expiresAt          DateTime?
+  lastValidatedAt    DateTime?
+  suspiciousAttempts Int                 @default(0)
+  metadata           Json?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  user               User?               @relation(fields: [userId], references: [id], onDelete: SetNull)
+  package            Package?            @relation(fields: [packageId], references: [id], onDelete: SetNull)
+  activations        LicenceActivation[]
+
+  @@index([userId])
+  @@index([packageId])
+  @@index([status, expiresAt])
+}
+
+model LicenceActivation {
+  id             String   @id @default(cuid())
+  licenceId      String
+  domain         String?
+  installationId String?
+  ipAddress      String?
+  userAgent      String?  @db.Text
+  validatedAt    DateTime @default(now())
+  status         String   @default("active")
+  metadata       Json?
+  licence        Licence  @relation(fields: [licenceId], references: [id], onDelete: Cascade)
+
+  @@index([licenceId, validatedAt])
+  @@index([domain])
+  @@index([installationId])
+}
+
+model Addon {
+  id             String       @id @default(cuid())
+  subscriptionId String
+  code           String
+  name           String
+  amount         Decimal      @default(0) @db.Decimal(10, 2)
+  enabled        Boolean      @default(true)
+  metadata       Json?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  @@index([subscriptionId])
+  @@index([code])
+}
+
+model WorkspaceLimitOverride {
+  id                    String    @id @default(cuid())
+  workspaceId           String    @unique
+  queueConcurrencyLimit Int?
+  emailScanLimit        Int?
+  contactExportLimit    Int?
+  integrationLimit      Int?
+  featureFlags          Json?
+  packageOverrides      Json?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  workspace             Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 }
 
 model SavedEmailAccount {

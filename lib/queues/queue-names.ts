@@ -1,0 +1,25 @@
+export const QUEUE_NAMES = [
+  "EMAIL_SYNC",
+  "CONTACT_EXTRACTION",
+  "EXCEL_EXPORT",
+  "CSV_EXPORT",
+  "KIT_SYNC",
+  "MAILCHIMP_SYNC",
+  "BREVO_SYNC",
+  "HUBSPOT_SYNC",
+  "BEEHIIV_SYNC",
+  "ACTIVECAMPAIGN_SYNC",
+  "SCHEDULED_SYNC",
+  "NOTIFICATIONS",
+  "MAINTENANCE",
+] as const;
+
+export type QueueName = (typeof QUEUE_NAMES)[number];
+
+export const JOB_PRIORITIES = {
+  CRITICAL: 1,
+  HIGH: 5,
+  NORMAL: 10,
+  LOW: 25,
+  BACKGROUND: 50,
+} as const;
