@@ -23,7 +23,6 @@ const dashboardPrefixes = [
   "/sync-history",
   "/analytics",
   "/logs",
-  "/admin",
   "/results",
 ];
 
@@ -45,6 +44,10 @@ export function AppChrome({
   user?: SessionUser | null;
 }) {
   const pathname = usePathname();
+
+  if (pathname === "/admin" || pathname.startsWith("/admin/")) {
+    return children;
+  }
 
   if (user && isDashboardPath(pathname)) {
     return <DashboardShell user={user}>{children}</DashboardShell>;

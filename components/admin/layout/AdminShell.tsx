@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import {
   Activity,
@@ -26,6 +29,7 @@ import {
   UsersRound,
   Webhook,
   Workflow,
+  X,
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -90,7 +94,13 @@ const sections = [
   },
 ];
 
-function Sidebar({ className }: { className?: string }) {
+function Sidebar({
+  className,
+  onNavigate,
+}: {
+  className?: string;
+  onNavigate?: () => void;
+}) {
   return (
     <aside
       className={cn(
@@ -119,6 +129,7 @@ function Sidebar({ className }: { className?: string }) {
                   className="flex h-9 items-center gap-3 rounded-md px-3 text-sm text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-950 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
                   href={item.href}
                   key={item.href}
+                  onClick={onNavigate}
                 >
                   <item.icon className="h-4 w-4" />
                   <span className="truncate">{item.label}</span>
@@ -133,16 +144,36 @@ function Sidebar({ className }: { className?: string }) {
 }
 
 export function AdminShell({ children, user }: AdminShellProps) {
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-[#F6FBFC] text-slate-950 dark:bg-[#050B16] dark:text-white">
       <div className="fixed inset-y-0 left-0 z-30 hidden lg:block">
         <Sidebar />
       </div>
+      {mobileOpen ? (
+        <div
+          className="fixed inset-0 z-50 bg-slate-950/40 backdrop-blur-sm lg:hidden"
+          onClick={() => setMobileOpen(false)}
+        >
+          <div
+            className="h-full w-[17rem]"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <Sidebar onNavigate={() => setMobileOpen(false)} />
+          </div>
+        </div>
+      ) : null}
       <div className="lg:pl-[17rem]">
         <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/92 backdrop-blur dark:border-white/10 dark:bg-[#071A2F]/92">
           <div className="flex h-16 items-center gap-3 px-4 sm:px-6">
-            <Button aria-label="Open navigation" className="h-10 w-10 rounded-md px-0 lg:hidden" variant="outline">
-              <Menu className="h-4 w-4" />
+            <Button
+              aria-label={mobileOpen ? "Close navigation" : "Open navigation"}
+              className="h-10 w-10 rounded-md px-0 lg:hidden"
+              variant="outline"
+              onClick={() => setMobileOpen((current) => !current)}
+            >
+              {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
             </Button>
             <div className="hidden min-w-0 items-center gap-2 text-sm text-slate-500 md:flex">
               <span>Admin</span>
