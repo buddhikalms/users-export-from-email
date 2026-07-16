@@ -33,7 +33,7 @@ export default function ExportPage() {
   if (!ready || !syncResult) {
     return (
       <main className="w-full">
-        <div className="rounded-[1.75rem] border border-dashed border-border bg-white/70 dark:bg-card/75 p-8 text-sm text-muted-foreground">
+        <div className="empty-panel text-left">
           Preparing workbook export data...
         </div>
       </main>
@@ -83,7 +83,7 @@ export default function ExportPage() {
                 </label>
                 <select
                   id="platform"
-                  className="flex h-11 w-full rounded-2xl border border-input bg-white/85 dark:bg-card/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-card"
+                  className="form-control"
                   defaultValue="kit"
                 >
                   {integrationRegistry.map((integration) => (
@@ -99,7 +99,7 @@ export default function ExportPage() {
                 </label>
                 <select
                   id="account"
-                  className="flex h-11 w-full rounded-2xl border border-input bg-white/85 dark:bg-card/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-card"
+                  className="form-control"
                   disabled
                   defaultValue=""
                 >
@@ -112,7 +112,7 @@ export default function ExportPage() {
                 </label>
                 <select
                   id="destination"
-                  className="flex h-11 w-full rounded-2xl border border-input bg-white/85 dark:bg-card/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-card"
+                  className="form-control"
                   disabled
                   defaultValue=""
                 >
@@ -125,14 +125,14 @@ export default function ExportPage() {
                 </label>
                 <select
                   id="dedupe"
-                  className="flex h-11 w-full rounded-2xl border border-input bg-white/85 dark:bg-card/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-card"
+                  className="form-control"
                   defaultValue="strict"
                 >
                   <option value="strict">Strict email dedupe</option>
                 </select>
               </div>
             </div>
-            <div className="rounded-3xl border border-dashed border-primary/25 bg-primary/5 p-4 text-sm leading-6 text-muted-foreground">
+            <div className="notice-panel p-4 leading-6">
               Kit, Zoho Campaigns, and Brevo are the launch integrations for this workflow.
             </div>
           </CardContent>
@@ -181,7 +181,7 @@ export default function ExportPage() {
               </label>
               <select
                 id="last-seen-mode"
-                className="flex h-11 w-full rounded-2xl border border-input bg-white/85 dark:bg-card/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                className="form-control"
                 value={filter.mode}
                 onChange={(event) =>
                   setFilter((current) => ({
@@ -203,7 +203,7 @@ export default function ExportPage() {
               <input
                 id="last-seen-date"
                 type="date"
-                className="flex h-11 w-full rounded-2xl border border-input bg-white/85 dark:bg-card/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
+                className="form-control disabled:cursor-not-allowed disabled:opacity-50"
                 disabled={filter.mode === "all"}
                 value={filter.date ?? ""}
                 onChange={(event) =>
@@ -215,7 +215,7 @@ export default function ExportPage() {
               />
             </div>
 
-            <div className="rounded-3xl border border-dashed border-primary/20 bg-primary/5 p-5 text-sm leading-7 text-muted-foreground">
+            <div className="notice-panel">
               {filter.mode === "all"
                 ? "The workbook will include every synced contact."
                 : filter.mode === "after"

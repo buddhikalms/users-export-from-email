@@ -46,7 +46,7 @@ type FormState = {
 };
 
 type ProviderPreset = {
-  id: "outlook" | "zoho" | "zoho_pro" | "custom";
+  id: "outlook" | "gmail" | "zoho" | "zoho_pro" | "custom";
   name: string;
   host: string;
   port: number;
@@ -66,6 +66,16 @@ const providerPresets: ProviderPreset[] = [
     description: "Use for Outlook.com, Hotmail, and Microsoft 365 IMAP mailboxes.",
     usernamePlaceholder: "Usually the full Outlook email",
     passwordPlaceholder: "Enter account password or Outlook app password",
+  },
+  {
+    id: "gmail",
+    name: "Gmail / Google Workspace",
+    host: "imap.gmail.com",
+    port: 993,
+    security: "ssl_tls",
+    description: "Use for Gmail and Google Workspace mailboxes. IMAP must be enabled and Google accounts should use an app password.",
+    usernamePlaceholder: "Full Gmail or Google Workspace email",
+    passwordPlaceholder: "Enter a Gmail app password",
   },
   {
     id: "zoho",
@@ -431,127 +441,127 @@ export function ConnectionForm() {
   return (
     <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
       <div className="space-y-6">
-      <Card className="border-white/80">
-        <CardHeader>
-          <CardTitle>Saved Email Accounts</CardTitle>
-          <p className="text-sm leading-6 text-muted-foreground">
-            Keep multiple IMAP accounts in the database and choose any one when
-            you want to sync folders.
-          </p>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {loadingAccounts ? (
-            <div className="rounded-3xl border border-dashed border-border bg-white/60 dark:bg-card/70 p-8 text-center text-sm text-muted-foreground">
-              Loading saved accounts...
-            </div>
-          ) : savedAccounts.length === 0 ? (
-            <div className="rounded-3xl border border-dashed border-border bg-white/60 dark:bg-card/70 p-8 text-center text-sm text-muted-foreground">
-              No email accounts are saved yet. Use the form to add your first one.
-            </div>
-          ) : (
-            savedAccounts.map((account) => (
-              <div
-                key={account.id}
-                className="rounded-[1.5rem] border border-white/70 bg-white/85 dark:bg-card/85 p-5"
-              >
-                <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div className="space-y-2">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <h3 className="text-lg font-semibold">{account.label}</h3>
-                      {account.isDefault ? <Badge>Default</Badge> : null}
+        <Card>
+          <CardHeader>
+            <CardTitle>Saved Email Accounts</CardTitle>
+            <p className="text-sm leading-6 text-muted-foreground">
+              Keep multiple IMAP accounts in the database and choose any one when
+              you want to sync folders.
+            </p>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {loadingAccounts ? (
+              <div className="empty-panel">
+                Loading saved accounts...
+              </div>
+            ) : savedAccounts.length === 0 ? (
+              <div className="empty-panel">
+                No email accounts are saved yet. Use the form to add your first one.
+              </div>
+            ) : (
+              savedAccounts.map((account) => (
+                <div
+                  key={account.id}
+                  className="surface-panel rounded-[1.5rem] p-5"
+                >
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div className="space-y-2">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h3 className="text-lg font-semibold">{account.label}</h3>
+                        {account.isDefault ? <Badge>Default</Badge> : null}
+                      </div>
+                      <p className="text-sm text-muted-foreground">{account.email}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {account.host}:{account.port} / {account.security} / {account.username}
+                      </p>
                     </div>
+
+                    <div className="flex flex-wrap gap-2">
+                      <Button
+                        size="sm"
+                        onClick={() => void useSavedAccount(account)}
+                      >
+                        <PlayCircle className="h-4 w-4" />
+                        Use
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={busyAction === `test-${account.id}`}
+                        onClick={() => void testSavedAccount(account)}
+                      >
+                        Test
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={busyAction === `delete-${account.id}`}
+                        onClick={() => void deleteSavedAccount(account)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        Delete
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Security Vault Email Accounts</CardTitle>
+            <p className="text-sm leading-6 text-muted-foreground">
+              Unlock the vault to sync with a saved credential. The password stays in
+              memory and is sent to the server only for the immediate IMAP request.
+            </p>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {!vault.hasVault ? (
+              <div className="empty-panel p-6 text-left">
+                No vault exists yet. Create one from the Security Vault page.
+              </div>
+            ) : !vault.isUnlocked ? (
+              <VaultUnlock
+                onUnlock={async (masterPassword) => {
+                  await vault.unlockVault(masterPassword);
+                }}
+              />
+            ) : vault.vaultData?.emailAccounts.length ? (
+              vault.vaultData.emailAccounts.map((account) => (
+                <div
+                  key={account.id}
+                  className="flex flex-wrap items-start justify-between gap-3 surface-panel rounded-[1.5rem] p-5"
+                >
+                  <div>
+                    <h3 className="text-lg font-semibold">{account.name}</h3>
                     <p className="text-sm text-muted-foreground">{account.email}</p>
                     <p className="text-xs text-muted-foreground">
-                      {account.host}:{account.port} / {account.security} / {account.username}
+                      {account.host}:{account.port} / {account.username}
                     </p>
                   </div>
-
-                  <div className="flex flex-wrap gap-2">
-                    <Button
-                      size="sm"
-                      onClick={() => void useSavedAccount(account)}
-                    >
-                      <PlayCircle className="h-4 w-4" />
-                      Use
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      disabled={busyAction === `test-${account.id}`}
-                      onClick={() => void testSavedAccount(account)}
-                    >
-                      Test
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      disabled={busyAction === `delete-${account.id}`}
-                      onClick={() => void deleteSavedAccount(account)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                      Delete
-                    </Button>
-                  </div>
+                  <Button size="sm" onClick={() => void useVaultAccount(account.id)}>
+                    <PlayCircle className="h-4 w-4" />
+                    Use
+                  </Button>
                 </div>
+              ))
+            ) : (
+              <div className="empty-panel p-6 text-left">
+                No email credentials are saved in the unlocked vault.
               </div>
-            ))
-          )}
-        </CardContent>
-      </Card>
-
-      <Card className="border-white/80">
-        <CardHeader>
-          <CardTitle>Security Vault Email Accounts</CardTitle>
-          <p className="text-sm leading-6 text-muted-foreground">
-            Unlock the vault to sync with a saved credential. The password stays in
-            memory and is sent to the server only for the immediate IMAP request.
-          </p>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {!vault.hasVault ? (
-            <div className="rounded-3xl border border-dashed border-border bg-white/60 dark:bg-card/70 p-6 text-sm text-muted-foreground">
-              No vault exists yet. Create one from the Security Vault page.
-            </div>
-          ) : !vault.isUnlocked ? (
-            <VaultUnlock
-              onUnlock={async (masterPassword) => {
-                await vault.unlockVault(masterPassword);
-              }}
-            />
-          ) : vault.vaultData?.emailAccounts.length ? (
-            vault.vaultData.emailAccounts.map((account) => (
-              <div
-                key={account.id}
-                className="flex flex-wrap items-start justify-between gap-3 rounded-[1.5rem] border border-white/70 bg-white/85 dark:bg-card/85 p-5"
-              >
-                <div>
-                  <h3 className="text-lg font-semibold">{account.name}</h3>
-                  <p className="text-sm text-muted-foreground">{account.email}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {account.host}:{account.port} / {account.username}
-                  </p>
-                </div>
-                <Button size="sm" onClick={() => void useVaultAccount(account.id)}>
-                  <PlayCircle className="h-4 w-4" />
-                  Use
-                </Button>
-              </div>
-            ))
-          ) : (
-            <div className="rounded-3xl border border-dashed border-border bg-white/60 dark:bg-card/70 p-6 text-sm text-muted-foreground">
-              No email credentials are saved in the unlocked vault.
-            </div>
-          )}
-        </CardContent>
-      </Card>
+            )}
+          </CardContent>
+        </Card>
       </div>
 
-      <Card className="border-white/80">
+      <Card>
         <CardHeader>
           <CardTitle>Add Email Account Or Use One-Time Connection</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="rounded-3xl border border-dashed border-primary/20 bg-primary/5 p-5 text-sm leading-7 text-muted-foreground">
+          <div className="notice-panel">
             Choose a provider to fill the incoming IMAP host, port, and security.
             For Zoho, make sure IMAP access is enabled in Zoho Mail settings and
             use an app-specific password when your account requires it. Saved
@@ -563,7 +573,7 @@ export function ConnectionForm() {
               <Label htmlFor="provider">Email provider</Label>
               <select
                 id="provider"
-                className="flex h-11 w-full rounded-2xl border border-input bg-white/85 dark:bg-card/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                className="form-control"
                 value={providerId}
                 onChange={(event) =>
                   applyProviderPreset(event.target.value as ProviderPreset["id"])
@@ -653,7 +663,7 @@ export function ConnectionForm() {
               <Label htmlFor="security">Security type</Label>
               <select
                 id="security"
-                className="flex h-11 w-full rounded-2xl border border-input bg-white/85 dark:bg-card/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+                className="form-control"
                 value={form.security}
                 onChange={(event) =>
                   updateField("security", event.target.value as FormState["security"])

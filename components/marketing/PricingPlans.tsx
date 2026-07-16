@@ -359,7 +359,7 @@ export function PricingPlans({ catalogPlans, catalogAddOns }: PricingPlansProps)
               )}
             >
               {plan.featured ? (
-                <span className="absolute right-4 top-4 rounded-full bg-violet-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-violet-700 dark:bg-violet-400/15 dark:text-violet-300">
+                <span className="absolute right-4 top-4 rounded-full bg-violet-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-violet-700 dark:bg-violet-400/10 dark:text-violet-300">
                   Most popular
                 </span>
               ) : null}
@@ -437,7 +437,7 @@ export function PricingPlans({ catalogPlans, catalogAddOns }: PricingPlansProps)
                             className={cn(
                               "flex cursor-pointer gap-3 rounded-xl border p-3 transition",
                               checked
-                                ? "border-brand-light-purple bg-brand-blue/15"
+                                ? "border-brand-light-purple bg-brand-blue/10"
                                 : "border-white/10 bg-slate-950/50 hover:border-white/20 hover:bg-white/[0.07]",
                             )}
                           >
@@ -459,7 +459,7 @@ export function PricingPlans({ catalogPlans, catalogAddOns }: PricingPlansProps)
                       })}
                     </div>
                     {upgradeSuggestion ? (
-                      <div className="mt-4 rounded-xl border border-brand-light-purple/30 bg-brand-blue/15 p-3">
+                      <div className="mt-4 rounded-xl border border-brand-light-purple/30 bg-brand-blue/10 p-3">
                         <p className="text-sm font-semibold text-white">
                           Consider {upgradeSuggestion.plan.name}
                           {upgradeSuggestion.plan.monthly !== null ? ` at ${formatMonthly(upgradeSuggestion.plan.monthly)}/mo` : ""}
@@ -495,13 +495,13 @@ export function PricingPlans({ catalogPlans, catalogAddOns }: PricingPlansProps)
                   <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">Key inclusions</p>
                   {selected.quickFeatures.map((feature) => (
                     <div key={feature} className="flex items-center gap-3 text-sm text-slate-200">
-                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-400/15 text-emerald-300"><Check className="h-3.5 w-3.5" /></span>
+                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-400/10 text-emerald-300"><Check className="h-3.5 w-3.5" /></span>
                       {feature}
                     </div>
                   ))}
                 </div>
 
-                <div className="mt-7 rounded-2xl border border-white/10 bg-black/15 p-4">
+                <div className="mt-7 rounded-2xl border border-white/10 bg-black/10 p-4">
                   <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">{selected.exclusions.length ? "Not included" : "No fixed exclusions"}</p>
                   {selected.exclusions.length ? (
                     <ul className="mt-3 space-y-2.5">
@@ -546,7 +546,7 @@ export function PricingPlans({ catalogPlans, catalogAddOns }: PricingPlansProps)
                             return (
                               <motion.div key={feature.title} initial={reduceMotion ? false : { opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: index * 0.04 }} className="rounded-2xl border border-white/10 bg-white/[0.055] p-4">
                                 <div className="flex gap-3">
-                                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-blue/15 text-brand-light-purple"><Icon className="h-4 w-4" /></span>
+                                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-blue/10 text-brand-light-purple"><Icon className="h-4 w-4" /></span>
                                   <div><p className="text-sm font-semibold text-white">{feature.title}</p><p className="mt-1.5 text-xs leading-5 text-slate-400">{feature.description}</p></div>
                                 </div>
                               </motion.div>

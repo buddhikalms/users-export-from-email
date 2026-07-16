@@ -381,7 +381,7 @@ export function AutomationWorkspace({
 
   return (
     <div className="space-y-6">
-      <section className="rounded-[2rem] border border-border/70 bg-card/82 p-6 shadow-sm">
+      <section className="rounded-[2rem] border border-border/70 bg-card/80 p-6 shadow-sm">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <Badge className="bg-primary/10 text-primary">Automation</Badge>
@@ -597,7 +597,7 @@ export function AutomationWorkspace({
                   </label>
                   <select
                     id="rule-trigger"
-                    className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-card"
+                    className="flex h-11 w-full rounded-2xl border border-input bg-white/80 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-card"
                     value={form.trigger}
                     onChange={(event) =>
                       setForm((current) => {
@@ -645,7 +645,7 @@ export function AutomationWorkspace({
                   </label>
                   <select
                     id="email-account"
-                    className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-card"
+                    className="flex h-11 w-full rounded-2xl border border-input bg-white/80 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-card"
                     value={form.emailAccountId}
                     onChange={(event) => setForm((current) => ({
                       ...current,
@@ -667,7 +667,7 @@ export function AutomationWorkspace({
                   </label>
                   <select
                     id="platform-account"
-                    className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-card"
+                    className="flex h-11 w-full rounded-2xl border border-input bg-white/80 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-card"
                     value={
                       form.marketingAccountId
                         ? `${form.marketingAccountType}:${form.marketingAccountId}`
@@ -730,7 +730,7 @@ export function AutomationWorkspace({
                   </label>
                   <select
                     id="destination-account-target"
-                    className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-card"
+                    className="flex h-11 w-full rounded-2xl border border-input bg-white/80 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-card"
                     disabled={!selectedPlatformAccount || loadingDestinations}
                     value={form.destinationId ? `${form.destinationType}:${form.destinationId}` : ""}
                     onChange={(event) => {
@@ -762,7 +762,7 @@ export function AutomationWorkspace({
                   Schedule
                 </label>
                 <select
-                  className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:opacity-60 dark:bg-card"
+                  className="flex h-11 w-full rounded-2xl border border-input bg-white/80 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:opacity-60 dark:bg-card"
                   disabled={form.trigger !== "SCHEDULED"}
                   id="schedule"
                   value={getScheduleSelectValue(form.schedule)}
@@ -793,7 +793,7 @@ export function AutomationWorkspace({
                     Day of month
                   </label>
                   <select
-                    className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-card"
+                    className="flex h-11 w-full rounded-2xl border border-input bg-white/80 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-card"
                     disabled={form.trigger !== "SCHEDULED"}
                     id="monthly-day"
                     value={form.monthlyDay}

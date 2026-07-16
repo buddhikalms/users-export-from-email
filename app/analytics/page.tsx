@@ -79,7 +79,7 @@ export default async function AnalyticsPage() {
       </div>
       <div className="grid gap-4 md:grid-cols-4">
         {statCards.map(([label, value, Icon]) => (
-          <div key={label} className="rounded-3xl border border-border/70 bg-card/82 p-5 shadow-sm">
+          <div key={label} className="rounded-3xl border border-border/70 bg-card/80 p-5 shadow-sm">
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">{label}</p>
@@ -91,17 +91,17 @@ export default async function AnalyticsPage() {
         ))}
       </div>
       <div className="grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
-        <div className="rounded-3xl border border-border/70 bg-card/82 p-5 shadow-sm">
+        <div className="rounded-3xl border border-border/70 bg-card/80 p-5 shadow-sm">
           <h2 className="text-xl font-semibold">Contacts Growth</h2>
           <ContactGrowthChart data={growthData} />
         </div>
-        <div className="rounded-3xl border border-border/70 bg-card/82 p-5 shadow-sm">
+        <div className="rounded-3xl border border-border/70 bg-card/80 p-5 shadow-sm">
           <h2 className="text-xl font-semibold">Folder Activity</h2>
           <FolderActivityChart data={folderActivity} />
         </div>
       </div>
       <div className="grid gap-6 xl:grid-cols-3">
-        <div className="rounded-3xl border border-border/70 bg-card/82 p-5 shadow-sm">
+        <div className="rounded-3xl border border-border/70 bg-card/80 p-5 shadow-sm">
           <h2 className="text-xl font-semibold">Platform Usage</h2>
           <div className="mt-5 space-y-4">
             {platformUsage.length ? platformUsage.map((item) => (
@@ -121,7 +121,7 @@ export default async function AnalyticsPage() {
             )}
           </div>
         </div>
-        <div className="rounded-3xl border border-border/70 bg-card/82 p-5 shadow-sm">
+        <div className="rounded-3xl border border-border/70 bg-card/80 p-5 shadow-sm">
           <h2 className="text-xl font-semibold">Top Domains</h2>
           <div className="mt-4 space-y-3">
             {topDomains.length ? (
@@ -137,7 +137,7 @@ export default async function AnalyticsPage() {
             )}
           </div>
         </div>
-        <div className="rounded-3xl border border-border/70 bg-card/82 p-5 shadow-sm">
+        <div className="rounded-3xl border border-border/70 bg-card/80 p-5 shadow-sm">
           <h2 className="text-xl font-semibold">Cleanup Funnel</h2>
           <div className="mt-4 space-y-3">
             {[

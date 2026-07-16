@@ -27,7 +27,7 @@ export function MarketingHeader({ signedIn = false }: { signedIn?: boolean }) {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-brand-blue/15 bg-brand-white/85 backdrop-blur-xl dark:border-white/10 dark:bg-brand-navy/85">
+    <header className="sticky top-0 z-50 border-b border-brand-blue/10 bg-brand-white/80 backdrop-blur-xl dark:border-white/10 dark:bg-brand-navy/80">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link className="flex items-center gap-3 font-semibold" href="/">
           <Image

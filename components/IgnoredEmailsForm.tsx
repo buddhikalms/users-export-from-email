@@ -208,7 +208,7 @@ export function IgnoredEmailsForm() {
             {ignoredEmails.map((item) => (
               <div
                 key={item.id}
-                className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/70 bg-white/85 dark:bg-card/85 px-4 py-3"
+                className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/70 bg-white/80 dark:bg-card/80 px-4 py-3"
               >
                 <span className="text-sm font-medium">{item.email}</span>
                 <Button

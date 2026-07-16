@@ -74,12 +74,12 @@ function formatDate(value: string | Date | null | undefined) {
 
 function statusClass(status: string | null | undefined) {
   if (status === "ACTIVE" || status === "SYNCED" || status === "REUSED" || status === "CREATED") {
-    return "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300";
+    return "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300";
   }
   if (status?.includes("MISMATCH") || status === "INACTIVE" || status === "MISSING") {
-    return "bg-amber-500/15 text-amber-700 dark:text-amber-300";
+    return "bg-amber-500/10 text-amber-700 dark:text-amber-300";
   }
-  if (status === "FAILED") return "bg-red-500/15 text-red-700 dark:text-red-300";
+  if (status === "FAILED") return "bg-red-500/10 text-red-700 dark:text-red-300";
   return "bg-muted text-muted-foreground";
 }
 

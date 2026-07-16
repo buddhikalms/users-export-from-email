@@ -17,7 +17,7 @@
   --accent-foreground: 0 0% 100%;
   --muted: 220 22% 94%;
   --muted-foreground: 220 10% 43%;
-  --destructive: 204 100% 42%;
+  --destructive: 0 84% 60%;
   --destructive-foreground: 48 60% 98%;
   --ring: 178 97% 36%;
   --radius: 0.875rem;
@@ -38,9 +38,39 @@
   --accent-foreground: 224 36% 7%;
   --muted: 224 22% 14%;
   --muted-foreground: 220 12% 68%;
-  --destructive: 204 100% 42%;
+  --destructive: 0 72% 51%;
   --destructive-foreground: 0 0% 100%;
   --ring: 178 97% 36%;
+}
+
+@layer components {
+  .surface-panel {
+    @apply border border-border/70 bg-card/80 text-card-foreground shadow-sm backdrop-blur dark:bg-card/75;
+  }
+
+  .soft-panel {
+    @apply rounded-3xl border border-border/70 bg-card/75 text-card-foreground shadow-sm backdrop-blur dark:bg-card/70;
+  }
+
+  .empty-panel {
+    @apply rounded-3xl border border-dashed border-border bg-card/75 p-8 text-center text-sm text-muted-foreground shadow-sm backdrop-blur dark:bg-card/70;
+  }
+
+  .notice-panel {
+    @apply rounded-3xl border border-dashed border-primary/25 bg-primary/10 p-5 text-sm leading-7 text-foreground dark:bg-primary/10;
+  }
+
+  .form-control {
+    @apply flex h-11 w-full rounded-2xl border border-input bg-card/80 px-4 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-card/90;
+  }
+
+  .data-table-shell {
+    @apply overflow-hidden rounded-[1.5rem] border border-border/70 bg-card/80 text-card-foreground shadow-sm dark:bg-card/80;
+  }
+
+  .data-table-head {
+    @apply border-b border-border/70 bg-muted/80 text-foreground dark:bg-muted/70;
+  }
 }
 
 * {

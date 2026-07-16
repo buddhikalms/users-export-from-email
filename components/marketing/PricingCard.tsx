@@ -22,7 +22,7 @@ export function PricingCard({
       className={cn(
         "flex flex-col rounded-2xl border p-6 shadow-sm",
         featured
-          ? "border-brand-blue bg-slate-950 text-white shadow-xl shadow-brand-blue/15"
+          ? "border-brand-blue bg-slate-950 text-white shadow-xl shadow-brand-blue/10"
           : "border-slate-200 bg-white dark:border-white/10 dark:bg-white/[0.04]",
       )}
     >

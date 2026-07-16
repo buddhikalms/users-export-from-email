@@ -55,7 +55,7 @@ export function AdminTable({
           </thead>
           <tbody className="divide-y divide-border/70">
             {filteredRows.map((row) => (
-              <tr key={row.id} className="transition hover:bg-secondary/35">
+              <tr key={row.id} className="transition hover:bg-secondary/40">
                 {columns.map((column) => (
                   <td key={`${row.id}-${column.key}`} className="px-4 py-3 align-top">
                     {row.cells[column.key] ?? ""}

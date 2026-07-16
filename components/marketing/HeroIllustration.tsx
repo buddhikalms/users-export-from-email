@@ -73,7 +73,7 @@ export function HeroIllustration() {
       >
         <div className="absolute inset-0 translate-y-5 rounded-[1.75rem] bg-brand-blue shadow-[0_28px_55px_-18px_rgba(0,127,212,0.6)] [transform:rotateX(8deg)_rotateY(-8deg)]" />
         <div className="absolute inset-x-0 top-5 h-20 overflow-hidden rounded-[1.75rem] border border-white/30 bg-gradient-to-br from-brand-purple via-brand-blue to-brand-turquoise">
-          <div className="absolute inset-x-0 top-0 h-full origin-top bg-brand-navy/35 [clip-path:polygon(0_0,50%_63%,100%_0)]" />
+          <div className="absolute inset-x-0 top-0 h-full origin-top bg-brand-navy/40 [clip-path:polygon(0_0,50%_63%,100%_0)]" />
           <Mail className="absolute left-1/2 top-1/2 h-9 w-9 -translate-x-1/2 -translate-y-1/2 text-white" />
         </div>
       </motion.div>
@@ -94,7 +94,7 @@ export function HeroIllustration() {
       </div>
 
       <motion.div
-        className="absolute left-1/2 top-[280px] z-10 w-52 -translate-x-1/2 rounded-[1.5rem] border border-white/90 bg-white/85 p-4 shadow-[0_24px_55px_-22px_rgba(15,23,42,0.35)] backdrop-blur-xl"
+        className="absolute left-1/2 top-[280px] z-10 w-52 -translate-x-1/2 rounded-[1.5rem] border border-white/90 bg-white/80 p-4 shadow-[0_24px_55px_-22px_rgba(15,23,42,0.35)] backdrop-blur-xl"
         animate={reduceMotion ? undefined : { y: [0, -5, 0] }}
         transition={{ duration: 4.8, repeat: Infinity, ease: "easeInOut" }}
       >

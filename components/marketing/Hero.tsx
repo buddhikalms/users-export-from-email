@@ -28,7 +28,7 @@ export function Hero() {
 
   return (
     <section
-      className="relative isolate overflow-hidden border-b border-brand-blue/15"
+      className="relative isolate overflow-hidden border-b border-brand-blue/10"
       onMouseMove={(event) => {
         if (reduceMotion) return;
         const rect = event.currentTarget.getBoundingClientRect();

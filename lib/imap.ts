@@ -37,7 +37,7 @@ function getImapErrorDetails(error: unknown) {
   };
 }
 
-function toSafeImapError(error: unknown) {
+function toSafeImapError(error: unknown, settings?: ConnectionSettings) {
   const details = getImapErrorDetails(error);
   const rawMessage = error instanceof Error ? error.message : details.message;
   const responseText = details.responseText ?? details.response ?? "";
@@ -51,6 +51,17 @@ function toSafeImapError(error: unknown) {
     return new ImapConnectionError(
       "Authentication failed. Check that the username is the full email address, IMAP access is enabled for this mailbox, and the password is correct. For Zoho accounts with 2FA, SAML, or federated login, use a Zoho application-specific password.",
       401,
+    );
+  }
+
+  if (/Failed to establish connection in required time|timeout|timed out/i.test(rawMessage ?? "")) {
+    const endpoint = settings
+      ? `${settings.host}:${settings.port} using ${settings.security === "ssl_tls" ? "SSL/TLS" : "STARTTLS"}`
+      : "the configured IMAP server";
+
+    return new ImapConnectionError(
+      `Could not reach ${endpoint} before the connection timeout. Check the incoming IMAP host, port, security type, firewall/network access, and whether IMAP is enabled for this mailbox. Gmail IMAP should use imap.gmail.com, port 993, SSL/TLS, and a Gmail app password.`,
+      504,
     );
   }
 
@@ -99,7 +110,7 @@ async function withImapClient<T>(
     await client.connect();
     return await callback(client);
   } catch (error) {
-    throw toSafeImapError(error);
+    throw toSafeImapError(error, settings);
   } finally {
     try {
       await client.logout();

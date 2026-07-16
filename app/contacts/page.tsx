@@ -111,7 +111,7 @@ export default async function ContactsPage({ searchParams }: ContactsPageProps) 
           ["Duplicate risk", formatCount(duplicateRiskCount)],
           ["Starred leads", formatCount(starredCount)],
         ].map(([label, value]) => (
-          <div key={label} className="rounded-3xl border border-border/70 bg-card/82 p-5 shadow-sm">
+          <div key={label} className="rounded-3xl border border-border/70 bg-card/80 p-5 shadow-sm">
             <div className="text-sm text-muted-foreground">{label}</div>
             <div className="mt-3 text-3xl font-semibold">{value}</div>
           </div>

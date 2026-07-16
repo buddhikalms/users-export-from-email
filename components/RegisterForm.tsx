@@ -133,7 +133,7 @@ export function RegisterForm({ googleAuthEnabled }: { googleAuthEnabled: boolean
             </Alert>
           ) : null}
 
-          <Button className="h-12 w-full rounded-xl bg-brand-turquoise shadow-lg shadow-brand-turquoise/15 hover:bg-brand-blue" disabled={loading} type="submit">
+          <Button className="h-12 w-full rounded-xl bg-brand-turquoise shadow-lg shadow-brand-turquoise/10 hover:bg-brand-blue" disabled={loading} type="submit">
             {loading ? "Creating account..." : "Create Account"}
           </Button>
 

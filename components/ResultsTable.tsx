@@ -191,17 +191,17 @@ function ContactTable({
 
   if (cleanContacts.length === 0) {
     return (
-      <div className="rounded-3xl border border-dashed border-border bg-white/60 dark:bg-card/70 p-8 text-center text-sm text-muted-foreground">
+      <div className="empty-panel">
         {emptyMessage}
       </div>
     );
   }
 
   return (
-    <div className="overflow-hidden rounded-[1.5rem] border border-border/70 bg-white/85 dark:bg-card/85">
+    <div className="data-table-shell">
       <div className="overflow-x-auto">
         <table className="min-w-full text-left text-sm">
-          <thead className="bg-secondary/60 text-foreground">
+          <thead className="data-table-head">
             <tr>
               <th className="px-4 py-3 font-semibold">Name</th>
               <th className="px-4 py-3 font-semibold">Email</th>
@@ -405,14 +405,14 @@ export function ResultsTable({
         </CardHeader>
         <CardContent>
           {filteredSyncResult.duplicatesAcrossFolders.length === 0 ? (
-            <div className="rounded-3xl border border-dashed border-border bg-white/60 dark:bg-card/70 p-8 text-center text-sm text-muted-foreground">
+            <div className="empty-panel">
               No duplicate email addresses were found across the selected folders.
             </div>
           ) : (
-            <div className="overflow-hidden rounded-[1.5rem] border border-border/70 bg-white/85 dark:bg-card/85">
+            <div className="data-table-shell">
               <div className="overflow-x-auto">
                 <table className="min-w-full text-left text-sm">
-                  <thead className="bg-secondary/60 text-foreground">
+                  <thead className="data-table-head">
                     <tr>
                       <th className="px-4 py-3 font-semibold">Name</th>
                       <th className="px-4 py-3 font-semibold">Email</th>

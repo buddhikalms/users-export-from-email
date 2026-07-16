@@ -28,7 +28,7 @@ export function HeroBackground({ x, y }: { x: MotionValue<number>; y: MotionValu
           animate={reduceMotion ? undefined : { scale: [1.05, 0.96, 1.05], y: [0, 24, 0] }}
           transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
         />
-        <div className="absolute left-[42%] top-[15%] h-72 w-72 rounded-full bg-brand-blue/15 blur-[100px]" />
+        <div className="absolute left-[42%] top-[15%] h-72 w-72 rounded-full bg-brand-blue/10 blur-[100px]" />
       </motion.div>
       {particles.map(([left, top, size], index) => (
         <motion.span

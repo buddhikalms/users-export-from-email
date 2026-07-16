@@ -86,7 +86,7 @@ export function LoginForm({
             </Alert>
           ) : null}
 
-          <Button className="h-12 w-full rounded-xl bg-brand-turquoise shadow-lg shadow-brand-turquoise/15 hover:bg-brand-blue" disabled={loading} type="submit">
+          <Button className="h-12 w-full rounded-xl bg-brand-turquoise shadow-lg shadow-brand-turquoise/10 hover:bg-brand-blue" disabled={loading} type="submit">
             {loading ? "Signing in..." : "Sign In"}
           </Button>
           <p className="pt-1 text-center text-sm text-muted-foreground">

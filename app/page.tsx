@@ -225,7 +225,7 @@ export default function MarketingHomePage() {
       <Section className="pb-20 pt-8 lg:pb-28">
         <Reveal>
           <div className="relative overflow-hidden rounded-[2rem] bg-slate-950 px-6 py-16 text-center text-white shadow-[0_32px_90px_-38px_rgba(0,127,212,0.55)] sm:px-12 lg:py-20 dark:bg-brand-blue">
-            <div className="absolute -left-24 -top-24 h-72 w-72 rounded-full bg-brand-blue/40 blur-3xl dark:bg-white/15" />
+            <div className="absolute -left-24 -top-24 h-72 w-72 rounded-full bg-brand-blue/40 blur-3xl dark:bg-white/10" />
             <div className="absolute -bottom-32 -right-20 h-80 w-80 rounded-full bg-orange-400/20 blur-3xl" />
             <FileSpreadsheet className="relative mx-auto h-8 w-8 text-brand-light-purple dark:text-white" />
             <h2 className="relative mx-auto mt-6 max-w-3xl text-3xl font-semibold tracking-tight sm:text-5xl">

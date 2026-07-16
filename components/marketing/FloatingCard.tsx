@@ -52,7 +52,7 @@ export function FloatingCard({
       </span>
       <span className="min-w-0">
         <span className="block whitespace-nowrap text-xs font-semibold text-brand-navy">{label}</span>
-        {detail ? <span className="block whitespace-nowrap text-[10px] text-brand-navy/55">{detail}</span> : null}
+        {detail ? <span className="block whitespace-nowrap text-[10px] text-brand-navy/50">{detail}</span> : null}
       </span>
     </motion.div>
   );

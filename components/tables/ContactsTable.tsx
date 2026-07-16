@@ -72,7 +72,7 @@ const columns: ColumnDef<ContactRow>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => (
-      <Badge className="bg-accent/15 text-accent-foreground dark:text-accent">
+      <Badge className="bg-accent/10 text-accent-foreground dark:text-accent">
         {row.original.status}
       </Badge>
     ),

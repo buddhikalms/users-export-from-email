@@ -165,7 +165,7 @@ export function AdminShell({ children, user }: AdminShellProps) {
         </div>
       ) : null}
       <div className="lg:pl-[17rem]">
-        <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/92 backdrop-blur dark:border-white/10 dark:bg-[#071A2F]/92">
+        <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/90 backdrop-blur dark:border-white/10 dark:bg-[#071A2F]/90">
           <div className="flex h-16 items-center gap-3 px-4 sm:px-6">
             <Button
               aria-label={mobileOpen ? "Close navigation" : "Open navigation"}

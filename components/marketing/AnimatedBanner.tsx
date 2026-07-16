@@ -32,7 +32,7 @@ export function AnimatedBanner() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-sm text-brand-light-purple"
+              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1 text-sm text-brand-light-purple"
             >
               <Sparkles className="h-4 w-4 text-brand-turquoise" />
               New workflow: inbox to marketing platform
@@ -81,7 +81,7 @@ export function AnimatedBanner() {
               className="absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full border border-dashed border-brand-turquoise/30"
               transition={{ duration: 28, repeat: Infinity, ease: "linear" }}
             />
-            <div className="absolute left-1/2 top-1/2 grid h-28 w-28 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-3xl border border-white/15 bg-white/10 text-center shadow-2xl backdrop-blur">
+            <div className="absolute left-1/2 top-1/2 grid h-28 w-28 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-3xl border border-white/10 bg-white/10 text-center shadow-2xl backdrop-blur">
               <MailCheck className="h-7 w-7 text-brand-turquoise" />
               <span className="mt-2 text-xs font-semibold">OMAZYNC</span>
             </div>
@@ -97,7 +97,7 @@ export function AnimatedBanner() {
                 <motion.div
                   key={label}
                   animate={{ y: [0, -8, 0] }}
-                  className={`absolute ${positions[index]} w-36 rounded-2xl border border-white/15 bg-white/10 p-3 shadow-xl backdrop-blur`}
+                  className={`absolute ${positions[index]} w-36 rounded-2xl border border-white/10 bg-white/10 p-3 shadow-xl backdrop-blur`}
                   transition={{ duration: 3.6, delay: index * 0.35, repeat: Infinity, ease: "easeInOut" }}
                 >
                   <div className="flex items-center gap-2 text-sm font-semibold">

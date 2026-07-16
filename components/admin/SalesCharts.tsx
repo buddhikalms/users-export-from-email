@@ -34,7 +34,7 @@ export function SalesCharts({
 }) {
   return (
     <div className="grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
-      <div className="rounded-3xl border border-border/70 bg-card/82 p-5 shadow-sm">
+      <div className="rounded-3xl border border-border/70 bg-card/80 p-5 shadow-sm">
         <h2 className="text-xl font-semibold">Sales Activity</h2>
         <p className="mt-1 text-sm text-muted-foreground">
           Payment timestamps and subscription records by month.
@@ -60,7 +60,7 @@ export function SalesCharts({
           </ResponsiveContainer>
         </div>
       </div>
-      <div className="rounded-3xl border border-border/70 bg-card/82 p-5 shadow-sm">
+      <div className="rounded-3xl border border-border/70 bg-card/80 p-5 shadow-sm">
         <h2 className="text-xl font-semibold">Plans</h2>
         <p className="mt-1 text-sm text-muted-foreground">Current subscription mix.</p>
         <div className="mt-5 h-[320px]">

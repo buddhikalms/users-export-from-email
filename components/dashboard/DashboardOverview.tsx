@@ -40,7 +40,7 @@ function StatCard({
   icon: ElementType;
 }) {
   return (
-    <div className="rounded-3xl border border-border/70 bg-card/82 p-5 shadow-sm backdrop-blur transition hover:-translate-y-0.5 hover:shadow-lg">
+    <div className="rounded-3xl border border-border/70 bg-card/80 p-5 shadow-sm backdrop-blur transition hover:-translate-y-0.5 hover:shadow-lg">
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-sm text-muted-foreground">{label}</p>
@@ -69,7 +69,7 @@ export function DashboardOverview({
 }: DashboardOverviewProps) {
   return (
     <div className="space-y-6">
-      <section className="overflow-hidden rounded-[2rem] border border-border/70 bg-card/82 p-6 shadow-sm backdrop-blur md:p-8">
+      <section className="overflow-hidden rounded-[2rem] border border-border/70 bg-card/80 p-6 shadow-sm backdrop-blur md:p-8">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="max-w-3xl">
             <Badge className="bg-primary/10 text-primary">Enterprise contact ops</Badge>
@@ -108,7 +108,7 @@ export function DashboardOverview({
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
-        <div className="rounded-3xl border border-border/70 bg-card/82 p-5 shadow-sm">
+        <div className="rounded-3xl border border-border/70 bg-card/80 p-5 shadow-sm">
           <div className="mb-5 flex items-center justify-between gap-3">
             <div>
               <h2 className="text-xl font-semibold">Contact Growth</h2>
@@ -119,7 +119,7 @@ export function DashboardOverview({
           <ContactGrowthChart data={growthData} />
         </div>
 
-        <div className="rounded-3xl border border-border/70 bg-card/82 p-5 shadow-sm">
+        <div className="rounded-3xl border border-border/70 bg-card/80 p-5 shadow-sm">
           <h2 className="text-xl font-semibold">Folder Activity</h2>
           <p className="mb-5 text-sm text-muted-foreground">Top folders by contact yield</p>
           <FolderActivityChart data={folderActivity} />
@@ -127,7 +127,7 @@ export function DashboardOverview({
       </section>
 
       <section className="grid gap-6 xl:grid-cols-3">
-        <div className="rounded-3xl border border-border/70 bg-card/82 p-5 shadow-sm xl:col-span-2">
+        <div className="rounded-3xl border border-border/70 bg-card/80 p-5 shadow-sm xl:col-span-2">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-xl font-semibold">Recent Sync Activity</h2>
             <Button asChild size="sm" variant="ghost">
@@ -139,7 +139,7 @@ export function DashboardOverview({
           </div>
         </div>
 
-        <div className="rounded-3xl border border-border/70 bg-card/82 p-5 shadow-sm">
+        <div className="rounded-3xl border border-border/70 bg-card/80 p-5 shadow-sm">
           <h2 className="text-xl font-semibold">Most Active Domains</h2>
           {topDomains.length ? (
             <div className="mt-4 space-y-3">

@@ -286,7 +286,7 @@ export default function ResultsPage() {
       </div>
 
       {loading ? (
-        <div className="rounded-[1.75rem] border border-dashed border-border bg-white/70 dark:bg-card/75 p-10 text-center text-sm text-muted-foreground">
+        <div className="empty-panel p-10">
           Starting sync...
         </div>
       ) : null}
@@ -299,7 +299,7 @@ export default function ResultsPage() {
       ) : null}
 
       {backgroundStatus ? (
-        <div className="mb-6 rounded-[1.75rem] border border-border bg-white/85 dark:bg-card/85 p-6 shadow-sm">
+        <div className="mb-6 surface-panel rounded-[1.75rem] p-6">
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">

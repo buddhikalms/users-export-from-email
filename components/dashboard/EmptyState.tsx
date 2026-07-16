@@ -17,7 +17,7 @@ export function EmptyState({
   icon: ElementType;
 }) {
   return (
-    <div className="rounded-[2rem] border border-dashed border-border bg-card/72 p-10 text-center shadow-sm">
+    <div className="rounded-[2rem] border border-dashed border-border bg-card/75 p-10 text-center shadow-sm">
       <div className="mx-auto grid h-16 w-16 place-items-center rounded-3xl bg-primary/10 text-primary">
         <Icon className="h-7 w-7" />
       </div>

@@ -14,8 +14,8 @@ const buttonVariants = cva(
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         outline:
-          "border border-border bg-white/70 backdrop-blur hover:bg-white dark:bg-card/70 dark:hover:bg-secondary",
-        ghost: "hover:bg-secondary/70 hover:text-secondary-foreground",
+          "border border-border bg-card/80 text-foreground backdrop-blur hover:bg-muted dark:bg-card/75 dark:hover:bg-muted",
+        ghost: "text-foreground hover:bg-muted hover:text-foreground",
       },
       size: {
         default: "h-11 px-5 py-2",

@@ -133,7 +133,7 @@ export function IntegrationsWorkspace({
 
   return (
     <div className="space-y-6">
-      <section className="flex flex-col gap-5 rounded-[2rem] border border-border/70 bg-card/82 p-6 shadow-sm md:flex-row md:items-center md:justify-between">
+      <section className="flex flex-col gap-5 rounded-[2rem] border border-border/70 bg-card/80 p-6 shadow-sm md:flex-row md:items-center md:justify-between">
         <div>
           <Badge className="bg-primary/10 text-primary">Integration Center</Badge>
           <h1 className="mt-4 text-4xl font-semibold tracking-tight">Marketing Sync Hub</h1>
@@ -206,7 +206,7 @@ export function IntegrationsWorkspace({
                   </div>
                 </div>
                 {integration.accounts > 0 ? (
-                  <Badge className="bg-accent/15 text-accent-foreground dark:text-accent">
+                  <Badge className="bg-accent/10 text-accent-foreground dark:text-accent">
                     <CheckCircle2 className="h-3.5 w-3.5" />
                     Connected
                   </Badge>
@@ -276,7 +276,7 @@ export function IntegrationsWorkspace({
                   </label>
                   <select
                     id="platform"
-                    className="flex h-11 w-full rounded-2xl border border-input bg-white/85 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-card"
+                    className="flex h-11 w-full rounded-2xl border border-input bg-white/80 px-4 py-2 text-sm shadow-sm outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 dark:bg-card"
                     value={form.platform}
                     onChange={(event) => {
                       const platform = event.target.value as MarketingPlatformId;

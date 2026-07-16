@@ -99,9 +99,9 @@ function ResponsePanel({ response }: { response: OmaAssistantResponse }) {
   return (
     <div className="mt-4 space-y-4 rounded-2xl border border-border bg-background/70 p-4">
       <div className="flex flex-wrap items-center gap-2">
-        <Badge className="bg-primary/12 text-primary">{response.title}</Badge>
+        <Badge className="bg-primary/10 text-primary">{response.title}</Badge>
         {response.needsConfirmation ? (
-          <Badge className="bg-amber-500/12 text-amber-700 dark:text-amber-300">Confirmation required</Badge>
+          <Badge className="bg-amber-500/10 text-amber-700 dark:text-amber-300">Confirmation required</Badge>
         ) : null}
       </div>
       <ul className="space-y-2 text-sm text-muted-foreground">
@@ -303,7 +303,7 @@ export function OmaAssistantWorkspace({ mode = "page" }: { mode?: "page" | "pane
     <div className={cn(isPanel ? "h-full" : "grid min-h-[calc(100vh-7rem)] gap-5 xl:grid-cols-[minmax(0,1fr)_360px]")}>
       <section
         className={cn(
-          "flex flex-col overflow-hidden border border-border bg-card/86 shadow-sm",
+          "flex flex-col overflow-hidden border border-border bg-card/80 shadow-sm",
           isPanel ? "h-full rounded-none border-0" : "min-h-[680px] rounded-3xl",
         )}
       >
@@ -315,7 +315,7 @@ export function OmaAssistantWorkspace({ mode = "page" }: { mode?: "page" | "pane
             <h1 className="text-xl font-semibold tracking-tight">OM - Assist</h1>
             <p className="text-sm text-muted-foreground">Voice and workflow assistant for OMAZYNC</p>
           </div>
-          <Badge className="bg-emerald-500/12 text-emerald-700 dark:text-emerald-300">
+          <Badge className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-300">
             Safety checks on
           </Badge>
         </div>
@@ -393,7 +393,7 @@ export function OmaAssistantWorkspace({ mode = "page" }: { mode?: "page" | "pane
 
       {isPanel ? null : (
       <aside className="space-y-5">
-        <section className="rounded-3xl border border-border bg-card/86 p-5 shadow-sm">
+        <section className="rounded-3xl border border-border bg-card/80 p-5 shadow-sm">
           <div className="flex items-center gap-3">
             <ShieldCheck className="h-5 w-5 text-primary" />
             <h2 className="text-base font-semibold">Operating Rules</h2>
@@ -405,7 +405,7 @@ export function OmaAssistantWorkspace({ mode = "page" }: { mode?: "page" | "pane
           </div>
         </section>
 
-        <section className="rounded-3xl border border-border bg-card/86 p-5 shadow-sm">
+        <section className="rounded-3xl border border-border bg-card/80 p-5 shadow-sm">
           <div className="flex items-center gap-3">
             <Sparkles className="h-5 w-5 text-primary" />
             <h2 className="text-base font-semibold">Current Guidance</h2>
@@ -416,7 +416,7 @@ export function OmaAssistantWorkspace({ mode = "page" }: { mode?: "page" | "pane
           </div>
         </section>
 
-        <section className="rounded-3xl border border-border bg-card/86 p-5 shadow-sm">
+        <section className="rounded-3xl border border-border bg-card/80 p-5 shadow-sm">
           <div className="flex items-center gap-3">
             <Volume2 className="h-5 w-5 text-primary" />
             <h2 className="text-base font-semibold">Voice Status</h2>

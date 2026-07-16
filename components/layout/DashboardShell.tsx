@@ -228,7 +228,7 @@ function Sidebar({
   const sidebar = (
     <aside
       className={cn(
-        "flex h-full flex-col border-r border-border/80 bg-card/82 shadow-[0_18px_80px_hsl(var(--foreground)/0.08)] backdrop-blur-xl transition-all duration-300",
+        "flex h-full flex-col border-r border-border/80 bg-card/80 shadow-[0_18px_80px_hsl(var(--foreground)/0.08)] backdrop-blur-xl transition-all duration-300",
         collapsed ? "w-[84px]" : "w-[286px]",
       )}
     >
@@ -348,7 +348,7 @@ function CommandPalette({
       {open ? (
         <motion.div
           animate={{ opacity: 1 }}
-          className="fixed inset-0 z-[60] flex items-start justify-center bg-foreground/35 px-4 pt-24 backdrop-blur-sm"
+          className="fixed inset-0 z-[60] flex items-start justify-center bg-foreground/40 px-4 pt-24 backdrop-blur-sm"
           exit={{ opacity: 0 }}
           initial={{ opacity: 0 }}
           onClick={onClose}
@@ -405,7 +405,7 @@ function AssistantDrawer({
       {open ? (
         <motion.div
           animate={{ opacity: 1 }}
-          className="fixed inset-0 z-[70] flex justify-end bg-foreground/35 backdrop-blur-sm"
+          className="fixed inset-0 z-[70] flex justify-end bg-foreground/40 backdrop-blur-sm"
           exit={{ opacity: 0 }}
           initial={{ opacity: 0 }}
           onClick={onClose}

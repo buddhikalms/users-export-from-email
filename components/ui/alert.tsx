@@ -6,7 +6,7 @@ function Alert({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "rounded-2xl border border-border bg-white/80 p-4 text-sm text-foreground",
+        "rounded-2xl border border-border bg-card/80 p-4 text-sm text-foreground shadow-sm backdrop-blur dark:bg-card/80",
         className,
       )}
       role="alert"

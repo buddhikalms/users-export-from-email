@@ -51,7 +51,7 @@ export function BookingEmbed() {
             onClick={(event) => event.stopPropagation()}
           >
             <button
-              className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black/10 text-slate-700 transition hover:bg-black/15"
+              className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-black/10 text-slate-700 transition hover:bg-black/10"
               type="button"
               aria-label="Close booking popup"
               onClick={() => setOpen(false)}

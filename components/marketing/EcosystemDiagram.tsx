@@ -45,7 +45,7 @@ export function EcosystemDiagram() {
                 stroke="currentColor"
                 strokeDasharray="7 9"
                 strokeWidth="1.5"
-                className="text-brand-light-purple/80 dark:text-brand-blue/35"
+                className="text-brand-light-purple/80 dark:text-brand-blue/40"
                 animate={reduceMotion ? undefined : { strokeDashoffset: [0, -32] }}
                 transition={{ duration: 3.5 + index * 0.08, repeat: Infinity, ease: "linear" }}
               />

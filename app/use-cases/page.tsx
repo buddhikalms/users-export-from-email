@@ -180,7 +180,7 @@ export default function UseCasesPage() {
                     key={item.plan}
                     className={
                       item.featured
-                        ? "rounded-2xl border border-brand-light-purple/60 bg-brand-blue/15 p-4"
+                        ? "rounded-2xl border border-brand-light-purple/60 bg-brand-blue/10 p-4"
                         : "rounded-2xl border border-white/10 bg-white/[0.04] p-4"
                     }
                   >
@@ -309,7 +309,7 @@ export default function UseCasesPage() {
                   </div>
                 </div>
 
-                <div className="mt-5 flex items-center gap-3 rounded-2xl border border-brand-blue/15 bg-brand-blue/10 p-4 text-sm font-medium text-brand-navy dark:border-brand-light-purple/20 dark:bg-brand-blue/10 dark:text-brand-light-purple">
+                <div className="mt-5 flex items-center gap-3 rounded-2xl border border-brand-blue/10 bg-brand-blue/10 p-4 text-sm font-medium text-brand-navy dark:border-brand-light-purple/20 dark:bg-brand-blue/10 dark:text-brand-light-purple">
                   <Sparkles className="h-5 w-5 shrink-0" />
                   {item.result}
                 </div>
@@ -326,7 +326,7 @@ export default function UseCasesPage() {
               key={item.plan}
               className={
                 item.featured
-                  ? "rounded-[1.5rem] border border-brand-blue bg-slate-950 p-6 text-white shadow-2xl shadow-brand-blue/15"
+                  ? "rounded-[1.5rem] border border-brand-blue bg-slate-950 p-6 text-white shadow-2xl shadow-brand-blue/10"
                   : "rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-white/[0.04]"
               }
             >
