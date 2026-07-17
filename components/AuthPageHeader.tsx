@@ -10,6 +10,7 @@ import { useTheme } from "@/components/layout/ThemeProvider";
 export function AuthPageHeader() {
   const { resolvedTheme, setTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
+  const logoSrc = isDark ? "/Omazync-light-logo.png" : "/Omazync-logo.png";
 
   return (
     <header className="mb-10 flex items-center justify-between gap-4">
@@ -19,7 +20,7 @@ export function AuthPageHeader() {
           className="h-11 w-40 rounded-md object-cover"
           height={1024}
           priority
-          src="/Omazync-logo.png"
+          src={logoSrc}
           width={1536}
         />
       </Link>

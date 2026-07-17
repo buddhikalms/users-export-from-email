@@ -46,9 +46,16 @@ export function MarketingFooter() {
           <Link className="flex items-center gap-3 font-semibold" href="/">
             <Image
               alt="OMAZYNC"
-              className="h-10 w-36 rounded-md object-cover"
+              className="h-10 w-36 rounded-md object-cover dark:hidden"
               height={1024}
               src="/Omazync-logo.png"
+              width={1536}
+            />
+            <Image
+              alt="OMAZYNC"
+              className="hidden h-10 w-36 rounded-md object-cover dark:block"
+              height={1024}
+              src="/Omazync-light-logo.png"
               width={1536}
             />
           </Link>

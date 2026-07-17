@@ -224,6 +224,8 @@ function Sidebar({
   onToggle: () => void;
   onClose: () => void;
 }) {
+  const { resolvedTheme } = useTheme();
+  const logoSrc = resolvedTheme === "dark" ? "/Omazync-light-logo.png" : "/Omazync-logo.png";
   const visibleNavGroups = getNavGroups(user.role);
   const sidebar = (
     <aside
@@ -242,7 +244,7 @@ function Sidebar({
             )}
             height={1024}
             priority
-            src="/Omazync-logo.png"
+            src={logoSrc}
             width={1536}
           />
           {!collapsed ? (

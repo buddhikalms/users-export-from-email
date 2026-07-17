@@ -21,6 +21,7 @@ export function MarketingHeader({ signedIn = false }: { signedIn?: boolean }) {
   const [open, setOpen] = useState(false);
   const { resolvedTheme, setTheme } = useTheme();
   const isDark = resolvedTheme === "dark";
+  const logoSrc = isDark ? "/Omazync-light-logo.png" : "/Omazync-logo.png";
 
   function toggleTheme() {
     setTheme(isDark ? "light" : "dark");
@@ -35,7 +36,7 @@ export function MarketingHeader({ signedIn = false }: { signedIn?: boolean }) {
             className="h-10 w-36 rounded-md object-cover"
             height={1024}
             priority
-            src="/Omazync-logo.png"
+            src={logoSrc}
             width={1536}
           />
         </Link>
@@ -121,7 +122,7 @@ export function MarketingHeader({ signedIn = false }: { signedIn?: boolean }) {
                   alt="OMAZYNC"
                   className="h-10 w-36 rounded-md object-cover"
                   height={1024}
-                  src="/Omazync-logo.png"
+                  src={logoSrc}
                   width={1536}
                 />
                 <Button
