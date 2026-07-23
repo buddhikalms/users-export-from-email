@@ -2,6 +2,7 @@
 
 import {
   BarChart3,
+  CheckCircle2,
   ContactRound,
   DatabaseZap,
   FileSpreadsheet,
@@ -9,7 +10,6 @@ import {
   MailCheck,
   RefreshCw,
   ShieldCheck,
-  Sparkles,
   UsersRound,
 } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
@@ -18,7 +18,7 @@ const nodes = [
   { title: "Outlook Sync", icon: MailCheck, side: "left", top: 8 },
   { title: "IMAP Mailboxes", icon: Mail, side: "right", top: 8 },
   { title: "Contact Extraction", icon: ContactRound, side: "left", top: 28 },
-  { title: "Duplicate Cleanup", icon: Sparkles, side: "right", top: 28 },
+  { title: "Duplicate Cleanup", icon: CheckCircle2, side: "right", top: 28 },
   { title: "Excel / CSV Export", icon: FileSpreadsheet, side: "left", top: 48 },
   { title: "Kit Sync", icon: RefreshCw, side: "right", top: 48 },
   { title: "Zoho Campaigns", icon: UsersRound, side: "left", top: 68 },

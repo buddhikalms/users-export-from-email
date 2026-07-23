@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, FileSpreadsheet, MailCheck, Sparkles } from "lucide-react";
+import { ArrowRight, CheckCircle2, FileSpreadsheet, MailCheck } from "lucide-react";
 import { motion } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
@@ -34,7 +34,7 @@ export function AnimatedBanner() {
               transition={{ duration: 0.5 }}
               className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1 text-sm text-brand-light-purple"
             >
-              <Sparkles className="h-4 w-4 text-brand-turquoise" />
+              <MailCheck className="h-4 w-4 text-brand-turquoise" />
               New workflow: inbox to marketing platform
             </motion.div>
             <motion.h2

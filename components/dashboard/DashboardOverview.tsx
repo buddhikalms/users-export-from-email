@@ -4,9 +4,9 @@ import {
   CheckCircle2,
   Clock3,
   FileSpreadsheet,
+  Layers3,
   MailCheck,
   ShieldCheck,
-  Sparkles,
   UsersRound,
 } from "lucide-react";
 
@@ -90,7 +90,7 @@ export function DashboardOverview({
             </Button>
             <Button asChild variant="outline">
               <Link href={"/integrations" as "/"}>
-                <Sparkles className="h-4 w-4" />
+                <Layers3 className="h-4 w-4" />
                 Integrations
               </Link>
             </Button>

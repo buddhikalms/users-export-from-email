@@ -1,13 +1,13 @@
 "use client";
 
-import { CheckCheck, CloudUpload, ContactRound, Mail, ScanSearch, Sparkles } from "lucide-react";
+import { CheckCheck, CloudUpload, ContactRound, Mail, ScanSearch } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 
 const steps = [
   ["Outlook", Mail],
   ["Scanning Emails", ScanSearch],
   ["Extract Contacts", ContactRound],
-  ["Clean Duplicates", Sparkles],
+  ["Clean Duplicates", CheckCheck],
   ["Export", CheckCheck],
   ["Marketing Platform", CloudUpload],
 ] as const;

@@ -1,6 +1,5 @@
 "use client";
 
-import { Sparkles } from "lucide-react";
 import {
   motion,
   useMotionValue,

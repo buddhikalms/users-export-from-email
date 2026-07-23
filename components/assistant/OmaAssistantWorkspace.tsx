@@ -12,7 +12,6 @@ import {
   MicOff,
   Send,
   ShieldCheck,
-  Sparkles,
   Volume2,
 } from "lucide-react";
 
@@ -407,7 +406,7 @@ export function OmaAssistantWorkspace({ mode = "page" }: { mode?: "page" | "pane
 
         <section className="rounded-3xl border border-border bg-card/80 p-5 shadow-sm">
           <div className="flex items-center gap-3">
-            <Sparkles className="h-5 w-5 text-primary" />
+            <Bot className="h-5 w-5 text-primary" />
             <h2 className="text-base font-semibold">Current Guidance</h2>
           </div>
           <div className="mt-4 rounded-2xl border border-border bg-background/70 p-4">

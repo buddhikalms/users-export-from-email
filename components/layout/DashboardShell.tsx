@@ -26,11 +26,11 @@ import {
   MailCheck,
   Menu,
   Moon,
+  PlugZap,
   Search,
   Settings,
   Shield,
   ShieldCheck,
-  Sparkles,
   Sun,
   Tags,
   Workflow,
@@ -68,7 +68,7 @@ const navGroups = [
   {
     label: "Marketing",
     items: [
-      { label: "Integrations", href: "/dashboard/integrations", icon: Sparkles },
+      { label: "Integrations", href: "/dashboard/integrations", icon: PlugZap },
       { label: "Kit Accounts", href: "/settings/kit", icon: CircleUserRound },
       { label: "Destinations", href: "/export", icon: Tags },
       { label: "Automation", href: "/automation", icon: Workflow },

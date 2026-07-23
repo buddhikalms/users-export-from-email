@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import {
   Activity,
+  BarChart3,
   Bell,
   BriefcaseBusiness,
   Building2,
@@ -25,7 +26,6 @@ import {
   Settings,
   ShieldCheck,
   SlidersHorizontal,
-  Sparkles,
   UsersRound,
   Webhook,
   Workflow,
@@ -51,7 +51,7 @@ const sections = [
     items: [
       { href: "/admin", label: "Admin Dashboard", icon: Gauge },
       { href: "/admin/live-operations", label: "Live Operations", icon: Activity },
-      { href: "/admin/analytics", label: "Analytics", icon: Sparkles },
+      { href: "/admin/analytics", label: "Analytics", icon: BarChart3 },
     ],
   },
   {

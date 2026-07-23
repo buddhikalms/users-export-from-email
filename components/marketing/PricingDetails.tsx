@@ -5,7 +5,6 @@ import {
   CircleDollarSign,
   PlugZap,
   Settings2,
-  Sparkles,
   UsersRound,
   X,
 } from "lucide-react";
@@ -203,7 +202,7 @@ export function PricingDetails({ addOns }: PricingDetailsProps) {
       <section className="rounded-[2rem] bg-slate-950 p-7 text-white sm:p-10">
         <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
           <div>
-            <Sparkles className="h-7 w-7 text-brand-light-purple" />
+            <Check className="h-7 w-7 text-brand-light-purple" />
             <h2 className="mt-5 text-3xl font-bold tracking-tight sm:text-4xl">Why choose OMAZYNC Email Exporter?</h2>
             <p className="mt-4 leading-7 text-slate-300">Discover, organize, export, and sync valuable contacts without locking your data away.</p>
           </div>

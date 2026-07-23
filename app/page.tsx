@@ -15,7 +15,6 @@ import {
   Newspaper,
   RefreshCw,
   SearchCheck,
-  Sparkles,
   Target,
   UserSearch,
   UsersRound,
@@ -50,7 +49,7 @@ const platformFeatures = [
   [
     "Duplicate Cleanup",
     "Normalize addresses and merge repeated contacts into one dependable record.",
-    Sparkles,
+    CheckCircle2,
   ],
   [
     "Folder-Based Organization",

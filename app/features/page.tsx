@@ -9,7 +9,6 @@ import {
   MailCheck,
   Repeat,
   ShieldCheck,
-  Sparkles,
   Tags,
 } from "lucide-react";
 
@@ -27,7 +26,7 @@ const features = [
   ["Outlook/IMAP Sync", "Connect Outlook and compatible IMAP mailboxes with secure server-side sync.", MailCheck],
   ["Folder-wise contact extraction", "Keep contacts organized by source folder for tags, segments, and exports.", FolderTree],
   ["Forwarded email chain detection", "Find original senders hidden in forwarded conversations.", Repeat],
-  ["Duplicate cleanup", "Merge repeated emails and reduce noisy contact lists.", Sparkles],
+  ["Duplicate cleanup", "Merge repeated emails and reduce noisy contact lists.", ShieldCheck],
   ["mailto cleanup", "Strip mailto formatting and normalize contact addresses.", Tags],
   ["Excel/CSV export", "Download polished files for analysis, CRM imports, and client delivery.", FileSpreadsheet],
   ["Marketing platform sync", "Send contacts to Kit, Zoho Campaigns, and Brevo.", Clock],

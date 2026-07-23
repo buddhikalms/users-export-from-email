@@ -11,13 +11,13 @@ import {
   Newspaper,
   Rocket,
   Search,
-  Sparkles,
-  UsersRound,
+  SearchCheck,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { CTASection } from "@/components/marketing/CTASection";
 import { Section, SectionIntro } from "@/components/marketing/Section";
+import { getPricingCatalog, type PricingPlanCatalogItem } from "@/lib/pricing-catalog";
 
 export const metadata: Metadata = {
   title: "Use Cases - OMAZYNC",
@@ -27,23 +27,23 @@ export const metadata: Metadata = {
 
 const planMatches = [
   {
+    slug: "starter",
     plan: "Starter",
     fit: "Solo workflows",
-    price: "$19/mo",
     description: "Best for freelancers, founders, and small teams exporting one mailbox to Excel or CSV.",
     featured: false,
   },
   {
+    slug: "professional",
     plan: "Professional",
     fit: "Growth teams",
-    price: "$49/mo",
     description: "Best for teams using multiple mailboxes, Kit, Zoho Campaigns, Brevo, and scheduled exports.",
     featured: true,
   },
   {
-    plan: "Agency",
+    slug: "business",
+    plan: "Business",
     fit: "Client operations",
-    price: "$129/mo",
     description: "Best for agencies, PR teams, publishers, and client accounts that need automation rules.",
     featured: false,
   },
@@ -53,7 +53,7 @@ const useCases = [
   {
     title: "Marketing agencies",
     icon: BriefcaseBusiness,
-    plan: "Agency",
+    plan: "Business",
     pain: "Client contacts are spread across campaign inboxes, team folders, and forwarded leads.",
     outcome: "Build client-ready contact databases, map folders to tags, and sync each client to the correct marketing account.",
     workflow: ["Connect client mailbox", "Scan campaign folders", "Remove duplicates", "Sync to Kit or Zoho"],
@@ -63,7 +63,7 @@ const useCases = [
   {
     title: "PR teams",
     icon: Megaphone,
-    plan: "Agency",
+    plan: "Business",
     pain: "Journalists, partners, and contributors are buried inside years of replies and forwarded email chains.",
     outcome: "Discover original senders, clean press contacts, and export outreach-ready lists by beat or publication.",
     workflow: ["Scan media folders", "Detect forwarded senders", "Clean duplicates", "Export press list"],
@@ -139,7 +139,21 @@ const outcomes = [
   "Sync to Kit, Zoho Campaigns, and Brevo",
 ] as const;
 
-export default function UseCasesPage() {
+function formatMonthly(value: number | null) {
+  if (value === null) return "Custom";
+
+  return `$${value.toFixed(value % 1 === 0 ? 0 : 2)}/mo`;
+}
+
+function getPlanPrice(plans: PricingPlanCatalogItem[], slug: (typeof planMatches)[number]["slug"]) {
+  const plan = plans.find((item) => item.slug === slug);
+
+  return formatMonthly(plan?.monthly ?? null);
+}
+
+export default async function UseCasesPage() {
+  const { plans } = await getPricingCatalog();
+
   return (
     <main>
       <section className="relative overflow-hidden bg-[linear-gradient(180deg,#FDFDFD_0%,rgba(3,183,178,0.12)_54%,#FDFDFD_100%)] dark:bg-[linear-gradient(180deg,#050E34_0%,rgba(0,127,212,0.24)_58%,#050E34_100%)]">
@@ -172,7 +186,7 @@ export default function UseCasesPage() {
             <div className="rounded-[1.5rem] bg-slate-950 p-5 text-white">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-semibold">Plan finder</span>
-                <Sparkles className="h-5 w-5 text-brand-light-purple" />
+                <SearchCheck className="h-5 w-5 text-brand-light-purple" />
               </div>
               <div className="mt-5 grid gap-3">
                 {planMatches.map((item) => (
@@ -190,7 +204,7 @@ export default function UseCasesPage() {
                         <p className="mt-1 text-xs text-slate-300">{item.fit}</p>
                       </div>
                       <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-950">
-                        {item.price}
+                        {getPlanPrice(plans, item.slug)}
                       </span>
                     </div>
                     <p className="mt-3 text-sm leading-6 text-slate-300">{item.description}</p>
@@ -310,7 +324,7 @@ export default function UseCasesPage() {
                 </div>
 
                 <div className="mt-5 flex items-center gap-3 rounded-2xl border border-brand-blue/10 bg-brand-blue/10 p-4 text-sm font-medium text-brand-navy dark:border-brand-light-purple/20 dark:bg-brand-blue/10 dark:text-brand-light-purple">
-                  <Sparkles className="h-5 w-5 shrink-0" />
+                  <CheckCircle2 className="h-5 w-5 shrink-0" />
                   {item.result}
                 </div>
               </article>
@@ -337,7 +351,7 @@ export default function UseCasesPage() {
               <p className={item.featured ? "mt-3 text-sm leading-6 text-slate-300" : "mt-3 text-sm leading-6 text-slate-600 dark:text-slate-300"}>
                 {item.description}
               </p>
-              <div className="mt-6 text-3xl font-semibold">{item.price}</div>
+              <div className="mt-6 text-3xl font-semibold">{getPlanPrice(plans, item.slug)}</div>
               <Button
                 asChild
                 className={item.featured ? "mt-6 bg-white text-slate-950 hover:bg-slate-100" : "mt-6"}

@@ -9,7 +9,6 @@ import {
   CheckCircle2,
   FolderSync,
   GitBranch,
-  Sparkles,
   Tags,
   Workflow,
   X,
@@ -541,7 +540,7 @@ export function AutomationWorkspace({
             </CardHeader>
             <CardContent className="space-y-3">
               {[
-                ["Contacts with AI category", Sparkles],
+                ["Contacts with AI category", Tags],
                 ["Contacts with lead score", GitBranch],
                 ["Contacts with company", Bot],
                 ["Cleanup logs", CheckCircle2],

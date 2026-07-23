@@ -8,7 +8,6 @@ import {
   Folder,
   Mail,
   Sheet,
-  Sparkles,
   UserRound,
   UsersRound,
   Zap,
@@ -103,7 +102,7 @@ export function HeroIllustration() {
             <span className="grid h-9 w-9 place-items-center rounded-xl bg-brand-turquoise/10 text-brand-turquoise"><Folder className="h-4 w-4" /></span>
             <div><p className="text-xs font-bold text-slate-800">Contacts organized</p><p className="text-[10px] text-slate-500">Inbox to clean folders</p></div>
           </div>
-          <Sparkles className="h-4 w-4 text-brand-purple" />
+          <Check className="h-4 w-4 text-brand-purple" />
         </div>
         <div className="mt-3 grid grid-cols-3 gap-2">
           {["Clients", "Leads", "Suppliers"].map((folder) => <div key={folder} className="rounded-lg bg-slate-50 px-2 py-2 text-center text-[9px] font-semibold text-slate-600">{folder}</div>)}
